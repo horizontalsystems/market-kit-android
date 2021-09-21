@@ -33,8 +33,16 @@ sealed class CoinType {
             }
         }
 
+    override fun equals(other: Any?): Boolean {
+        return other is CoinType && other.id == id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
     override fun toString(): String {
-        return when(this) {
+        return when (this) {
             Bitcoin -> "bitcoin"
             BitcoinCash -> "bitcoinCash"
             Litecoin -> "litecoin"
@@ -72,7 +80,7 @@ sealed class CoinType {
             val chunks = id.split("|")
 
             return if (chunks.size == 1) {
-                 when (chunks[0]) {
+                when (chunks[0]) {
                     "bitcoin" -> Bitcoin
                     "bitcoinCash" -> BitcoinCash
                     "litecoin" -> Litecoin
@@ -83,7 +91,7 @@ sealed class CoinType {
                     else -> Unsupported(chunks[0])
                 }
             } else {
-                 when (chunks[0]) {
+                when (chunks[0]) {
                     "erc20" -> Erc20(chunks[1])
                     "bep2" -> Bep2(chunks[1])
                     "bep20" -> Bep20(chunks[1])
