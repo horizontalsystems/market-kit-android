@@ -1,8 +1,6 @@
 package io.horizontalsystems.marketkit.storage
 
-import io.horizontalsystems.marketkit.models.Coin
-import io.horizontalsystems.marketkit.models.MarketCoin
-import io.horizontalsystems.marketkit.models.Platform
+import io.horizontalsystems.marketkit.models.*
 
 class CoinStorage(marketDatabase: MarketDatabase) {
 
@@ -15,6 +13,30 @@ class CoinStorage(marketDatabase: MarketDatabase) {
 
     fun marketCoins(filter: String, limit: Int): List<MarketCoin> {
         return coinDao.getMarketCoins("%$filter%", limit)
+    }
+
+    fun marketCoins(coinUids: List<String>): List<MarketCoin> {
+        return coinDao.getMarketCoins(coinUids)
+    }
+
+    fun platformCoins(coinTypes: List<CoinType>): List<PlatformCoin> {
+        return coinDao.getPlatformCoins(coinTypes)
+    }
+
+    fun platformCoin(coinType: CoinType): PlatformCoin? {
+        return coinDao.getPlatformCoin(coinType)
+    }
+
+    fun platformCoins(): List<PlatformCoin> {
+        return coinDao.getPlatformCoins()
+    }
+
+    fun coins(filter: String, limit: Int): List<Coin> {
+        return coinDao.getCoins("%$filter%", limit)
+    }
+
+    fun save(marketCoins: List<MarketCoin>) {
+        coinDao.save(marketCoins)
     }
 
 }

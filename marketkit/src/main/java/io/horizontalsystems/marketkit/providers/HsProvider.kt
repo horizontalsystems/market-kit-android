@@ -52,7 +52,7 @@ class HsProvider {
     }
 
     interface MarketService {
-        @GET("coins")
+        @GET("coins/all")
         fun getMarketCoins(): Single<List<CoinResponse>>
     }
 
