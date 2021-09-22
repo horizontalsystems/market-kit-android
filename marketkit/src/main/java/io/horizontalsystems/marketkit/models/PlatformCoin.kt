@@ -2,7 +2,6 @@ package io.horizontalsystems.marketkit.models
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import java.util.*
 
 data class PlatformCoin(
     @Embedded
@@ -26,14 +25,7 @@ data class PlatformCoin(
     val coinType: CoinType
         get() = platform.coinType
 
-    val decimal: Int
-        get() = platform.decimal
+    val decimals: Int
+        get() = platform.decimals
 
-    override fun equals(other: Any?): Boolean {
-        return other is PlatformCoin && other.platform == platform && other.coin == coin
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(platform, coin)
-    }
 }

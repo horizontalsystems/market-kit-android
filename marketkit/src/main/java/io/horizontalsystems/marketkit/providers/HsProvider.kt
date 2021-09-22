@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.providers
 
 import com.google.gson.GsonBuilder
+import io.horizontalsystems.marketkit.models.CoinCategory
 import io.horizontalsystems.marketkit.models.CoinResponse
 import io.horizontalsystems.marketkit.models.MarketCoin
 import io.reactivex.Single
@@ -14,7 +15,7 @@ import java.util.logging.Logger
 
 class HsProvider {
     private val logger = Logger.getLogger("HsProvider")
-    private val url = "http://10.0.1.32:3000/v1/"
+    private val url = "http://161.35.110.248:3000/v1/"
     private val service: MarketService
 
     init {
@@ -26,11 +27,6 @@ class HsProvider {
 
         val gson = GsonBuilder()
             .setLenient()
-//            .registerTypeAdapter(BigInteger::class.java, BigIntegerTypeAdapter(isHex = false))
-//            .registerTypeAdapter(Long::class.java, LongTypeAdapter(isHex = false))
-//            .registerTypeAdapter(Int::class.java, IntTypeAdapter(isHex = false))
-//            .registerTypeAdapter(ByteArray::class.java, ByteArrayTypeAdapter())
-//            .registerTypeAdapter(Address::class.java, AddressTypeAdapter())
             .create()
 
         val retrofit = Retrofit.Builder()
@@ -51,9 +47,16 @@ class HsProvider {
         }
     }
 
+    fun getCoinCategories(): Single<List<CoinCategory>> {
+        return service.getCategories()
+    }
+
     interface MarketService {
         @GET("coins/all")
         fun getMarketCoins(): Single<List<CoinResponse>>
+
+        @GET("categories")
+        fun getCategories(): Single<List<CoinCategory>>
     }
 
 }

@@ -6,13 +6,15 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import io.horizontalsystems.marketkit.models.Coin
+import io.horizontalsystems.marketkit.models.CoinCategory
 import io.horizontalsystems.marketkit.models.Platform
 
 
-@Database(entities = [Coin::class, Platform::class], version = 1, exportSchema = false)
+@Database(entities = [Coin::class, Platform::class, CoinCategory::class], version = 1, exportSchema = false)
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class MarketDatabase : RoomDatabase() {
     abstract fun coinDao(): CoinDao
+    abstract fun coinCategoryDao(): CoinCategoryDao
 
     companion object {
 
