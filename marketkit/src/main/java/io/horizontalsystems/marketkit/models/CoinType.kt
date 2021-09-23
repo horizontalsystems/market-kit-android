@@ -76,7 +76,7 @@ sealed class CoinType {
             }
         }
 
-        fun fromString(id: String): CoinType {
+        fun fromId(id: String): CoinType {
             val chunks = id.split("|")
 
             return if (chunks.size == 1) {

@@ -16,7 +16,7 @@ data class CoinResponse(
     @SerializedName("market_cap")
     val marketCap: BigInteger,
     @SerializedName("market_cap_rank")
-    val marketCapRank: Int,
+    val marketCapRank: Int?,
     @SerializedName("total_volume")
     val totalVolume: BigInteger,
     val platforms: List<PlatformResponse>,

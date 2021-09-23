@@ -35,6 +35,10 @@ class CoinManager(
         return storage.platformCoins(coinTypes)
     }
 
+    fun platformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin> {
+        return storage.platformCoins(coinTypeIds.map { CoinType.fromId(it) })
+    }
+
     fun save(coin: Coin, platform: Platform) {
         storage.save(coin, platform)
         marketCoinsUpdatedObservable.onNext(Unit)

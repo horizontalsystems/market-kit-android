@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.horizontalsystems.marketkit.models.CoinType
+import java.math.BigDecimal
 
 class DatabaseTypeConverters {
     private val gson by lazy { Gson() }
@@ -15,7 +16,7 @@ class DatabaseTypeConverters {
 
     @TypeConverter
     fun toCoinType(value: String): CoinType {
-        return CoinType.fromString(value)
+        return CoinType.fromId(value)
     }
 
     @TypeConverter
@@ -26,5 +27,15 @@ class DatabaseTypeConverters {
     @TypeConverter
     fun toMap(value: String): Map<String, String> {
         return gson.fromJson(value, object : TypeToken<Map<String, String>>() {}.type)
+    }
+
+    @TypeConverter
+    fun fromBigDecimal(bigDecimal: BigDecimal): String? {
+        return bigDecimal.toPlainString()
+    }
+
+    @TypeConverter
+    fun toBigDecimal(value: String): BigDecimal{
+        return BigDecimal(value)
     }
 }
