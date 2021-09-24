@@ -3,23 +3,27 @@ package io.horizontalsystems.marketkit
 import android.content.Context
 import io.horizontalsystems.marketkit.managers.CoinCategoryManager
 import io.horizontalsystems.marketkit.managers.CoinManager
+import io.horizontalsystems.marketkit.managers.CoinPriceManager
+import io.horizontalsystems.marketkit.managers.CoinPriceSyncManager
 import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinCategoryStorage
+import io.horizontalsystems.marketkit.storage.CoinPriceStorage
 import io.horizontalsystems.marketkit.storage.CoinStorage
 import io.horizontalsystems.marketkit.storage.MarketDatabase
 import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 
 class MarketKit(
     private val coinManager: CoinManager,
     private val coinCategoryManager: CoinCategoryManager,
     private val coinSyncer: CoinSyncer,
-    private val coinCategorySyncer: CoinCategorySyncer
+    private val coinCategorySyncer: CoinCategorySyncer,
+    private val coinPriceManager: CoinPriceManager,
+    private val coinPriceSyncManager: CoinPriceSyncManager
 ) {
-
     // Coins
 
     val marketCoinsUpdatedObservable: Observable<Unit>
@@ -69,49 +73,54 @@ class MarketKit(
     }
 
     fun sync() {
-//        coinSyncer.sync()
-//        coinCategorySyncer.sync()
+        coinSyncer.sync()
+        coinCategorySyncer.sync()
     }
 
     // Coin Prices
 
     fun refreshCoinPrices(currencyCode: String) {
-        // TODO
+        coinPriceSyncManager.refresh(currencyCode)
     }
 
     fun coinPrice(coinUid: String, currencyCode: String): CoinPrice? {
-        // TODO
-        return null
+        return coinPriceManager.coinPrice(coinUid, currencyCode)
     }
 
     fun coinPriceMap(coinUids: List<String>, currencyCode: String): Map<String, CoinPrice> {
-        // TODO
-        return mapOf()
+        return coinPriceManager.coinPriceMap(coinUids, currencyCode)
     }
 
-    private val coinPriceObservable = PublishSubject.create<CoinPrice>()
     fun coinPriceObservable(coinUid: String, currencyCode: String): Observable<CoinPrice> {
-        // TODO
-        return coinPriceObservable
+        return coinPriceSyncManager.coinPriceObservable(coinUid, currencyCode)
     }
 
-    private val coinPriceMapObservable = PublishSubject.create<Map<String, CoinPrice>>()
     fun coinPriceMapObservable(coinUids: List<String>, currencyCode: String): Observable<Map<String, CoinPrice>> {
-        // TODO
-        return coinPriceMapObservable
+        return coinPriceSyncManager.coinPriceMapObservable(coinUids, currencyCode)
     }
-
 
     companion object {
         fun getInstance(context: Context): MarketKit {
-            val coinStorage = CoinStorage(MarketDatabase.getInstance(context))
-            val coinCategoryStorage = CoinCategoryStorage(MarketDatabase.getInstance(context))
-            val coinManager = CoinManager(coinStorage)
-            val coinCategoryManager = CoinCategoryManager(coinCategoryStorage)
-            val coinSyncer = CoinSyncer(HsProvider(), coinManager)
-            val coinCategorySyncer = CoinCategorySyncer(HsProvider(), coinCategoryManager)
+            val marketDatabase = MarketDatabase.getInstance(context)
+            val coinManager = CoinManager(CoinStorage(marketDatabase))
+            val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
+            val hsProvider = HsProvider()
+            val coinSyncer = CoinSyncer(hsProvider, coinManager)
+            val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
+            val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
+            val coinPriceSchedulerFactory = CoinPriceSchedulerFactory(coinPriceManager, hsProvider)
+            val coinPriceSyncManager = CoinPriceSyncManager(coinPriceSchedulerFactory)
+            coinPriceManager.listener = coinPriceSyncManager
 
-            return MarketKit(coinManager, coinCategoryManager, coinSyncer, coinCategorySyncer)
+            return MarketKit(
+                coinManager,
+                coinCategoryManager,
+                coinSyncer,
+                coinCategorySyncer,
+                coinPriceManager,
+                coinPriceSyncManager
+            )
         }
     }
+
 }

@@ -17,10 +17,6 @@ class CoinSyncer(
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe({ marketCoins ->
-                Log.e("AAA", "${marketCoins.size} market coins fetched")
-//                marketCoins.forEach {
-//                    Log.e("AAA", it.toString())
-//                }
                 coinManager.handleFetched(marketCoins)
             }, {
                 Log.e("AAA", "CoinSyncer error", it)

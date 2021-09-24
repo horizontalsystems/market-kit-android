@@ -1,7 +1,6 @@
 package io.horizontalsystems.marketkit.models
 
 sealed class CoinType {
-
     object Bitcoin : CoinType()
     object BitcoinCash : CoinType()
     object Litecoin : CoinType()
@@ -101,7 +100,6 @@ sealed class CoinType {
                 }
             }
         }
-
     }
 
 }

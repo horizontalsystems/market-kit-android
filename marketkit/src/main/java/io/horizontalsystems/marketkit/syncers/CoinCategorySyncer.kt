@@ -17,10 +17,6 @@ class CoinCategorySyncer(
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe({ categories ->
-                Log.e("AAA", "${categories.size} categories fetched")
-                categories.forEach {
-                    Log.e("AAA", it.toString())
-                }
                 coinCategoryManager.handleFetched(categories)
             }, {
                 Log.e("AAA", "CoinCategorySyncer error", it)
