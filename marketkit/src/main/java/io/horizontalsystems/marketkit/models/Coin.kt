@@ -1,8 +1,11 @@
 package io.horizontalsystems.marketkit.models
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity
 data class Coin(
     @PrimaryKey
@@ -11,7 +14,7 @@ data class Coin(
     val code: String,
     val marketCapRank: Int? = null,
     val coinGeckoId: String? = null
-) {
+) : Parcelable {
     constructor(coinResponse: CoinResponse) : this(
         coinResponse.uid,
         coinResponse.name,

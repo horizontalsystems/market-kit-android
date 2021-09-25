@@ -1,8 +1,11 @@
 package io.horizontalsystems.marketkit.models
 
+import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class PlatformCoin(
     @Embedded
     val platform: Platform,
@@ -12,7 +15,7 @@ data class PlatformCoin(
         entityColumn = "uid"
     )
     val coin: Coin
-) {
+): Parcelable {
     val marketCoin: MarketCoin
         get() = MarketCoin(coin, listOf(platform))
 

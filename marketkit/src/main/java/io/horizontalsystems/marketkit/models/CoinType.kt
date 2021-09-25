@@ -1,17 +1,32 @@
 package io.horizontalsystems.marketkit.models
 
-sealed class CoinType {
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+sealed class CoinType: Parcelable {
+    @Parcelize
     object Bitcoin : CoinType()
+    @Parcelize
     object BitcoinCash : CoinType()
+    @Parcelize
     object Litecoin : CoinType()
+    @Parcelize
     object Dash : CoinType()
+    @Parcelize
     object Zcash : CoinType()
+    @Parcelize
     object Ethereum : CoinType()
+    @Parcelize
     object BinanceSmartChain : CoinType()
+    @Parcelize
     class Erc20(val address: String) : CoinType()
+    @Parcelize
     class Bep20(val address: String) : CoinType()
+    @Parcelize
     class Bep2(val symbol: String) : CoinType()
+    @Parcelize
     class Sol20(val address: String) : CoinType()
+    @Parcelize
     class Unsupported(val type: String) : CoinType()
 
     val id: String
