@@ -36,7 +36,7 @@ class CoinManager(
     }
 
     fun platformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin> {
-        return storage.platformCoins(coinTypeIds.map { CoinType.fromId(it) })
+        return storage.platformCoinsByCoinTypeIds(coinTypeIds)
     }
 
     fun save(coin: Coin, platform: Platform) {

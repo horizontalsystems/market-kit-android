@@ -23,6 +23,10 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         return coinDao.getPlatformCoins(coinTypes)
     }
 
+    fun platformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin> {
+        return coinDao.getPlatformCoinsByCoinTypeIds(coinTypeIds)
+    }
+
     fun platformCoin(coinType: CoinType): PlatformCoin? {
         return coinDao.getPlatformCoin(coinType)
     }

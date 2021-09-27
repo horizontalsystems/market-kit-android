@@ -30,6 +30,10 @@ interface CoinDao {
     fun getPlatformCoins(coinTypes: List<CoinType>): List<PlatformCoin>
 
     @Transaction
+    @Query("SELECT * FROM Platform WHERE coinType in (:coinTypeIds)")
+    fun getPlatformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin>
+
+    @Transaction
     @Query("SELECT * FROM Platform WHERE coinType = :coinType")
     fun getPlatformCoin(coinType: CoinType): PlatformCoin?
 
