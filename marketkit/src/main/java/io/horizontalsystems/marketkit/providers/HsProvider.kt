@@ -14,7 +14,7 @@ import java.util.logging.Logger
 
 class HsProvider {
     private val logger = Logger.getLogger("HsProvider")
-    private val url = "http://161.35.110.248:3000/v1/"
+    private val url = "https://markets-dev.horizontalsystems.xyz/v1/"
     private val service: MarketService
 
     init {
