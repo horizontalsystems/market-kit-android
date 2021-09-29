@@ -15,6 +15,7 @@ import io.horizontalsystems.marketkit.storage.MarketDatabase
 import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class MarketKit(
     private val coinManager: CoinManager,
@@ -26,20 +27,24 @@ class MarketKit(
 ) {
     // Coins
 
-    val marketCoinsUpdatedObservable: Observable<Unit>
-        get() = coinManager.marketCoinsUpdatedObservable
+    val fullCoinsUpdatedObservable: Observable<Unit>
+        get() = coinManager.fullCoinsUpdatedObservable
 
 
-    fun marketCoins(filter: String, limit: Int = 20): List<MarketCoin> {
-        return coinManager.marketCoins(filter, limit)
+    fun fullCoins(filter: String, limit: Int = 20): List<FullCoin> {
+        return coinManager.fullCoins(filter, limit)
     }
 
-    fun marketCoins(coinUids: List<String>): List<MarketCoin> {
-        return coinManager.marketCoins(coinUids)
+    fun fullCoins(coinUids: List<String>): List<FullCoin> {
+        return coinManager.fullCoins(coinUids)
     }
 
-    fun marketCoinsByCoinTypes(coinTypes: List<CoinType>): List<MarketCoin> {
-        return coinManager.marketCoinsByCoinTypes(coinTypes)
+    fun fullCoinsByCoinTypes(coinTypes: List<CoinType>): List<FullCoin> {
+        return coinManager.fullCoinsByCoinTypes(coinTypes)
+    }
+
+    fun marketInfosSingle(top: Int = 250, limit: Int? = null, order: MarketInfo.Order? = null): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(top, limit, order)
     }
 
     fun platformCoin(coinType: CoinType): PlatformCoin? {
@@ -102,9 +107,9 @@ class MarketKit(
     companion object {
         fun getInstance(context: Context): MarketKit {
             val marketDatabase = MarketDatabase.getInstance(context)
-            val coinManager = CoinManager(CoinStorage(marketDatabase))
-            val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
             val hsProvider = HsProvider()
+            val coinManager = CoinManager(CoinStorage(marketDatabase), hsProvider)
+            val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
             val coinSyncer = CoinSyncer(hsProvider, coinManager)
             val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))

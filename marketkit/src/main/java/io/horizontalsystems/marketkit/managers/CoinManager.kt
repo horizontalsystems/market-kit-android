@@ -1,26 +1,33 @@
 package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 
 class CoinManager(
-    private val storage: CoinStorage
+    private val storage: CoinStorage,
+    private val hsProvider: HsProvider
 ) {
-    val marketCoinsUpdatedObservable = PublishSubject.create<Unit>()
+    val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
 
-    fun marketCoins(filter: String, limit: Int): List<MarketCoin> {
-        return storage.marketCoins(filter, limit)
+    fun fullCoins(filter: String, limit: Int): List<FullCoin> {
+        return storage.fullCoins(filter, limit)
     }
 
-    fun marketCoins(coinUids: List<String>): List<MarketCoin> {
-        return storage.marketCoins(coinUids)
+    fun fullCoins(coinUids: List<String>): List<FullCoin> {
+        return storage.fullCoins(coinUids)
     }
 
-    fun marketCoinsByCoinTypes(coinTypes: List<CoinType>): List<MarketCoin> {
+    fun fullCoinsByCoinTypes(coinTypes: List<CoinType>): List<FullCoin> {
         val platformCoins = storage.platformCoins(coinTypes)
 
-        return storage.marketCoins(platformCoins.map { it.coin.uid })
+        return storage.fullCoins(platformCoins.map { it.coin.uid })
+    }
+
+    fun marketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+        return hsProvider.getMarketInfosSingle(top, limit, order)
     }
 
     fun platformCoin(coinType: CoinType): PlatformCoin? {
@@ -39,18 +46,13 @@ class CoinManager(
         return storage.platformCoinsByCoinTypeIds(coinTypeIds)
     }
 
-    fun save(coin: Coin, platform: Platform) {
-        storage.save(coin, platform)
-        marketCoinsUpdatedObservable.onNext(Unit)
-    }
-
     fun coins(filter: String, limit: Int): List<Coin> {
         return storage.coins(filter, limit)
     }
 
-    fun handleFetched(marketCoins: List<MarketCoin>) {
-        storage.save(marketCoins)
-        marketCoinsUpdatedObservable.onNext(Unit)
+    fun handleFetched(fullCoins: List<FullCoin>) {
+        storage.save(fullCoins)
+        fullCoinsUpdatedObservable.onNext(Unit)
     }
 
 }

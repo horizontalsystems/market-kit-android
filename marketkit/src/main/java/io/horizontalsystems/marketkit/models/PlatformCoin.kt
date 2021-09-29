@@ -16,8 +16,8 @@ data class PlatformCoin(
     )
     val coin: Coin
 ): Parcelable {
-    val marketCoin: MarketCoin
-        get() = MarketCoin(coin, listOf(platform))
+    val fullCoin: FullCoin
+        get() = FullCoin(coin, listOf(platform))
 
     val name: String
         get() = coin.name

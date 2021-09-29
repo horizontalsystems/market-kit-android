@@ -6,16 +6,11 @@ class CoinStorage(marketDatabase: MarketDatabase) {
 
     private val coinDao = marketDatabase.coinDao()
 
-    fun save(coin: Coin, platform: Platform) {
-        coinDao.insert(coin)
-        coinDao.insert(platform)
-    }
-
-    fun marketCoins(filter: String, limit: Int): List<MarketCoin> {
+    fun fullCoins(filter: String, limit: Int): List<FullCoin> {
         return coinDao.getMarketCoins("%$filter%", limit)
     }
 
-    fun marketCoins(coinUids: List<String>): List<MarketCoin> {
+    fun fullCoins(coinUids: List<String>): List<FullCoin> {
         return coinDao.getMarketCoins(coinUids)
     }
 
@@ -39,8 +34,8 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         return coinDao.getCoins("%$filter%", limit)
     }
 
-    fun save(marketCoins: List<MarketCoin>) {
-        coinDao.save(marketCoins)
+    fun save(fullCoins: List<FullCoin>) {
+        coinDao.save(fullCoins)
     }
 
 }

@@ -5,7 +5,7 @@ import java.math.BigDecimal
 
 data class CoinPriceResponse(
     val price: BigDecimal,
-    @SerializedName("price_change")
+    @SerializedName("price_change_24h")
     val priceChange: BigDecimal,
     @SerializedName("last_updated")
     val lastUpdated: Long

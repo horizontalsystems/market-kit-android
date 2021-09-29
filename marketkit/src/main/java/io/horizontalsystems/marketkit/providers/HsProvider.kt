@@ -37,10 +37,18 @@ class HsProvider {
         service = retrofit.create(MarketService::class.java)
     }
 
-    fun getMarketCoins(): Single<List<MarketCoin>> {
-        return service.getMarketCoins().map { responseCoinsList ->
+    fun getFullCoins(): Single<List<FullCoin>> {
+        return service.getFullCoins().map { responseCoinsList ->
             responseCoinsList.map {
-                MarketCoin(it)
+                FullCoin(it)
+            }
+        }
+    }
+
+    fun getMarketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+        return service.getMarketInfos(top, limit, order?.field?.v, order?.direction?.v).map {
+            it.map {
+                MarketInfo(it)
             }
         }
     }
@@ -60,7 +68,15 @@ class HsProvider {
 
     interface MarketService {
         @GET("coins/all")
-        fun getMarketCoins(): Single<List<CoinResponse>>
+        fun getFullCoins(): Single<List<FullCoinResponse>>
+
+        @GET("coins")
+        fun getMarketInfos(
+            @Query("top") top: Int,
+            @Query("limit") limit: Int?,
+            @Query("orderField") orderField: String?,
+            @Query("orderDirection") orderDirection: String?,
+        ): Single<List<MarketInfoResponse>>
 
         @GET("categories")
         fun getCategories(): Single<List<CoinCategory>>

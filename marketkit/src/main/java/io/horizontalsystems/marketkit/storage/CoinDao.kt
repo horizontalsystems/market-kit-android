@@ -19,11 +19,11 @@ interface CoinDao {
                 "ORDER BY marketCapRank DESC " +
                 "LIMIT :limit"
     )
-    fun getMarketCoins(filter: String, limit: Int): List<MarketCoin>
+    fun getMarketCoins(filter: String, limit: Int): List<FullCoin>
 
     @Transaction
     @Query("SELECT * FROM Coin WHERE uid IN (:coinUids)")
-    fun getMarketCoins(coinUids: List<String>): List<MarketCoin>
+    fun getMarketCoins(coinUids: List<String>): List<FullCoin>
 
     @Transaction
     @Query("SELECT * FROM Platform WHERE coinType in (:coinTypes)")
@@ -50,8 +50,8 @@ interface CoinDao {
     fun getCoins(filter: String, limit: Int): List<Coin>
 
     @Transaction
-    fun save(marketCoins: List<MarketCoin>) {
-        marketCoins.forEach { marketCoin ->
+    fun save(fullCoins: List<FullCoin>) {
+        fullCoins.forEach { marketCoin ->
             insert(marketCoin.coin)
             marketCoin.platforms.forEach { platform ->
                 insert(platform)

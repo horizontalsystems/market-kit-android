@@ -3,7 +3,7 @@ package io.horizontalsystems.marketkit.models
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class MarketCoin(
+data class FullCoin(
     @Embedded
     val coin: Coin,
     @Relation(
@@ -13,7 +13,7 @@ data class MarketCoin(
     )
     val platforms: List<Platform>
 ) {
-    constructor(coinResponse: CoinResponse) : this(
+    constructor(coinResponse: FullCoinResponse) : this(
         Coin(coinResponse),
         coinResponse.platforms.mapNotNull { Platform.getInstance(it, coinResponse.uid) }
     )

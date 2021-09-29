@@ -13,11 +13,11 @@ class CoinSyncer(
     private var disposable: Disposable? = null
 
     fun sync() {
-        disposable = hsProvider.getMarketCoins()
+        disposable = hsProvider.getFullCoins()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .subscribe({ marketCoins ->
-                coinManager.handleFetched(marketCoins)
+            .subscribe({ fullCoins ->
+                coinManager.handleFetched(fullCoins)
             }, {
                 Log.e("AAA", "CoinSyncer error", it)
             })
