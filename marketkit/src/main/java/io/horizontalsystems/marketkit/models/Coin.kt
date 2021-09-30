@@ -18,7 +18,7 @@ data class Coin(
     constructor(coinResponse: CoinResponse) : this(
         coinResponse.uid,
         coinResponse.name,
-        coinResponse.code,
+        coinResponse.code.uppercase(),
         coinResponse.marketCapRank,
         coinResponse.coinGeckoId
     )
