@@ -3,21 +3,23 @@ package io.horizontalsystems.marketkit.demo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
-import io.reactivex.disposables.Disposable
+import io.horizontalsystems.marketkit.models.MarketInfo
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class MainViewModel(
-    private val marketKit: MarketKit
-) : ViewModel() {
+class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
+    private val disposables = CompositeDisposable()
 
-    private var disposable: Disposable? = null
+    fun run() {
+        syncCoins()
+        fetchMarketInfos()
+    }
 
-    fun syncCoins() {
+    private fun syncCoins() {
         marketKit.sync()
         marketKit.refreshCoinPrices("USD")
 
-        disposable?.dispose()
-        disposable = marketKit.coinPriceMapObservable(listOf("bitcoin", "ethereum", "solana"), "USD")
+        marketKit.coinPriceMapObservable(listOf("bitcoin", "ethereum", "solana"), "USD")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.e("AAA", "coinPrices: ${it.size}")
@@ -27,6 +29,31 @@ class MainViewModel(
             }, {
                 Log.e("AAA", "coinPriceMapObservable error", it)
             })
+            .let {
+                disposables.add(it)
+            }
     }
 
+    private fun fetchMarketInfos(
+        top: Int = 250,
+        limit: Int? = null,
+        order: MarketInfo.Order? = null,
+    ) {
+        marketKit.marketInfosSingle(top, limit, order)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.e("AAA", "marketInfo: $it")
+                }
+            }, {
+                Log.e("AAA", "marketInfosSingle Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun onCleared() {
+        disposables.clear()
+    }
 }

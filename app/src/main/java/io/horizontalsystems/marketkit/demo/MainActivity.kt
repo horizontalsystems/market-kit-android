@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, ViewModelFactory(this)).get(MainViewModel::class.java)
 
-        syncButton.setOnClickListener {
-            viewModel.syncCoins()
+        runButton.setOnClickListener {
+            viewModel.run()
         }
     }
 
