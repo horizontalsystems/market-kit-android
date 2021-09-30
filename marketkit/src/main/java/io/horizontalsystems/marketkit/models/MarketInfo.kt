@@ -1,11 +1,21 @@
 package io.horizontalsystems.marketkit.models
 
-class MarketInfo(marketInfoResponse: MarketInfoResponse) {
-    val coin = Coin(marketInfoResponse)
-    val price = marketInfoResponse.price
-    val priceChange = marketInfoResponse.priceChange
-    val marketCap = marketInfoResponse.marketCap
-    val totalVolume = marketInfoResponse.totalVolume
+import java.math.BigDecimal
+
+data class MarketInfo(
+    val coin: Coin,
+    val price: BigDecimal,
+    val priceChange: BigDecimal,
+    val marketCap: BigDecimal,
+    val totalVolume: BigDecimal,
+) {
+    constructor(marketInfoResponse: MarketInfoResponse) : this(
+        Coin(marketInfoResponse),
+        marketInfoResponse.price,
+        marketInfoResponse.priceChange,
+        marketInfoResponse.marketCap,
+        marketInfoResponse.totalVolume,
+    )
 
     enum class OrderField(val v: String) {
         PriceChange("price_change"),
