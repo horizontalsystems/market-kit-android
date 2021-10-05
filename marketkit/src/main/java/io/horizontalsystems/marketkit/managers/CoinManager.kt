@@ -30,6 +30,10 @@ class CoinManager(
         return hsProvider.getMarketInfosSingle(top, limit, order)
     }
 
+    fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+        return hsProvider.getMarketInfosSingle(coinUids, order)
+    }
+
     fun platformCoin(coinType: CoinType): PlatformCoin? {
         return storage.platformCoin(coinType)
     }

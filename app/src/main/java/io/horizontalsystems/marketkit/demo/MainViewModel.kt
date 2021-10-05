@@ -12,7 +12,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun run() {
         syncCoins()
-        fetchMarketInfos()
+        fetchMarketInfos(listOf("bitcoin", "ethereum", "solana", "ripple"))
     }
 
     private fun syncCoins() {
@@ -40,6 +40,24 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         order: MarketInfo.Order? = null,
     ) {
         marketKit.marketInfosSingle(top, limit, order)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.e("AAA", "marketInfo: $it")
+                }
+            }, {
+                Log.e("AAA", "marketInfosSingle Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    private fun fetchMarketInfos(
+        coinUids: List<String>,
+        order: MarketInfo.Order? = null,
+    ) {
+        marketKit.marketInfosSingle(coinUids, order)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {

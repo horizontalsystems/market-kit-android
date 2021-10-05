@@ -47,6 +47,10 @@ class MarketKit(
         return coinManager.marketInfosSingle(top, limit, order)
     }
 
+    fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order? = null): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(coinUids, order)
+    }
+
     fun platformCoin(coinType: CoinType): PlatformCoin? {
         return coinManager.platformCoin(coinType)
     }

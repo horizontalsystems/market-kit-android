@@ -53,6 +53,15 @@ class HsProvider {
         }
     }
 
+    fun getMarketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+        return service.getMarketInfos(coinUids.joinToString(separator = ","), order?.field?.v, order?.direction?.v)
+            .map { marketInfoResponses ->
+                marketInfoResponses.map { marketInfoResponse ->
+                    MarketInfo(marketInfoResponse)
+                }
+            }
+    }
+
     fun getCoinCategories(): Single<List<CoinCategory>> {
         return service.getCategories()
     }
@@ -67,15 +76,22 @@ class HsProvider {
     }
 
     interface MarketService {
-        @GET("coins/all")
+        @GET("coins")
         fun getFullCoins(): Single<List<FullCoinResponse>>
 
-        @GET("coins")
+        @GET("coins/top_markets")
         fun getMarketInfos(
             @Query("top") top: Int,
             @Query("limit") limit: Int?,
             @Query("orderField") orderField: String?,
             @Query("orderDirection") orderDirection: String?,
+        ): Single<List<MarketInfoResponse>>
+
+        @GET("coins/markets")
+        fun getMarketInfos(
+            @Query("uids") uids: String,
+            @Query("orderField") orderField: String?,
+            @Query("orderDirection") orderDirection: String?
         ): Single<List<MarketInfoResponse>>
 
         @GET("categories")
