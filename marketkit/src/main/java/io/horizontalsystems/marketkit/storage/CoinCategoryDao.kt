@@ -13,4 +13,7 @@ interface CoinCategoryDao {
 
     @Query("SELECT * FROM CoinCategory")
     fun getCoinCategories(): List<CoinCategory>
+
+    @Query("SELECT * FROM CoinCategory WHERE uid IN(:uids)")
+    fun getCoinCategories(uids: List<String>): List<CoinCategory>
 }

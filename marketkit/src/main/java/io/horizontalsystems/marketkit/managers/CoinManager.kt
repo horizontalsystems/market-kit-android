@@ -8,7 +8,8 @@ import io.reactivex.subjects.PublishSubject
 
 class CoinManager(
     private val storage: CoinStorage,
-    private val hsProvider: HsProvider
+    private val hsProvider: HsProvider,
+    private val categoryManager: CoinCategoryManager
 ) {
     val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
 
@@ -32,6 +33,47 @@ class CoinManager(
 
     fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
         return hsProvider.getMarketInfosSingle(coinUids, order)
+    }
+
+    fun marketInfoOverviewSingle(coinUid: String, currencyCode: String, language: String): Single<MarketInfoOverview> {
+        return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language)
+            .map { overviewRaw ->
+                val categoriesMap = categoryManager.coinCategories(overviewRaw.categoryIds)
+                    .map { it.uid to it }
+                    .toMap()
+
+                val performance = overviewRaw.performance
+                    .map { (vsCurrency, v) ->
+                        vsCurrency to v.mapNotNull { (timePeriodRaw, performance) ->
+                            if (performance == null) return@mapNotNull null
+                            val timePeriod = TimePeriod.fromString(timePeriodRaw) ?: return@mapNotNull null
+
+                            timePeriod to performance
+                        }.toMap()
+                    }.toMap()
+
+                val links = overviewRaw.links
+                    .mapNotNull { (linkTypeRaw, link) ->
+                        LinkType.fromString(linkTypeRaw)?.let {
+                            it to link
+                        }
+                    }.toMap()
+
+                MarketInfoOverview(
+                    overviewRaw.marketData.marketCap,
+                    overviewRaw.marketData.marketCapRank,
+                    overviewRaw.marketData.totalSupply,
+                    overviewRaw.marketData.circulatingSupply,
+                    overviewRaw.marketData.volume24h,
+                    overviewRaw.marketData.dilutedMarketCap,
+                    overviewRaw.marketData.tvl,
+                    performance,
+                    overviewRaw.genesisDate,
+                    overviewRaw.categoryIds.mapNotNull { categoriesMap[it] },
+                    overviewRaw.description,
+                    links,
+                )
+            }
     }
 
     fun platformCoin(coinType: CoinType): PlatformCoin? {

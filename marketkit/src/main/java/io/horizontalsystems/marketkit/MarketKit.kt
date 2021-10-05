@@ -54,6 +54,10 @@ class MarketKit(
         return coinManager.marketInfosSingle(coinUids, order)
     }
 
+    fun marketInfoOverviewSingle(coinUid: String, currencyCode: String, language: String): Single<MarketInfoOverview> {
+        return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
+    }
+
     fun platformCoin(coinType: CoinType): PlatformCoin? {
         return coinManager.platformCoin(coinType)
     }
@@ -121,8 +125,8 @@ class MarketKit(
         fun getInstance(context: Context, hsApiBaseUrl: String, cryptoCompareApiKey: String? = null): MarketKit {
             val marketDatabase = MarketDatabase.getInstance(context)
             val hsProvider = HsProvider(hsApiBaseUrl)
-            val coinManager = CoinManager(CoinStorage(marketDatabase), hsProvider)
             val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
+            val coinManager = CoinManager(CoinStorage(marketDatabase), hsProvider, coinCategoryManager)
             val coinSyncer = CoinSyncer(hsProvider, coinManager)
             val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))

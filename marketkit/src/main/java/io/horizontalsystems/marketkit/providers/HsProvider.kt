@@ -3,6 +3,7 @@ package io.horizontalsystems.marketkit.providers
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 class HsProvider(
@@ -48,6 +49,10 @@ class HsProvider(
             }
     }
 
+    fun getMarketInfoOverview(coinUid: String, currencyCode: String, language: String): Single<MarketInfoOverviewRaw> {
+        return service.getMarketInfoOverview(coinUid, currencyCode, language)
+    }
+
     interface MarketService {
         @GET("coins")
         fun getFullCoins(): Single<List<FullCoinResponse>>
@@ -75,6 +80,13 @@ class HsProvider(
             @Query("ids") ids: String,
             @Query("currency") currencyCode: String
         ): Single<Map<String, CoinPriceResponse>>
+
+        @GET("coins/{coinUid}")
+        fun getMarketInfoOverview(
+            @Path("coinUid") coinUid: String,
+            @Query("currency") currency: String,
+            @Query("language") language: String,
+        ): Single<MarketInfoOverviewRaw>
     }
 
 }
