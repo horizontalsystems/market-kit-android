@@ -14,6 +14,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         syncCoins()
         fetchMarketInfos(listOf("bitcoin", "ethereum", "solana", "ripple"))
         fetchPosts()
+        marketInfoOverview("bitcoin", "EUR", "en")
     }
 
     private fun syncCoins() {
@@ -82,6 +83,19 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 }
             }, {
                 Log.e("AAA", "postsSingle error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    private fun marketInfoOverview(coinUid: String, currencyCode: String, language: String) {
+        marketKit.marketInfoOverviewSingle(coinUid, currencyCode, language)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.e("AAA", "marketInfoOverview: $it")
+            }, {
+                Log.e("AAA", "marketInfoOverview Error", it)
             })
             .let {
                 disposables.add(it)
