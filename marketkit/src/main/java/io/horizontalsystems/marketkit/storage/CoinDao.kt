@@ -16,7 +16,7 @@ interface CoinDao {
     @Query(
         "SELECT * FROM Coin " +
                 "WHERE name LIKE :filter OR code LIKE :filter " +
-                "ORDER BY marketCapRank DESC " +
+                "ORDER BY CASE WHEN marketCapRank IS NULL THEN 1 ELSE 0 END, marketCapRank ASC " +
                 "LIMIT :limit"
     )
     fun getMarketCoins(filter: String, limit: Int): List<FullCoin>
@@ -44,7 +44,7 @@ interface CoinDao {
     @Query(
         "SELECT * FROM Coin " +
                 "WHERE name LIKE :filter OR code LIKE :filter " +
-                "ORDER BY marketCapRank ASC " +
+                "ORDER BY CASE WHEN marketCapRank IS NULL THEN 1 ELSE 0 END, marketCapRank ASC " +
                 "LIMIT :limit"
     )
     fun getCoins(filter: String, limit: Int): List<Coin>
