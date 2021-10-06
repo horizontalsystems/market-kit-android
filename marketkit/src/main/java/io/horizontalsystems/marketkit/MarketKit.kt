@@ -1,12 +1,10 @@
 package io.horizontalsystems.marketkit
 
 import android.content.Context
-import io.horizontalsystems.marketkit.managers.CoinCategoryManager
-import io.horizontalsystems.marketkit.managers.CoinManager
-import io.horizontalsystems.marketkit.managers.CoinPriceManager
-import io.horizontalsystems.marketkit.managers.CoinPriceSyncManager
+import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
+import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinCategoryStorage
 import io.horizontalsystems.marketkit.storage.CoinPriceStorage
@@ -23,7 +21,8 @@ class MarketKit(
     private val coinSyncer: CoinSyncer,
     private val coinCategorySyncer: CoinCategorySyncer,
     private val coinPriceManager: CoinPriceManager,
-    private val coinPriceSyncManager: CoinPriceSyncManager
+    private val coinPriceSyncManager: CoinPriceSyncManager,
+    private val postManager: PostManager
 ) {
     // Coins
 
@@ -43,7 +42,11 @@ class MarketKit(
         return coinManager.fullCoinsByCoinTypes(coinTypes)
     }
 
-    fun marketInfosSingle(top: Int = 250, limit: Int? = null, order: MarketInfo.Order? = null): Single<List<MarketInfo>> {
+    fun marketInfosSingle(
+        top: Int = 250,
+        limit: Int? = null,
+        order: MarketInfo.Order? = null
+    ): Single<List<MarketInfo>> {
         return coinManager.marketInfosSingle(top, limit, order)
     }
 
@@ -108,10 +111,16 @@ class MarketKit(
         return coinPriceSyncManager.coinPriceMapObservable(coinUids, currencyCode)
     }
 
+    // Posts
+
+    fun postsSingle(): Single<List<Post>> {
+        return postManager.postsSingle()
+    }
+
     companion object {
-        fun getInstance(context: Context): MarketKit {
+        fun getInstance(context: Context, hsApiBaseUrl: String, cryptoCompareApiKey: String? = null): MarketKit {
             val marketDatabase = MarketDatabase.getInstance(context)
-            val hsProvider = HsProvider()
+            val hsProvider = HsProvider(hsApiBaseUrl)
             val coinManager = CoinManager(CoinStorage(marketDatabase), hsProvider)
             val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
             val coinSyncer = CoinSyncer(hsProvider, coinManager)
@@ -120,6 +129,8 @@ class MarketKit(
             val coinPriceSchedulerFactory = CoinPriceSchedulerFactory(coinPriceManager, hsProvider)
             val coinPriceSyncManager = CoinPriceSyncManager(coinPriceSchedulerFactory)
             coinPriceManager.listener = coinPriceSyncManager
+            val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
+            val postManager = PostManager(cryptoCompareProvider)
 
             return MarketKit(
                 coinManager,
@@ -127,7 +138,8 @@ class MarketKit(
                 coinSyncer,
                 coinCategorySyncer,
                 coinPriceManager,
-                coinPriceSyncManager
+                coinPriceSyncManager,
+                postManager
             )
         }
     }
