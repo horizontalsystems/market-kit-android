@@ -3,7 +3,7 @@ package io.horizontalsystems.marketkit.models
 import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
-data class MarketInfoResponse(
+data class MarketInfoRaw(
     override val uid: String,
     override val name: String,
     override val code: String,
@@ -18,5 +18,5 @@ data class MarketInfoResponse(
     @SerializedName("market_cap")
     val marketCap: BigDecimal,
     @SerializedName("total_volume")
-    val totalVolume: BigDecimal,
+    val totalVolume: BigDecimal?,
 ) : CoinResponse
