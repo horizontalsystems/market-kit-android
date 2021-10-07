@@ -28,11 +28,15 @@ class CoinManager(
     }
 
     fun marketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfo>> {
-        return hsProvider.getMarketInfosSingle(top, limit, order)
+        return hsProvider.getMarketInfosSingle(top, limit, order).map {
+            convertToMarketInfoArray(it)
+        }
     }
 
     fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
-        return hsProvider.getMarketInfosSingle(coinUids, order)
+        return hsProvider.getMarketInfosSingle(coinUids, order).map {
+            convertToMarketInfoArray(it)
+        }
     }
 
     fun marketInfoOverviewSingle(coinUid: String, currencyCode: String, language: String): Single<MarketInfoOverview> {
@@ -99,6 +103,16 @@ class CoinManager(
     fun handleFetched(fullCoins: List<FullCoin>) {
         storage.save(fullCoins)
         fullCoinsUpdatedObservable.onNext(Unit)
+    }
+
+    private fun convertToMarketInfoArray(rawMarketInfoArray: List<MarketInfoRaw>): List<MarketInfo> {
+        return storage.fullCoins(rawMarketInfoArray.map { it.uid })
+            .mapNotNull { fullCoin ->
+                rawMarketInfoArray.firstOrNull { it.uid == fullCoin.coin.uid }
+                    ?.let { marketInfoRaw ->
+                        return@mapNotNull MarketInfo(marketInfoRaw, fullCoin)
+                    }
+            }
     }
 
 }

@@ -19,21 +19,12 @@ class HsProvider(
         }
     }
 
-    fun getMarketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfo>> {
-        return service.getMarketInfos(top, limit, order?.field?.v, order?.direction?.v).map {
-            it.map {
-                MarketInfo(it)
-            }
-        }
+    fun getMarketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfos(top, limit, order?.field?.v, order?.direction?.v)
     }
 
-    fun getMarketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+    fun getMarketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfoRaw>> {
         return service.getMarketInfos(coinUids.joinToString(separator = ","), order?.field?.v, order?.direction?.v)
-            .map { marketInfoResponses ->
-                marketInfoResponses.map { marketInfoResponse ->
-                    MarketInfo(marketInfoResponse)
-                }
-            }
     }
 
     fun getCoinCategories(): Single<List<CoinCategory>> {
@@ -63,14 +54,14 @@ class HsProvider(
             @Query("limit") limit: Int?,
             @Query("orderField") orderField: String?,
             @Query("orderDirection") orderDirection: String?,
-        ): Single<List<MarketInfoResponse>>
+        ): Single<List<MarketInfoRaw>>
 
         @GET("coins/markets")
         fun getMarketInfos(
             @Query("uids") uids: String,
             @Query("orderField") orderField: String?,
             @Query("orderDirection") orderDirection: String?
-        ): Single<List<MarketInfoResponse>>
+        ): Single<List<MarketInfoRaw>>
 
         @GET("categories")
         fun getCategories(): Single<List<CoinCategory>>
