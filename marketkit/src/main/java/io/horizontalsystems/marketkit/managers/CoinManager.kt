@@ -29,13 +29,13 @@ class CoinManager(
 
     fun marketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfo>> {
         return hsProvider.getMarketInfosSingle(top, limit, order).map {
-            convertToMarketInfoArray(it)
+            getMarketInfos(it)
         }
     }
 
     fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
         return hsProvider.getMarketInfosSingle(coinUids, order).map {
-            convertToMarketInfoArray(it)
+            getMarketInfos(it)
         }
     }
 
@@ -105,14 +105,18 @@ class CoinManager(
         fullCoinsUpdatedObservable.onNext(Unit)
     }
 
-    private fun convertToMarketInfoArray(rawMarketInfoArray: List<MarketInfoRaw>): List<MarketInfo> {
-        return storage.fullCoins(rawMarketInfoArray.map { it.uid })
-            .mapNotNull { fullCoin ->
-                rawMarketInfoArray.firstOrNull { it.uid == fullCoin.coin.uid }
-                    ?.let { marketInfoRaw ->
-                        return@mapNotNull MarketInfo(marketInfoRaw, fullCoin)
-                    }
+    private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
+        return try {
+            val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
+            val hashMap = fullCoins.map {  it.coin.uid to it }.toMap()
+
+            rawMarketInfos.mapNotNull { rawMarketInfo ->
+                val fullCoin = hashMap[rawMarketInfo.uid] ?: return@mapNotNull null
+                MarketInfo(rawMarketInfo, fullCoin)
             }
+        } catch (e: Exception){
+            emptyList()
+        }
     }
 
 }

@@ -7,7 +7,7 @@ data class MarketInfo(
     val price: BigDecimal,
     val priceChange: BigDecimal,
     val marketCap: BigDecimal,
-    val totalVolume: BigDecimal,
+    val totalVolume: BigDecimal?,
 ) {
     constructor(marketInfoRaw: MarketInfoRaw, fullCoin: FullCoin) : this(
         fullCoin,

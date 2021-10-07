@@ -18,5 +18,5 @@ data class MarketInfoRaw(
     @SerializedName("market_cap")
     val marketCap: BigDecimal,
     @SerializedName("total_volume")
-    val totalVolume: BigDecimal,
+    val totalVolume: BigDecimal?,
 ) : CoinResponse
