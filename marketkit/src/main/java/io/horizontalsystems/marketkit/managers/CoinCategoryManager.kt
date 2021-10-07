@@ -17,6 +17,10 @@ class CoinCategoryManager(
         return storage.coinCategories(uids)
     }
 
+    fun coinCategory(uid: String): CoinCategory? {
+        return storage.coinCategory(uid)
+    }
+
     fun handleFetched(coinCategories: List<CoinCategory>) {
         storage.save(coinCategories)
         coinCategoriesObservable.onNext(coinCategories)

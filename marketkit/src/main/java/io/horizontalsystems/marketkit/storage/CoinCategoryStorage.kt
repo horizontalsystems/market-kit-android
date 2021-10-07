@@ -13,6 +13,10 @@ class CoinCategoryStorage(marketDatabase: MarketDatabase) {
         return coinCategoryDao.getCoinCategories(uids)
     }
 
+    fun coinCategory(uid: String): CoinCategory? {
+        return coinCategoryDao.getCoinCategories(listOf(uid)).firstOrNull()
+    }
+
     fun save(coinCategories: List<CoinCategory>) {
         coinCategoryDao.insert(coinCategories)
     }

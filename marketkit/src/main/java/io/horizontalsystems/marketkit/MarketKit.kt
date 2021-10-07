@@ -88,6 +88,10 @@ class MarketKit(
         return coinCategoryManager.coinCategories()
     }
 
+    fun coinCategory(uid: String): CoinCategory? {
+        return coinCategoryManager.coinCategory(uid)
+    }
+
     fun sync() {
         coinSyncer.sync()
         coinCategorySyncer.sync()
