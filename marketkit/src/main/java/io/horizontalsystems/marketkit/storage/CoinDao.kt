@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.storage
 
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import io.horizontalsystems.marketkit.models.*
 
 @Dao
@@ -21,16 +22,15 @@ interface CoinDao {
     )
     fun getMarketCoins(filter: String, limit: Int): List<FullCoin>
 
-    @Transaction
-    @Query("SELECT * FROM Coin WHERE uid IN (:coinUids)")
-    fun getMarketCoins(coinUids: List<String>): List<FullCoin>
+    @RawQuery
+    fun getMarketCoins(query: SupportSQLiteQuery): List<FullCoin>
 
     @Transaction
-    @Query("SELECT * FROM Platform WHERE coinType in (:coinTypes)")
+    @Query("SELECT * FROM Platform WHERE coinType IN (:coinTypes)")
     fun getPlatformCoins(coinTypes: List<CoinType>): List<PlatformCoin>
 
     @Transaction
-    @Query("SELECT * FROM Platform WHERE coinType in (:coinTypeIds)")
+    @Query("SELECT * FROM Platform WHERE coinType IN (:coinTypeIds)")
     fun getPlatformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin>
 
     @Transaction

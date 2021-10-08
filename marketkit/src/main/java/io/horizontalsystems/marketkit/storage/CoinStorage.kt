@@ -1,5 +1,6 @@
 package io.horizontalsystems.marketkit.storage
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import io.horizontalsystems.marketkit.models.*
 
 class CoinStorage(marketDatabase: MarketDatabase) {
@@ -11,7 +12,15 @@ class CoinStorage(marketDatabase: MarketDatabase) {
     }
 
     fun fullCoins(coinUids: List<String>): List<FullCoin> {
-        return coinDao.getMarketCoins(coinUids)
+        val coinUidsList = coinUids.joinToString(", ") { "'$it'" }
+        val sqlQuery = """
+                      SELECT coin.*
+                      FROM Coin as coin
+                      LEFT JOIN Platform as platform ON coin.uid = platform.coinUid
+                      WHERE coin.uid IN ($coinUidsList)
+                      GROUP BY coin.uid
+                      """
+        return coinDao.getMarketCoins(SimpleSQLiteQuery(sqlQuery))
     }
 
     fun platformCoins(coinTypes: List<CoinType>): List<PlatformCoin> {
