@@ -13,11 +13,6 @@ data class FullCoin(
     )
     val platforms: List<Platform>
 ) {
-    constructor(coinResponse: FullCoinResponse) : this(
-        Coin(coinResponse),
-        coinResponse.platforms.mapNotNull { Platform.getInstance(it, coinResponse.uid) }
-    )
-
     override fun toString(): String {
         return "MarketCoin [ \n$coin, \n${platforms.joinToString(separator = ",\n")} \n]"
     }

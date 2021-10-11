@@ -9,4 +9,8 @@ data class CoinPriceResponse(
     val priceChange: BigDecimal,
     @SerializedName("last_updated")
     val lastUpdated: Long
-)
+) {
+    fun coinPrice(coinUid: String, currencyCode: String): CoinPrice {
+        return CoinPrice(coinUid, currencyCode, price, priceChange, lastUpdated)
+    }
+}

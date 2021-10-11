@@ -12,4 +12,7 @@ data class FullCoinResponse(
     override val coinGeckoId: String,
 
     val platforms: List<PlatformResponse>,
-) : CoinResponse
+) : CoinResponse {
+
+    fun fullCoin() = FullCoin(coin(), platforms.mapNotNull { it.platform(uid) })
+}

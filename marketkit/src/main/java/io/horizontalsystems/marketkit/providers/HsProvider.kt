@@ -12,11 +12,10 @@ class HsProvider(
     private val service = RetrofitUtils.build("${baseUrl}/v1/").create(MarketService::class.java)
 
     fun getFullCoins(): Single<List<FullCoin>> {
-        return service.getFullCoins().map { responseCoinsList ->
-            responseCoinsList.map {
-                FullCoin(it)
+        return service.getFullCoins()
+            .map { responseCoinsList ->
+                responseCoinsList.map { it.fullCoin() }
             }
-        }
     }
 
     fun getMarketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfoRaw>> {
@@ -34,8 +33,8 @@ class HsProvider(
     fun getCoinPrices(coinUids: List<String>, currencyCode: String): Single<List<CoinPrice>> {
         return service.getCoinPrices(coinUids.joinToString(separator = ","), currencyCode)
             .map { coinPricesMap ->
-                coinPricesMap.map { (coinUid, coinPrice) ->
-                    CoinPrice(coinUid, currencyCode, coinPrice.price, coinPrice.priceChange, coinPrice.lastUpdated)
+                coinPricesMap.map { (coinUid, coinPriceResponse) ->
+                    coinPriceResponse.coinPrice(coinUid, currencyCode)
                 }
             }
     }
