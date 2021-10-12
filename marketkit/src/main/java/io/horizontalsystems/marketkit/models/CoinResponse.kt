@@ -5,7 +5,7 @@ interface CoinResponse {
     val name: String
     val code: String
     val marketCapRank: Int?
-    val coinGeckoId: String
+    val coinGeckoId: String?
 
     fun coin() = Coin(uid, name, code, marketCapRank, coinGeckoId)
 }

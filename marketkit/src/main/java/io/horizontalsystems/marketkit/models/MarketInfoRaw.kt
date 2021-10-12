@@ -10,7 +10,7 @@ data class MarketInfoRaw(
     @SerializedName("market_cap_rank")
     override val marketCapRank: Int?,
     @SerializedName("coingecko_id")
-    override val coinGeckoId: String,
+    override val coinGeckoId: String?,
 
     val price: BigDecimal?,
     @SerializedName("price_change_24h")
