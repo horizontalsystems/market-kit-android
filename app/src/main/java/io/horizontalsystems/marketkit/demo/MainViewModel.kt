@@ -3,6 +3,7 @@ package io.horizontalsystems.marketkit.demo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
+import io.horizontalsystems.marketkit.models.ChartType
 import io.horizontalsystems.marketkit.models.MarketInfo
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -15,6 +16,26 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         fetchMarketInfos(listOf("bitcoin", "ethereum", "solana", "ripple"))
         fetchPosts()
         marketInfoOverview("bitcoin", "EUR", "en")
+        getChartInfo("coin-oracle", "USD", ChartType.MONTHLY)
+    }
+
+    private fun getChartInfo(coinUid: String, currencyCode: String, chartType: ChartType) {
+        //get stored chart info
+        val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, chartType)
+        Log.e("AAA", "storedChartInfo: ${storedChartInfo?.points}")
+
+        //fetch chartInfo from API
+        marketKit.getChartInfoAsync(coinUid, currencyCode, chartType)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.e("AAA", "fetchChartInfo: ${it.points}")
+            }, {
+                Log.e("AAA", "fetchChartInfo Error", it)
+
+            })
+            .let {
+                disposables.add(it)
+            }
     }
 
     private fun syncCoins() {

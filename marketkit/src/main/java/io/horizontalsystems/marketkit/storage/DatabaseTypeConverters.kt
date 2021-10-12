@@ -30,12 +30,12 @@ class DatabaseTypeConverters {
     }
 
     @TypeConverter
-    fun fromBigDecimal(bigDecimal: BigDecimal): String? {
-        return bigDecimal.toPlainString()
+    fun fromBigDecimal(bigDecimal: BigDecimal?): String? {
+        return bigDecimal?.toPlainString()
     }
 
     @TypeConverter
-    fun toBigDecimal(value: String): BigDecimal{
-        return BigDecimal(value)
+    fun toBigDecimal(value: String?): BigDecimal?{
+        return value?.let { BigDecimal(value) }
     }
 }
