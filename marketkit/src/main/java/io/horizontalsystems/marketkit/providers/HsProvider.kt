@@ -65,9 +65,9 @@ class HsProvider(
         @GET("categories")
         fun getCategories(): Single<List<CoinCategory>>
 
-        @GET("coins/prices")
+        @GET("coins/markets_prices")
         fun getCoinPrices(
-            @Query("ids") ids: String,
+            @Query("uids") uids: String,
             @Query("currency") currencyCode: String
         ): Single<Map<String, CoinPriceResponse>>
 
