@@ -1,15 +1,16 @@
 package io.horizontalsystems.marketkit
 
 import android.content.Context
+import io.horizontalsystems.marketkit.chart.ChartSchedulerFactory
+import io.horizontalsystems.marketkit.chart.ChartManager
+import io.horizontalsystems.marketkit.chart.ChartSyncManager
 import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
 import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
 import io.horizontalsystems.marketkit.providers.HsProvider
-import io.horizontalsystems.marketkit.storage.CoinCategoryStorage
-import io.horizontalsystems.marketkit.storage.CoinPriceStorage
-import io.horizontalsystems.marketkit.storage.CoinStorage
-import io.horizontalsystems.marketkit.storage.MarketDatabase
+import io.horizontalsystems.marketkit.storage.*
 import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.reactivex.Observable
@@ -22,7 +23,9 @@ class MarketKit(
     private val coinCategorySyncer: CoinCategorySyncer,
     private val coinPriceManager: CoinPriceManager,
     private val coinPriceSyncManager: CoinPriceSyncManager,
-    private val postManager: PostManager
+    private val postManager: PostManager,
+    private val chartManager: ChartManager,
+    private val chartSyncManager: ChartSyncManager
 ) {
     // Coins
 
@@ -125,6 +128,20 @@ class MarketKit(
         return postManager.postsSingle()
     }
 
+    // Chart Info
+
+    fun chartInfo(coinUid: String, currencyCode: String, chartType: ChartType): ChartInfo? {
+        return chartManager.getChartInfo(coinUid, currencyCode, chartType)
+    }
+
+    fun getChartInfoAsync(
+        coinUid: String,
+        currencyCode: String,
+        chartType: ChartType
+    ): Observable<ChartInfo> {
+        return chartSyncManager.chartInfoObservable(coinUid, currencyCode, chartType)
+    }
+
     companion object {
         fun getInstance(context: Context, hsApiBaseUrl: String, cryptoCompareApiKey: String? = null): MarketKit {
             val marketDatabase = MarketDatabase.getInstance(context)
@@ -139,6 +156,12 @@ class MarketKit(
             coinPriceManager.listener = coinPriceSyncManager
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
+            val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase))
+            val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
+            val chartSchedulerFactory = ChartSchedulerFactory(chartManager, coinGeckoProvider)
+            val chartSyncManager = ChartSyncManager(coinManager, chartSchedulerFactory).also {
+                chartManager.listener = it
+            }
 
             return MarketKit(
                 coinManager,
@@ -147,9 +170,21 @@ class MarketKit(
                 coinCategorySyncer,
                 coinPriceManager,
                 coinPriceSyncManager,
-                postManager
+                postManager,
+                chartManager,
+                chartSyncManager
             )
         }
     }
 
+}
+
+//Errors
+
+class NoChartInfo : Exception()
+
+sealed class ProviderError: Exception() {
+    class ApiRequestLimitExceeded : ProviderError()
+    class NoDataForCoin : ProviderError()
+    class NoCoinGeckoId : ProviderError()
 }
