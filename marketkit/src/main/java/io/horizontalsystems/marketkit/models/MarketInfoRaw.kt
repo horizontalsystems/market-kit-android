@@ -12,11 +12,11 @@ data class MarketInfoRaw(
     @SerializedName("coingecko_id")
     override val coinGeckoId: String,
 
-    val price: BigDecimal,
+    val price: BigDecimal?,
     @SerializedName("price_change_24h")
-    val priceChange: BigDecimal,
+    val priceChange: BigDecimal?,
     @SerializedName("market_cap")
-    val marketCap: BigDecimal,
+    val marketCap: BigDecimal?,
     @SerializedName("total_volume")
     val totalVolume: BigDecimal?,
 ) : CoinResponse
