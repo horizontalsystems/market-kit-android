@@ -47,4 +47,8 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         coinDao.save(fullCoins)
     }
 
+    fun coin(coinUid: String): Coin? {
+        return coinDao.coin(coinUid)
+    }
+
 }

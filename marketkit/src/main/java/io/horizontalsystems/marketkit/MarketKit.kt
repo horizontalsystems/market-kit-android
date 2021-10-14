@@ -10,6 +10,7 @@ import io.horizontalsystems.marketkit.providers.*
 import io.horizontalsystems.marketkit.storage.*
 import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
+import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -22,6 +23,7 @@ class MarketKit(
     private val coinPriceSyncManager: CoinPriceSyncManager,
     private val postManager: PostManager,
     private val chartManager: ChartManager,
+    private val exchangeSyncer: ExchangeSyncer,
     private val chartSyncManager: ChartSyncManager,
     private val globalMarketInfoManager: GlobalMarketInfoManager
 ) {
@@ -51,11 +53,18 @@ class MarketKit(
         return coinManager.marketInfosSingle(top, limit, order)
     }
 
-    fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order? = null): Single<List<MarketInfo>> {
+    fun marketInfosSingle(
+        coinUids: List<String>,
+        order: MarketInfo.Order? = null
+    ): Single<List<MarketInfo>> {
         return coinManager.marketInfosSingle(coinUids, order)
     }
 
-    fun marketInfoOverviewSingle(coinUid: String, currencyCode: String, language: String): Single<MarketInfoOverview> {
+    fun marketInfoOverviewSingle(
+        coinUid: String,
+        currencyCode: String,
+        language: String
+    ): Single<MarketInfoOverview> {
         return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
     }
 
@@ -96,6 +105,7 @@ class MarketKit(
     fun sync() {
         coinSyncer.sync()
         coinCategorySyncer.sync()
+        exchangeSyncer.sync()
     }
 
     // Coin Prices
@@ -116,7 +126,10 @@ class MarketKit(
         return coinPriceSyncManager.coinPriceObservable(coinUid, currencyCode)
     }
 
-    fun coinPriceMapObservable(coinUids: List<String>, currencyCode: String): Observable<Map<String, CoinPrice>> {
+    fun coinPriceMapObservable(
+        coinUids: List<String>,
+        currencyCode: String
+    ): Observable<Map<String, CoinPrice>> {
         return coinPriceSyncManager.coinPriceMapObservable(coinUids, currencyCode)
     }
 
@@ -124,6 +137,12 @@ class MarketKit(
 
     fun postsSingle(): Single<List<Post>> {
         return postManager.postsSingle()
+    }
+
+    // Market Tickers
+
+    fun marketTickersSingle(coinUid: String): Single<List<MarketTicker>> {
+        return coinManager.marketTickersSingle(coinUid)
     }
 
     // Chart Info
@@ -156,7 +175,11 @@ class MarketKit(
             val marketDatabase = MarketDatabase.getInstance(context)
             val hsProvider = HsProvider(hsApiBaseUrl, hsOldApiBaseUrl)
             val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
-            val coinManager = CoinManager(CoinStorage(marketDatabase), hsProvider, coinCategoryManager)
+            val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
+            val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
+            val exchangeSyncer = ExchangeSyncer(exchangeManager, coinGeckoProvider)
+            val coinManager =
+                CoinManager(CoinStorage(marketDatabase), hsProvider, coinCategoryManager, coinGeckoProvider, exchangeManager)
             val coinSyncer = CoinSyncer(hsProvider, coinManager)
             val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
@@ -166,7 +189,6 @@ class MarketKit(
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
             val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase))
-            val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val chartSchedulerFactory = ChartSchedulerFactory(chartManager, coinGeckoProvider)
             val chartSyncManager = ChartSyncManager(coinManager, chartSchedulerFactory).also {
                 chartManager.listener = it
@@ -183,8 +205,9 @@ class MarketKit(
                 coinPriceSyncManager,
                 postManager,
                 chartManager,
+                exchangeSyncer,
                 chartSyncManager,
-                globalMarketInfoManager
+                globalMarketInfoManager,
             )
         }
     }

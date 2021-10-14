@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
 import io.reactivex.Single
@@ -9,7 +10,9 @@ import io.reactivex.subjects.PublishSubject
 class CoinManager(
     private val storage: CoinStorage,
     private val hsProvider: HsProvider,
-    private val categoryManager: CoinCategoryManager
+    private val categoryManager: CoinCategoryManager,
+    private val coinGeckoProvider: CoinGeckoProvider,
+    private val exchangeManager: ExchangeManager
 ) {
     val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
 
@@ -27,19 +30,30 @@ class CoinManager(
         return storage.fullCoins(platformCoins.map { it.coin.uid })
     }
 
-    fun marketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+    fun marketInfosSingle(
+        top: Int,
+        limit: Int?,
+        order: MarketInfo.Order?
+    ): Single<List<MarketInfo>> {
         return hsProvider.getMarketInfosSingle(top, limit, order).map {
             getMarketInfos(it)
         }
     }
 
-    fun marketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfo>> {
+    fun marketInfosSingle(
+        coinUids: List<String>,
+        order: MarketInfo.Order?
+    ): Single<List<MarketInfo>> {
         return hsProvider.getMarketInfosSingle(coinUids, order).map {
             getMarketInfos(it)
         }
     }
 
-    fun marketInfoOverviewSingle(coinUid: String, currencyCode: String, language: String): Single<MarketInfoOverview> {
+    fun marketInfoOverviewSingle(
+        coinUid: String,
+        currencyCode: String,
+        language: String
+    ): Single<MarketInfoOverview> {
         return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language)
             .map { overviewRaw ->
                 val categoriesMap = categoryManager.coinCategories(overviewRaw.categoryIds)
@@ -50,7 +64,8 @@ class CoinManager(
                     .map { (vsCurrency, v) ->
                         vsCurrency to v.mapNotNull { (timePeriodRaw, performance) ->
                             if (performance == null) return@mapNotNull null
-                            val timePeriod = TimePeriod.fromString(timePeriodRaw) ?: return@mapNotNull null
+                            val timePeriod =
+                                TimePeriod.fromString(timePeriodRaw) ?: return@mapNotNull null
 
                             timePeriod to performance
                         }.toMap()
@@ -77,6 +92,16 @@ class CoinManager(
                     overviewRaw.description,
                     links,
                 )
+            }
+    }
+
+    fun marketTickersSingle(coinUid: String): Single<List<MarketTicker>> {
+        val coinGeckoId = storage.coin(coinUid)?.coinGeckoId ?: return Single.just(emptyList())
+
+        return coinGeckoProvider.marketTickersSingle(coinGeckoId)
+            .map { response ->
+                val imageUrls = exchangeManager.imageUrlsMap(response.exchangeIds)
+                response.marketTickers(imageUrls)
             }
     }
 
@@ -108,13 +133,13 @@ class CoinManager(
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
         return try {
             val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
-            val hashMap = fullCoins.map {  it.coin.uid to it }.toMap()
+            val hashMap = fullCoins.map { it.coin.uid to it }.toMap()
 
             rawMarketInfos.mapNotNull { rawMarketInfo ->
                 val fullCoin = hashMap[rawMarketInfo.uid] ?: return@mapNotNull null
                 MarketInfo(rawMarketInfo, fullCoin)
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             emptyList()
         }
     }

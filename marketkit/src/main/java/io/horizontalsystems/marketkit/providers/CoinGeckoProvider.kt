@@ -2,9 +2,7 @@ package io.horizontalsystems.marketkit.providers
 
 import io.horizontalsystems.marketkit.ProviderError
 import io.horizontalsystems.marketkit.mappers.CoinGeckoMarketChartsMapper
-import io.horizontalsystems.marketkit.models.ChartInfoKey
-import io.horizontalsystems.marketkit.models.ChartPointEntity
-import io.horizontalsystems.marketkit.models.ChartType
+import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,7 +16,7 @@ class CoinGeckoProvider(private val baseUrl: String) {
         RetrofitUtils.build(baseUrl).create(CoinGeckoService::class.java)
     }
 
-    fun getChartPointsAsync(chartPointKey: ChartInfoKey): Single<List<ChartPointEntity>> {
+    fun chartPointsSingle(chartPointKey: ChartInfoKey): Single<List<ChartPointEntity>> {
         val externalId = chartPointKey.coin.coinGeckoId ?: throw ProviderError.NoCoinGeckoId()
 
         val interval = if (chartPointKey.chartType.days >= 90) "daily" else null
@@ -82,6 +80,25 @@ class CoinGeckoProvider(private val baseUrl: String) {
         }
     }
 
+    fun exchangesSingle(limit: Int, page: Int): Single<List<Exchange>> {
+        return coinGeckoService.exchanges(limit, page)
+            .map { list ->
+                list.map { Exchange(it.id, it.name, it.image) }
+            }
+    }
+
+    fun marketTickersSingle(coinGeckoId: String): Single<CoinGeckoCoinResponse> {
+        return coinGeckoService.marketTickers(
+            coinGeckoId,
+            "true",
+            "false",
+            "false",
+            "false",
+            "false",
+            "false",
+        )
+    }
+
     private fun coinGeckoPointCount(chartType: ChartType) = when (chartType) {
         ChartType.TODAY -> chartType.points
         ChartType.DAILY -> chartType.points
@@ -97,6 +114,24 @@ class CoinGeckoProvider(private val baseUrl: String) {
             @Query("days") days: Int,
             @Query("interval") interval: String?,
         ): Single<Response.HistoricalMarketData>
+
+        @GET("exchanges")
+        fun exchanges(
+            @Query("per_page") limit: Int,
+            @Query("page") days: Int,
+        ): Single<List<ExchangeRaw>>
+
+        @GET("coins/{coinId}")
+        fun marketTickers(
+            @Path("coinId") coinId: String,
+            @Query("tickers") tickers: String,
+            @Query("localization") localization: String,
+            @Query("market_data") marketData: String,
+            @Query("community_data") communityData: String,
+            @Query("developer_data") developerData: String,
+            @Query("sparkline") sparkline: String,
+        ): Single<CoinGeckoCoinResponse>
+
 
         object Response {
             data class HistoricalMarketData(

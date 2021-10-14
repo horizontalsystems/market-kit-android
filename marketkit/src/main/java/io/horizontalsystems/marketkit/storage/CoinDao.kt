@@ -59,4 +59,7 @@ interface CoinDao {
         }
     }
 
+    @Query("SELECT * FROM Coin WHERE uid IN (:coinUid)")
+    fun coin(coinUid: String): Coin?
+
 }

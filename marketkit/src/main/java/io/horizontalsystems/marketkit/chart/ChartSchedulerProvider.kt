@@ -22,7 +22,7 @@ class ChartSchedulerProvider(
         get() = key.chartType.seconds
 
     override val syncSingle: Single<Unit>
-        get() = provider.getChartPointsAsync(key)
+        get() = provider.chartPointsSingle(key)
             .doOnSuccess { points ->
                 manager.update(points, key)
             }

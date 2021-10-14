@@ -19,6 +19,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         marketInfoOverview("bitcoin", "EUR", "en")
         getChartInfo("coin-oracle", "USD", ChartType.MONTHLY)
         globalMarketPoints("USD", TimePeriod.Hour24)
+        getMarketTickers("coin-oracle")
     }
 
     private fun getChartInfo(coinUid: String, currencyCode: String, chartType: ChartType) {
@@ -132,6 +133,22 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.e("AAA", "globalMarketPoints size: ${it.size}")
             }, {
                 Log.e("AAA", "globalMarketPoints Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    private fun getMarketTickers(coinUid: String) {
+        marketKit.marketTickersSingle(coinUid)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.e("AAA", "getMarketTickers: ${it.marketName} ${it.rate} ${it.volume}")
+                }
+            }, {
+                Log.e("AAA", "getMarketTickers Error", it)
+
             })
             .let {
                 disposables.add(it)
