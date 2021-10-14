@@ -27,7 +27,13 @@ class MainActivity : AppCompatActivity() {
 }
 
 class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
-    private val marketKit by lazy { MarketKit.getInstance(context, "https://markets-dev.horizontalsystems.xyz") }
+    private val marketKit by lazy {
+        MarketKit.getInstance(
+            context,
+            "https://markets-dev.horizontalsystems.xyz",
+            "https://markets.horizontalsystems.xyz"
+        )
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

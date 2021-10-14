@@ -9,7 +9,7 @@ import io.horizontalsystems.marketkit.models.*
 
 
 @Database(
-    entities = [Coin::class, Platform::class, CoinCategory::class, CoinPrice::class, ChartPointEntity::class],
+    entities = [Coin::class, Platform::class, CoinCategory::class, CoinPrice::class, ChartPointEntity::class, GlobalMarketInfo::class],
     version = 1,
     exportSchema = false
 )
@@ -19,6 +19,7 @@ abstract class MarketDatabase : RoomDatabase() {
     abstract fun coinCategoryDao(): CoinCategoryDao
     abstract fun coinPriceDao(): CoinPriceDao
     abstract fun chartPointDao(): ChartPointDao
+    abstract fun globalMarketInfoDao(): GlobalMarketInfoDao
 
     companion object {
 

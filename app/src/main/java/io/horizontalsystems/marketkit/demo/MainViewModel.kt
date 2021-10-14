@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.ChartType
 import io.horizontalsystems.marketkit.models.MarketInfo
+import io.horizontalsystems.marketkit.models.TimePeriod
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -17,6 +18,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         fetchPosts()
         marketInfoOverview("bitcoin", "EUR", "en")
         getChartInfo("coin-oracle", "USD", ChartType.MONTHLY)
+        globalMarketPoints("USD", TimePeriod.Hour24)
     }
 
     private fun getChartInfo(coinUid: String, currencyCode: String, chartType: ChartType) {
@@ -117,6 +119,19 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.e("AAA", "marketInfoOverview: $it")
             }, {
                 Log.e("AAA", "marketInfoOverview Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    private fun globalMarketPoints(currencyCode: String, timePeriod: TimePeriod) {
+        marketKit.globalMarketPointsSingle(currencyCode, timePeriod)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.e("AAA", "globalMarketPoints size: ${it.size}")
+            }, {
+                Log.e("AAA", "globalMarketPoints Error", it)
             })
             .let {
                 disposables.add(it)
