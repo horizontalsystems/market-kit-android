@@ -51,12 +51,20 @@ data class CoinGeckoCoinResponse(
                 raw.target
             }
 
-            MarketTickerRaw(base, target, raw.market, raw.lastRate, raw.volume)
+            MarketTickerRaw(base, target, raw.market, raw.lastRate, raw.volume, raw.convertedLastRate, raw.convertedVolume)
         }
             .filter { filterTicker(it) }
             .map {
                 val imageUrl = imageUrls[it.market.id]
-                MarketTicker(it.base, it.target, it.market.name, imageUrl, it.lastRate, it.volume)
+                var target = it.target
+                var volume = it.volume
+                var lastRate = it.lastRate
+                if (it.target.lowercase() == symbol.lowercase()){
+                    target = "USD"
+                    volume = it.convertedVolume.usd
+                    lastRate = it.convertedLastRate.usd
+                }
+                MarketTicker(it.base, target, it.market.name, imageUrl, lastRate, volume)
             }
     }
 
@@ -72,11 +80,19 @@ data class MarketTickerRaw(
     val market: TickerMarketRaw,
     @SerializedName("last")
     val lastRate: BigDecimal,
-    val volume: BigDecimal
+    val volume: BigDecimal,
+    @SerializedName("converted_last")
+    val convertedLastRate: TickerMarketConvertedValue,
+    @SerializedName("converted_volume")
+    val convertedVolume: TickerMarketConvertedValue,
 )
 
 data class TickerMarketRaw(
     @SerializedName("identifier")
     val id: String,
     val name: String,
+)
+
+data class TickerMarketConvertedValue(
+    val usd: BigDecimal,
 )
