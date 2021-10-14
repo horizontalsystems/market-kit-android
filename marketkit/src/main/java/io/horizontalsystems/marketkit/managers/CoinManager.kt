@@ -30,21 +30,20 @@ class CoinManager(
         return storage.fullCoins(platformCoins.map { it.coin.uid })
     }
 
-    fun marketInfosSingle(
-        top: Int,
-        limit: Int?,
-        order: MarketInfo.Order?
-    ): Single<List<MarketInfo>> {
-        return hsProvider.getMarketInfosSingle(top, limit, order).map {
+    fun marketInfosSingle(top: Int, ): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(top).map {
             getMarketInfos(it)
         }
     }
 
-    fun marketInfosSingle(
-        coinUids: List<String>,
-        order: MarketInfo.Order?
-    ): Single<List<MarketInfo>> {
-        return hsProvider.getMarketInfosSingle(coinUids, order).map {
+    fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(coinUids).map {
+            getMarketInfos(it)
+        }
+    }
+
+    fun marketInfosSingle(categoryUid: String): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(categoryUid).map {
             getMarketInfos(it)
         }
     }

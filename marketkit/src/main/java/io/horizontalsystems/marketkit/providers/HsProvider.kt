@@ -25,12 +25,16 @@ class HsProvider(
             }
     }
 
-    fun getMarketInfosSingle(top: Int, limit: Int?, order: MarketInfo.Order?): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(top, limit, order?.field?.v, order?.direction?.v)
+    fun marketInfosSingle(top: Int): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfos(top)
     }
 
-    fun getMarketInfosSingle(coinUids: List<String>, order: MarketInfo.Order?): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(coinUids.joinToString(separator = ","), order?.field?.v, order?.direction?.v)
+    fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfos(coinUids.joinToString(separator = ","))
+    }
+
+    fun marketInfosSingle(categoryUid: String): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfosByCategory(categoryUid)
     }
 
     fun getCoinCategories(): Single<List<CoinCategory>> {
@@ -60,17 +64,17 @@ class HsProvider(
 
         @GET("coins/top_markets")
         fun getMarketInfos(
-            @Query("top") top: Int,
-            @Query("limit") limit: Int?,
-            @Query("orderField") orderField: String?,
-            @Query("orderDirection") orderDirection: String?,
+            @Query("top") top: Int
         ): Single<List<MarketInfoRaw>>
 
         @GET("coins/markets")
         fun getMarketInfos(
             @Query("uids") uids: String,
-            @Query("orderField") orderField: String?,
-            @Query("orderDirection") orderDirection: String?
+        ): Single<List<MarketInfoRaw>>
+
+        @GET("categories/{categoryUid}/markets")
+        fun getMarketInfosByCategory(
+            @Path("categoryUid") categoryUid: String,
         ): Single<List<MarketInfoRaw>>
 
         @GET("categories")

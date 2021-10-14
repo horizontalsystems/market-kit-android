@@ -45,19 +45,16 @@ class MarketKit(
         return coinManager.fullCoinsByCoinTypes(coinTypes)
     }
 
-    fun marketInfosSingle(
-        top: Int = 250,
-        limit: Int? = null,
-        order: MarketInfo.Order? = null
-    ): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(top, limit, order)
+    fun marketInfosSingle(top: Int = 250): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(top)
     }
 
-    fun marketInfosSingle(
-        coinUids: List<String>,
-        order: MarketInfo.Order? = null
-    ): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(coinUids, order)
+    fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(coinUids)
+    }
+
+    fun marketInfosSingle(categoryUid: String): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(categoryUid)
     }
 
     fun marketInfoOverviewSingle(

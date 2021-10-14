@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.ChartType
-import io.horizontalsystems.marketkit.models.MarketInfo
 import io.horizontalsystems.marketkit.models.TimePeriod
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -14,7 +13,9 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun run() {
         syncCoins()
+        fetchMarketInfos()
         fetchMarketInfos(listOf("bitcoin", "ethereum", "solana", "ripple"))
+        fetchCoinsByCategory("dexes")
         fetchPosts()
         marketInfoOverview("bitcoin", "EUR", "en")
         getChartInfo("coin-oracle", "USD", ChartType.MONTHLY)
@@ -60,12 +61,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun fetchMarketInfos(
-        top: Int = 250,
-        limit: Int? = null,
-        order: MarketInfo.Order? = null,
-    ) {
-        marketKit.marketInfosSingle(top, limit, order)
+    private fun fetchMarketInfos(top: Int = 250) {
+        marketKit.marketInfosSingle(top)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -79,11 +76,23 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun fetchMarketInfos(
-        coinUids: List<String>,
-        order: MarketInfo.Order? = null,
-    ) {
-        marketKit.marketInfosSingle(coinUids, order)
+    private fun fetchCoinsByCategory(categoryUid: String) {
+        marketKit.marketInfosSingle(categoryUid)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.e("AAA", "marketInfo By Category: $it")
+                }
+            }, {
+                Log.e("AAA", "marketInfosSingle By Category Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    private fun fetchMarketInfos(coinUids: List<String>, ) {
+        marketKit.marketInfosSingle(coinUids)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {

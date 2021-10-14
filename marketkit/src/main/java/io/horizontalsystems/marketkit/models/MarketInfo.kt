@@ -16,17 +16,4 @@ data class MarketInfo(
         marketInfoRaw.marketCap,
         marketInfoRaw.totalVolume,
     )
-
-    enum class OrderField(val v: String) {
-        PriceChange("price_change"),
-        MarketCap("market_cap"),
-        TotalVolume("total_volume")
-    }
-
-    enum class OrderDirection(val v: String) {
-        Ascending("asc"),
-        Descending("desc")
-    }
-
-    data class Order(val field: OrderField, val direction: OrderDirection)
 }
