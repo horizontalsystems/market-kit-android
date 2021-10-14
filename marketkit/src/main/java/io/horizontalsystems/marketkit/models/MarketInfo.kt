@@ -24,8 +24,8 @@ data class MarketInfo(
     }
 
     enum class OrderDirection(val v: String) {
-        Ascending("ASC"),
-        Descending("DESC")
+        Ascending("asc"),
+        Descending("desc")
     }
 
     data class Order(val field: OrderField, val direction: OrderDirection)

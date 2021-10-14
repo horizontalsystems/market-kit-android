@@ -7,9 +7,16 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 class HsProvider(
-    baseUrl: String
+    baseUrl: String,
+    oldBaseUrl: String
 ) {
-    private val service = RetrofitUtils.build("${baseUrl}/v1/").create(MarketService::class.java)
+    private val service by lazy {
+        RetrofitUtils.build("${baseUrl}/v1/").create(MarketService::class.java)
+    }
+
+    private val serviceOld by lazy {
+        RetrofitUtils.build("${oldBaseUrl}/api/v1/").create(MarketServiceOld::class.java)
+    }
 
     fun getFullCoins(): Single<List<FullCoin>> {
         return service.getFullCoins()
@@ -31,7 +38,7 @@ class HsProvider(
     }
 
     fun getCoinPrices(coinUids: List<String>, currencyCode: String): Single<List<CoinPrice>> {
-        return service.getCoinPrices(coinUids.joinToString(separator = ","), currencyCode)
+        return service.getCoinPrices(coinUids.joinToString(separator = ","), currencyCode.lowercase())
             .map { coinPricesMap ->
                 coinPricesMap.map { (coinUid, coinPriceResponse) ->
                     coinPriceResponse.coinPrice(coinUid, currencyCode)
@@ -43,7 +50,11 @@ class HsProvider(
         return service.getMarketInfoOverview(coinUid, currencyCode, language)
     }
 
-    interface MarketService {
+    fun getGlobalMarketPointsSingle(currencyCode: String, timePeriod: TimePeriod): Single<List<GlobalMarketPoint>> {
+        return serviceOld.globalMarketPoints(timePeriod.v, currencyCode)
+    }
+
+    private interface MarketService {
         @GET("coins")
         fun getFullCoins(): Single<List<FullCoinResponse>>
 
@@ -79,4 +90,11 @@ class HsProvider(
         ): Single<MarketInfoOverviewRaw>
     }
 
+    private interface MarketServiceOld {
+        @GET("markets/global/{timePeriod}")
+        fun globalMarketPoints(
+            @Path("timePeriod") timePeriod: String,
+            @Query("currency_code") currencyCode: String
+        ): Single<List<GlobalMarketPoint>>
+    }
 }
