@@ -4,13 +4,14 @@ import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
 data class CoinPriceResponse(
+    val uid: String,
     val price: BigDecimal,
     @SerializedName("price_change_24h")
     val priceChange: BigDecimal,
     @SerializedName("last_updated")
     val lastUpdated: Long
 ) {
-    fun coinPrice(coinUid: String, currencyCode: String): CoinPrice {
-        return CoinPrice(coinUid, currencyCode, price, priceChange, lastUpdated)
+    fun coinPrice(currencyCode: String): CoinPrice {
+        return CoinPrice(uid, currencyCode, price, priceChange, lastUpdated)
     }
 }
