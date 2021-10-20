@@ -31,7 +31,7 @@ class HsProvider(
     }
 
     fun advancedMarketInfosSingle(top: Int): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(top)
+        return service.getAdvancedMarketInfos(top)
     }
 
     fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfoRaw>> {
@@ -80,6 +80,12 @@ class HsProvider(
         fun getMarketInfos(
             @Query("limit") top: Int,
             @Query("fields") fields: String = marketInfoFields,
+        ): Single<List<MarketInfoRaw>>
+
+        @GET("coins")
+        fun getAdvancedMarketInfos(
+            @Query("limit") top: Int,
+            @Query("fields") fields: String = advancedMarketFields,
         ): Single<List<MarketInfoRaw>>
 
         @GET("coins")
