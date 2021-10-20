@@ -8,7 +8,7 @@ data class MarketInfoOverviewRaw(
     val performance: Map<String, Map<String, BigDecimal?>>,
     @SerializedName("genesis_date")
     val genesisDate: Date?,
-    @SerializedName("category_ids")
+    @SerializedName("category_uids")
     val categoryIds: List<String>,
     val description: String,
     val links: Map<String, String>,

@@ -11,47 +11,16 @@ import io.reactivex.schedulers.Schedulers
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
 
-    fun run() {
-        syncCoins()
-        fetchMarketInfos()
-        fetchMarketInfos(listOf("bitcoin", "ethereum", "solana", "ripple"))
-        fetchCoinsByCategory("dexes")
-        fetchPosts()
-        marketInfoOverview("bitcoin", "EUR", "en")
-        getChartInfo("coin-oracle", "USD", ChartType.MONTHLY)
-        globalMarketPoints("USD", TimePeriod.Hour24)
-        getMarketTickers("bitcoin")
-    }
-
-    private fun getChartInfo(coinUid: String, currencyCode: String, chartType: ChartType) {
-        //get stored chart info
-        val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, chartType)
-        Log.e("AAA", "storedChartInfo: ${storedChartInfo?.points}")
-
-        //fetch chartInfo from API
-        marketKit.getChartInfoAsync(coinUid, currencyCode, chartType)
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                Log.e("AAA", "fetchChartInfo: ${it.points}")
-            }, {
-                Log.e("AAA", "fetchChartInfo Error", it)
-
-            })
-            .let {
-                disposables.add(it)
-            }
-    }
-
-    private fun syncCoins() {
+    fun runSyncCoins() {
         marketKit.sync()
         marketKit.refreshCoinPrices("USD")
 
         marketKit.coinPriceMapObservable(listOf("bitcoin", "ethereum", "solana"), "USD")
             .subscribeOn(Schedulers.io())
             .subscribe({
-                Log.e("AAA", "coinPrices: ${it.size}")
+                Log.w("AAA", "coinPrices: ${it.size}")
                 it.forEach {
-                    Log.e("AAA", "coinPrice ${it.key}: ${it.value}")
+                    Log.w("AAA", "coinPrice ${it.key}: ${it.value}")
                 }
             }, {
                 Log.e("AAA", "coinPriceMapObservable error", it)
@@ -61,12 +30,35 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun fetchMarketInfos(top: Int = 250) {
+    fun runGetChartInfo() {
+        val coinUid = "coin-oracle"
+        val currencyCode = "USD"
+        val chartType = ChartType.MONTHLY
+        //get stored chart info
+        val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, chartType)
+        Log.w("AAA", "storedChartInfo: ${storedChartInfo?.points}")
+
+        //fetch chartInfo from API
+        marketKit.getChartInfoAsync(coinUid, currencyCode, chartType)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "fetchChartInfo: ${it.points}")
+            }, {
+                Log.e("AAA", "fetchChartInfo Error", it)
+
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    fun runFetchMarketInfosByTop() {
+        val top = 250
         marketKit.advancedMarketInfosSingle(top)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
-                    Log.e("AAA", "marketInfo: $it")
+                    Log.w("AAA", "marketInfo: $it")
                 }
             }, {
                 Log.e("AAA", "marketInfosSingle Error", it)
@@ -76,12 +68,29 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun fetchCoinsByCategory(categoryUid: String) {
+    fun runFetchMarketInfosByCoinUids() {
+        val coinUids = listOf("bitcoin", "ethereum", "solana", "ripple")
+        marketKit.marketInfosSingle(coinUids)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "marketInfo: $it")
+                }
+            }, {
+                Log.e("AAA", "marketInfosSingle Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    fun runFetchMarketInfosByCategory() {
+        val categoryUid = "dexes"
         marketKit.marketInfosSingle(categoryUid)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
-                    Log.e("AAA", "marketInfo By Category: $it")
+                    Log.w("AAA", "marketInfo By Category: $it")
                 }
             }, {
                 Log.e("AAA", "marketInfosSingle By Category Error", it)
@@ -91,28 +100,13 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun fetchMarketInfos(coinUids: List<String>, ) {
-        marketKit.marketInfosSingle(coinUids)
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                it.forEach {
-                    Log.e("AAA", "marketInfo: $it")
-                }
-            }, {
-                Log.e("AAA", "marketInfosSingle Error", it)
-            })
-            .let {
-                disposables.add(it)
-            }
-    }
-
-    private fun fetchPosts() {
+    fun runFetchPosts() {
         marketKit.postsSingle()
             .subscribeOn(Schedulers.io())
             .subscribe({ posts ->
-                Log.e("AAA", "posts size ${posts.size}")
+                Log.w("AAA", "posts size ${posts.size}")
                 posts.forEach {
-                    Log.e("AAA", "post: ${it.title} - <${it.url}>")
+                    Log.w("AAA", "post: ${it.title} - <${it.url}>")
                 }
             }, {
                 Log.e("AAA", "postsSingle error", it)
@@ -122,11 +116,14 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun marketInfoOverview(coinUid: String, currencyCode: String, language: String) {
+    fun runMarketInfoOverview() {
+        val coinUid = "bitcoin"
+        val currencyCode = "USD"
+        val language = "en"
         marketKit.marketInfoOverviewSingle(coinUid, currencyCode, language)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                Log.e("AAA", "marketInfoOverview: $it")
+                Log.w("AAA", "marketInfoOverview: $it")
             }, {
                 Log.e("AAA", "marketInfoOverview Error", it)
             })
@@ -135,11 +132,13 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun globalMarketPoints(currencyCode: String, timePeriod: TimePeriod) {
+    fun runGlobalMarketPoints() {
+        val currencyCode = "USD"
+        val timePeriod = TimePeriod.Hour24
         marketKit.globalMarketPointsSingle(currencyCode, timePeriod)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                Log.e("AAA", "globalMarketPoints size: ${it.size}")
+                Log.w("AAA", "globalMarketPoints size: ${it.size}")
             }, {
                 Log.e("AAA", "globalMarketPoints Error", it)
             })
@@ -148,12 +147,13 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    private fun getMarketTickers(coinUid: String) {
+    fun runGetMarketTickers() {
+        val coinUid = "bitcoin"
         marketKit.marketTickersSingle(coinUid)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
-                    Log.e("AAA", "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target}")
+                    Log.w("AAA", "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target}")
                 }
             }, {
                 Log.e("AAA", "getMarketTickers Error", it)
