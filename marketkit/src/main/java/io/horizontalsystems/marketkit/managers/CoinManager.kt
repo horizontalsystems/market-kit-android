@@ -30,8 +30,14 @@ class CoinManager(
         return storage.fullCoins(platformCoins.map { it.coin.uid })
     }
 
-    fun marketInfosSingle(top: Int, ): Single<List<MarketInfo>> {
+    fun marketInfosSingle(top: Int): Single<List<MarketInfo>> {
         return hsProvider.marketInfosSingle(top).map {
+            getMarketInfos(it)
+        }
+    }
+
+    fun advancedMarketInfosSingle(top: Int): Single<List<MarketInfo>> {
+        return hsProvider.advancedMarketInfosSingle(top).map {
             getMarketInfos(it)
         }
     }

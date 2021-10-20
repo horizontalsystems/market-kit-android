@@ -34,8 +34,12 @@ class HsProvider(
         return service.getMarketInfos(marketInfoFields, coinUids.joinToString(","))
     }
 
+    fun advancedMarketInfosSingle(top: Int): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfos(advancedMarketFields, top)
+    }
+
     fun marketInfosSingle(categoryUid: String): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfosByCategory(marketInfoFields, categoryUid)
+        return service.getMarketInfosByCategory(categoryUid)
     }
 
     fun getCoinCategories(): Single<List<CoinCategory>> {
@@ -91,7 +95,6 @@ class HsProvider(
         @GET("categories/{categoryUid}/coins")
         fun getMarketInfosByCategory(
             @Path("categoryUid") categoryUid: String,
-            @Query("fields") fields: String,
         ): Single<List<MarketInfoRaw>>
 
         @GET("categories")
@@ -121,9 +124,11 @@ class HsProvider(
     }
 
     companion object {
-        private val marketInfoFields =
+        private const val marketInfoFields =
             "name,code,price,price_change_24h,market_cap_rank,coingecko_id,market_cap,total_volume"
-        private val fullCoinFields = "name,code,market_cap_rank,coingecko_id,platforms"
-        private val coinPriceFields = "price,price_change_24h,last_updated"
+        private const val fullCoinFields = "name,code,market_cap_rank,coingecko_id,platforms"
+        private const val coinPriceFields = "price,price_change_24h,last_updated"
+        private const val advancedMarketFields =
+            "price,market_cap,total_volume,price_change_24h,price_change_7d,price_change_14d,price_change_30d,price_change_200d,price_change_1y,ath_percentage,atl_percentage"
     }
 }

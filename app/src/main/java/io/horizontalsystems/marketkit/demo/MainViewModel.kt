@@ -62,7 +62,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     private fun fetchMarketInfos(top: Int = 250) {
-        marketKit.marketInfosSingle(top)
+        marketKit.advancedMarketInfosSingle(top)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
