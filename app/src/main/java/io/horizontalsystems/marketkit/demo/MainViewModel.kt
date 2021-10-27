@@ -54,7 +54,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runFetchMarketInfosByTop() {
         val top = 250
-        marketKit.advancedMarketInfosSingle(top)
+        marketKit.advancedMarketInfosSingle(top, "USD")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
