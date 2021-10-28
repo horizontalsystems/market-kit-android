@@ -36,8 +36,8 @@ class CoinManager(
         }
     }
 
-    fun advancedMarketInfosSingle(top: Int): Single<List<MarketInfo>> {
-        return hsProvider.advancedMarketInfosSingle(top).map {
+    fun advancedMarketInfosSingle(top: Int, currencyCode: String): Single<List<MarketInfo>> {
+        return hsProvider.advancedMarketInfosSingle(top, currencyCode).map {
             getMarketInfos(it)
         }
     }
