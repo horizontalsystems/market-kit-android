@@ -10,7 +10,7 @@ data class MarketInfoOverviewRaw(
     val genesisDate: Date?,
     @SerializedName("category_uids")
     val categoryIds: List<String>,
-    val description: String,
+    val description: String?,
     val links: Map<String, String>,
     @SerializedName("market_data")
     val marketData: MarketData,

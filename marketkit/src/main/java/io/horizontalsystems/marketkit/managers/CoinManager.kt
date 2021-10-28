@@ -94,7 +94,7 @@ class CoinManager(
                     performance,
                     overviewRaw.genesisDate,
                     overviewRaw.categoryIds.mapNotNull { categoriesMap[it] },
-                    overviewRaw.description,
+                    overviewRaw.description ?: "",
                     links,
                 )
             }
