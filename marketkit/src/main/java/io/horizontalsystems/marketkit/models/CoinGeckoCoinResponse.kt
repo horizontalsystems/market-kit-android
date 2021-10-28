@@ -23,7 +23,12 @@ data class CoinGeckoCoinResponse(
         ticker.volume.compareTo(BigDecimal.ZERO) == 0 -> false
         isSmartContractAddress(ticker.base) -> false
         isSmartContractAddress(ticker.target) -> false
+        isSymbolNotTargetNorBase(ticker.target, ticker.base) -> false
         else -> true
+    }
+
+    private fun isSymbolNotTargetNorBase(target: String, base: String): Boolean {
+        return (symbol.lowercase() != target.lowercase() && symbol.lowercase() != base.lowercase())
     }
 
     val exchangeIds: List<String>
@@ -40,35 +45,45 @@ data class CoinGeckoCoinResponse(
 
         return tickers.map { raw ->
             val base = if (contractAddresses.contains(raw.base.lowercase(Locale.ENGLISH))) {
-                symbol
+                symbol.uppercase()
             } else {
                 raw.base
             }
 
             val target = if (contractAddresses.contains(raw.target.lowercase(Locale.ENGLISH))) {
-                symbol
+                symbol.uppercase()
             } else {
                 raw.target
             }
 
-            MarketTickerRaw(base, target, raw.market, raw.lastRate, raw.volume, raw.convertedLastRate, raw.convertedVolume)
+            MarketTickerRaw(
+                base,
+                target,
+                raw.market,
+                raw.lastRate,
+                raw.volume,
+                raw.convertedLastRate,
+                raw.convertedVolume
+            )
         }
             .filter { filterTicker(it) }
             .map {
                 val imageUrl = imageUrls[it.market.id]
                 var target = it.target
+                var base = it.base
                 var volume = it.volume
                 var lastRate = it.lastRate
-                if (it.target.lowercase() == symbol.lowercase()){
-                    target = "USD"
-                    volume = it.convertedVolume.usd
+                if (it.target.lowercase() == symbol.lowercase()) {
+                    base = symbol.uppercase()
+                    target = it.base
                     lastRate = it.convertedLastRate.usd
+                    volume = it.convertedVolume.usd / lastRate
                 }
-                MarketTicker(it.base, target, it.market.name, imageUrl, lastRate, volume)
+                MarketTicker(base, target, it.market.name, imageUrl, lastRate, volume)
             }
     }
 
-    companion object{
+    companion object {
         private val smartContractPlatforms: List<String> =
             listOf("tron", "ethereum", "eos", "binance-smart-chain", "binancecoin")
     }

@@ -148,16 +148,20 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runGetMarketTickers() {
-        val coinUid = "bitcoin"
+        val coinUid = "ethereum"
         marketKit.marketTickersSingle(coinUid)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                it.forEach {
-                    Log.w("AAA", "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target}")
-                }
+                it
+                    .sortedByDescending { it.volume }
+                    .forEach {
+                        Log.w(
+                            "AAA",
+                            "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target}"
+                        )
+                    }
             }, {
                 Log.e("AAA", "getMarketTickers Error", it)
-
             })
             .let {
                 disposables.add(it)
