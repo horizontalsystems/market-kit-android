@@ -26,8 +26,8 @@ class HsProvider(
             }
     }
 
-    fun marketInfosSingle(top: Int, defi: Boolean): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(top, defi = defi)
+    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfos(top, currencyCode, defi)
     }
 
     fun advancedMarketInfosSingle(top: Int, currencyCode: String): Single<List<MarketInfoRaw>> {
@@ -83,8 +83,9 @@ class HsProvider(
         @GET("coins")
         fun getMarketInfos(
             @Query("limit") top: Int,
+            @Query("currency") currencyCode: String,
+            @Query("defi") defi: Boolean,
             @Query("fields") fields: String = marketInfoFields,
-            @Query("defi") defi: Boolean
         ): Single<List<MarketInfoRaw>>
 
         @GET("coins")

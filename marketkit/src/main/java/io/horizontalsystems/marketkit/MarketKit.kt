@@ -48,8 +48,8 @@ class MarketKit(
         return coinManager.fullCoinsByCoinTypes(coinTypes)
     }
 
-    fun marketInfosSingle(top: Int = 250, defi: Boolean = false): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(top, defi)
+    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean = false): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(top, currencyCode, defi)
     }
 
     fun advancedMarketInfosSingle(top: Int = 250, currencyCode: String): Single<List<MarketInfo>> {
@@ -189,7 +189,13 @@ class MarketKit(
             val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
             val exchangeSyncer = ExchangeSyncer(exchangeManager, coinGeckoProvider)
             val coinManager =
-                CoinManager(CoinStorage(marketDatabase), hsProvider, coinCategoryManager, coinGeckoProvider, exchangeManager)
+                CoinManager(
+                    CoinStorage(marketDatabase),
+                    hsProvider,
+                    coinCategoryManager,
+                    coinGeckoProvider,
+                    exchangeManager
+                )
             val coinSyncer = CoinSyncer(hsProvider, coinManager)
             val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
