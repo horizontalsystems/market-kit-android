@@ -35,8 +35,22 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         return coinDao.getPlatformCoin(coinType)
     }
 
-    fun platformCoins(): List<PlatformCoin> {
-        return coinDao.getPlatformCoins()
+    fun platformCoins(platformType: PlatformType, filter: String, limit: Int): List<PlatformCoin> {
+        val platformCondition =
+            platformType.coinTypeIdPrefixes.joinToString(" OR ") { "platform.coinType LIKE '$it%'" }
+
+        val query =
+            """
+                SELECT * FROM Platform 
+                LEFT JOIN Coin AS coin 
+                ON platform.coinUid == coin.uid 
+                WHERE (coin.name LIKE '%$filter%' OR coin.code LIKE '%$filter%')
+                AND ($platformCondition)
+                ORDER BY CASE WHEN coin.marketCapRank IS NULL THEN 1 ELSE 0 END, coin.marketCapRank ASC, coin.name ASC
+                LIMIT $limit
+                """
+
+        return coinDao.getPlatformCoins(SimpleSQLiteQuery(query))
     }
 
     fun coins(filter: String, limit: Int): List<Coin> {

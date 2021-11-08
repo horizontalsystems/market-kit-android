@@ -73,8 +73,8 @@ class MarketKit(
         return coinManager.platformCoin(coinType)
     }
 
-    fun platformCoins(): List<PlatformCoin> {
-        return coinManager.platformCoins()
+    fun platformCoins(platformType: PlatformType, filter: String, limit: Int = 20): List<PlatformCoin> {
+        return coinManager.platformCoins(platformType, filter, limit)
     }
 
     fun platformCoins(coinTypes: List<CoinType>): List<PlatformCoin> {

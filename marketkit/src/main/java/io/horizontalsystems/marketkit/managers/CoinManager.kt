@@ -114,8 +114,8 @@ class CoinManager(
         return storage.platformCoin(coinType)
     }
 
-    fun platformCoins(): List<PlatformCoin> {
-        return storage.platformCoins()
+    fun platformCoins(platformType: PlatformType, filter: String, limit: Int): List<PlatformCoin> {
+        return storage.platformCoins(platformType, filter, limit)
     }
 
     fun platformCoins(coinTypes: List<CoinType>): List<PlatformCoin> {

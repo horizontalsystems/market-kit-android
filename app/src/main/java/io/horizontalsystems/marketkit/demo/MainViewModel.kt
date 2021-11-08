@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.ChartType
+import io.horizontalsystems.marketkit.models.PlatformType
 import io.horizontalsystems.marketkit.models.TimePeriod
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -166,6 +167,15 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .let {
                 disposables.add(it)
             }
+    }
+
+    fun runPlatformCoinsByPlatformType() {
+        val platformType = PlatformType.Ethereum
+        val filter = "eth"
+        val coinList = marketKit.platformCoins(platformType, filter, 30)
+        coinList.forEach {
+            Log.w("AAA", "getPlatformCoinsByPlatformType code: ${it.code} name: ${it.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.coinType.id}", )
+        }
     }
 
     override fun onCleared() {
