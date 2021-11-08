@@ -149,4 +149,20 @@ class CoinManager(
         }
     }
 
+    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
+        return hsProvider.defiMarketInfosSingle(currencyCode).map {
+            getDefiMarketInfos(it)
+        }
+    }
+
+    private fun getDefiMarketInfos(rawDefiMarketInfos: List<DefiMarketInfoResponse>): List<DefiMarketInfo> {
+        val fullCoins = storage.fullCoins(rawDefiMarketInfos.mapNotNull { it.uid })
+        val hashMap = fullCoins.map { it.coin.uid to it }.toMap()
+
+        return rawDefiMarketInfos.map { rawDefiMarketInfo ->
+            val fullCoin = hashMap[rawDefiMarketInfo.uid]
+            DefiMarketInfo(rawDefiMarketInfo, fullCoin)
+        }
+    }
+
 }

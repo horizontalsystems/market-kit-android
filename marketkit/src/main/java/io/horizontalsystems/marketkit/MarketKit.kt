@@ -6,7 +6,10 @@ import io.horizontalsystems.marketkit.chart.ChartSchedulerFactory
 import io.horizontalsystems.marketkit.chart.ChartSyncManager
 import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
-import io.horizontalsystems.marketkit.providers.*
+import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
+import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
+import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
+import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.*
 import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
@@ -67,6 +70,12 @@ class MarketKit(
         language: String
     ): Single<MarketInfoOverview> {
         return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
+    }
+
+    fun defiMarketInfosSingle(
+        currencyCode: String
+    ): Single<List<DefiMarketInfo>> {
+        return coinManager.defiMarketInfosSingle(currencyCode)
     }
 
     fun platformCoin(coinType: CoinType): PlatformCoin? {

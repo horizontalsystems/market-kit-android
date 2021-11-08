@@ -70,6 +70,10 @@ class HsProvider(
         return serviceOld.globalMarketPoints(timePeriod.v, currencyCode)
     }
 
+    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfoResponse>> {
+        return service.getDefiMarketInfos(currencyCode)
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -117,6 +121,11 @@ class HsProvider(
             @Query("currency") currency: String,
             @Query("language") language: String,
         ): Single<MarketInfoOverviewRaw>
+
+        @GET("defi-coins")
+        fun getDefiMarketInfos(
+            @Query("currency") currencyCode: String
+        ): Single<List<DefiMarketInfoResponse>>
 
         companion object {
             private const val marketInfoFields =
