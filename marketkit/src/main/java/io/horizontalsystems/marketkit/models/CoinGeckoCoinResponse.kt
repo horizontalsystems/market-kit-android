@@ -2,6 +2,7 @@ package io.horizontalsystems.marketkit.models
 
 import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 
 data class CoinGeckoCoinResponse(
@@ -62,8 +63,6 @@ data class CoinGeckoCoinResponse(
                 raw.market,
                 raw.lastRate,
                 raw.volume,
-                raw.convertedLastRate,
-                raw.convertedVolume
             )
         }
             .filter { filterTicker(it) }
@@ -76,8 +75,8 @@ data class CoinGeckoCoinResponse(
                 if (it.target.lowercase() == symbol.lowercase()) {
                     base = symbol.uppercase()
                     target = it.base
-                    lastRate = it.convertedLastRate.usd
-                    volume = it.convertedVolume.usd / lastRate
+                    volume *= lastRate
+                    lastRate = BigDecimal.ONE.divide(lastRate, 4, RoundingMode.HALF_EVEN)
                 }
                 MarketTicker(base, target, it.market.name, imageUrl, lastRate, volume)
             }
@@ -96,18 +95,10 @@ data class MarketTickerRaw(
     @SerializedName("last")
     val lastRate: BigDecimal,
     val volume: BigDecimal,
-    @SerializedName("converted_last")
-    val convertedLastRate: TickerMarketConvertedValue,
-    @SerializedName("converted_volume")
-    val convertedVolume: TickerMarketConvertedValue,
 )
 
 data class TickerMarketRaw(
     @SerializedName("identifier")
     val id: String,
     val name: String,
-)
-
-data class TickerMarketConvertedValue(
-    val usd: BigDecimal,
 )
