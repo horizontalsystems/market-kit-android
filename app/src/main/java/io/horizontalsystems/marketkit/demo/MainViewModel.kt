@@ -71,7 +71,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runFetchMarketInfosByCoinUids() {
         val coinUids = listOf("bitcoin", "ethereum", "solana", "ripple")
-        marketKit.marketInfosSingle(coinUids)
+        val currencyCode = "USD"
+        marketKit.marketInfosSingle(coinUids, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -87,7 +88,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runFetchMarketInfosByCategory() {
         val categoryUid = "dexes"
-        marketKit.marketInfosSingle(categoryUid)
+        val currencyCode = "USD"
+        marketKit.marketInfosSingle(categoryUid, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {

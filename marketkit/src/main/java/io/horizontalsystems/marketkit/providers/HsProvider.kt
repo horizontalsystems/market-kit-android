@@ -34,12 +34,12 @@ class HsProvider(
         return service.getAdvancedMarketInfos(top, currencyCode)
     }
 
-    fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(coinUids.joinToString(","))
+    fun marketInfosSingle(coinUids: List<String>, currencyCode: String): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfos(coinUids.joinToString(","), currencyCode)
     }
 
-    fun marketInfosSingle(categoryUid: String): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfosByCategory(categoryUid)
+    fun marketInfosSingle(categoryUid: String, currencyCode: String): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfosByCategory(categoryUid, currencyCode)
     }
 
     fun getCoinCategories(): Single<List<CoinCategory>> {
@@ -98,12 +98,14 @@ class HsProvider(
         @GET("coins")
         fun getMarketInfos(
             @Query("uids") uids: String,
+            @Query("currency") currencyCode: String,
             @Query("fields") fields: String = marketInfoFields,
         ): Single<List<MarketInfoRaw>>
 
         @GET("categories/{categoryUid}/coins")
         fun getMarketInfosByCategory(
             @Path("categoryUid") categoryUid: String,
+            @Query("currency") currencyCode: String,
         ): Single<List<MarketInfoRaw>>
 
         @GET("categories")

@@ -42,14 +42,14 @@ class CoinManager(
         }
     }
 
-    fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(coinUids).map {
+    fun marketInfosSingle(coinUids: List<String>, currencyCode: String): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(coinUids, currencyCode).map {
             getMarketInfos(it)
         }
     }
 
-    fun marketInfosSingle(categoryUid: String): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(categoryUid).map {
+    fun marketInfosSingle(categoryUid: String, currencyCode: String): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(categoryUid, currencyCode).map {
             getMarketInfos(it)
         }
     }

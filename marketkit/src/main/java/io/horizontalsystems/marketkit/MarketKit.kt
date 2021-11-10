@@ -56,12 +56,12 @@ class MarketKit(
         return coinManager.advancedMarketInfosSingle(top, currencyCode)
     }
 
-    fun marketInfosSingle(coinUids: List<String>): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(coinUids)
+    fun marketInfosSingle(coinUids: List<String>, currencyCode: String): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(coinUids, currencyCode)
     }
 
-    fun marketInfosSingle(categoryUid: String): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(categoryUid)
+    fun marketInfosSingle(categoryUid: String, currencyCode: String): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(categoryUid, currencyCode)
     }
 
     fun marketInfoOverviewSingle(
