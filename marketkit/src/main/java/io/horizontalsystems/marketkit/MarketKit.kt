@@ -76,6 +76,10 @@ class MarketKit(
         return coinManager.marketInfoDetailsSingle(coinUid, currencyCode)
     }
 
+    fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
+        return coinManager.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
+    }
+
     fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
         return coinManager.defiMarketInfosSingle(currencyCode)
     }

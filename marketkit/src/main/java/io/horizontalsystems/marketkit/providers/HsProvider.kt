@@ -78,6 +78,17 @@ class HsProvider(
         return service.getMarketInfoDetails(coinUid, currency)
     }
 
+    fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
+        val interval = when (timePeriod) {
+            TimePeriod.Day7 -> "7d"
+            TimePeriod.Day30 -> "30d"
+            else -> "1d"
+        }
+        return service.getMarketInfoTvl(coinUid, currencyCode, interval).map { responseList ->
+            responseList.map { ChartPoint(it.tvl, null, it.timestamp) }
+        }
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -139,6 +150,13 @@ class HsProvider(
             @Path("coinUid") coinUid: String,
             @Query("currency") currency: String
         ): Single<MarketInfoDetailsResponse>
+
+        @GET("defi-coins/{coinUid}/tvls")
+        fun getMarketInfoTvl(
+            @Path("coinUid") coinUid: String,
+            @Query("currency") currency: String,
+            @Query("interval") interval: String
+        ): Single<List<MarketInfoTvlResponse>>
 
         companion object {
             private const val marketInfoFields =

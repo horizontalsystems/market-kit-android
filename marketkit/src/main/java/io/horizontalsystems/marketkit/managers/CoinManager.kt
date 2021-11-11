@@ -136,6 +136,22 @@ class CoinManager(
         fullCoinsUpdatedObservable.onNext(Unit)
     }
 
+    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
+        return hsProvider.defiMarketInfosSingle(currencyCode).map {
+            getDefiMarketInfos(it)
+        }
+    }
+
+    fun marketInfoDetailsSingle(coinUid: String, currency: String): Single<MarketInfoDetails> {
+        return hsProvider.getMarketInfoDetails(coinUid, currency).map {
+            MarketInfoDetails(it)
+        }
+    }
+
+    fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
+        return hsProvider.marketInfoTvlSingle(coinUid,  currencyCode,  timePeriod)
+    }
+
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
         return try {
             val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
@@ -147,18 +163,6 @@ class CoinManager(
             }
         } catch (e: Exception) {
             emptyList()
-        }
-    }
-
-    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
-        return hsProvider.defiMarketInfosSingle(currencyCode).map {
-            getDefiMarketInfos(it)
-        }
-    }
-
-    fun marketInfoDetailsSingle(coinUid: String, currency: String): Single<MarketInfoDetails> {
-        return hsProvider.getMarketInfoDetails(coinUid, currency).map {
-            MarketInfoDetails(it)
         }
     }
 
