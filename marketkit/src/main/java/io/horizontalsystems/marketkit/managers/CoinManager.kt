@@ -156,6 +156,12 @@ class CoinManager(
         }
     }
 
+    fun marketInfoDetailsSingle(coinUid: String, currency: String): Single<MarketInfoDetails> {
+        return hsProvider.getMarketInfoDetails(coinUid, currency).map {
+            MarketInfoDetails(it)
+        }
+    }
+
     private fun getDefiMarketInfos(rawDefiMarketInfos: List<DefiMarketInfoResponse>): List<DefiMarketInfo> {
         val fullCoins = storage.fullCoins(rawDefiMarketInfos.mapNotNull { it.uid })
         val hashMap = fullCoins.map { it.coin.uid to it }.toMap()

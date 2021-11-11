@@ -72,9 +72,11 @@ class MarketKit(
         return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
     }
 
-    fun defiMarketInfosSingle(
-        currencyCode: String
-    ): Single<List<DefiMarketInfo>> {
+    fun marketInfoDetailsSingle(coinUid: String, currencyCode: String): Single<MarketInfoDetails> {
+        return coinManager.marketInfoDetailsSingle(coinUid, currencyCode)
+    }
+
+    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
         return coinManager.defiMarketInfosSingle(currencyCode)
     }
 
