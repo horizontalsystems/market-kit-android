@@ -163,6 +163,10 @@ class MarketKit(
         return chartManager.getChartInfo(coinUid, currencyCode, chartType)
     }
 
+    fun chartInfoSingle(coinUid: String, currencyCode: String, chartType: ChartType): Single<ChartInfo> {
+        return chartManager.chartInfoSingle(coinUid, currencyCode, chartType)
+    }
+
     fun getChartInfoAsync(
         coinUid: String,
         currencyCode: String,
@@ -206,7 +210,7 @@ class MarketKit(
             coinPriceManager.listener = coinPriceSyncManager
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
-            val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase))
+            val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase), coinGeckoProvider)
             val chartSchedulerFactory = ChartSchedulerFactory(chartManager, coinGeckoProvider)
             val chartSyncManager = ChartSyncManager(coinManager, chartSchedulerFactory).also {
                 chartManager.listener = it

@@ -2,7 +2,9 @@ package io.horizontalsystems.marketkit.chart
 
 import io.horizontalsystems.marketkit.managers.CoinManager
 import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
 import io.horizontalsystems.marketkit.storage.ChartPointStorage
+import io.reactivex.Single
 import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.ZoneId
@@ -11,6 +13,7 @@ import java.util.*
 class ChartManager(
     private val coinManager: CoinManager,
     private val storage: ChartPointStorage,
+    private val provider: CoinGeckoProvider
 ) {
 
     var listener: Listener? = null
@@ -91,5 +94,18 @@ class ChartManager(
         val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull() ?: return null
         val key = ChartInfoKey(fullCoin.coin, currencyCode, chartType)
         return chartInfo(storedChartPoints(key), key.chartType)
+    }
+
+    fun chartInfoSingle(coinUid: String, currencyCode: String, chartType: ChartType): Single<ChartInfo> {
+        val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull()
+            ?: return Single.error(Exception("No Chart Data"))
+
+        val key = ChartInfoKey(fullCoin.coin, currencyCode, chartType)
+        return provider.chartPointsSingle(key)
+            .flatMap { points ->
+                chartInfo(points.map { ChartPoint(it.value, it.volume, it.timestamp) }, chartType)?.let {
+                    Single.just(it)
+                } ?: Single.error(Exception("No Chart Data"))
+            }
     }
 }
