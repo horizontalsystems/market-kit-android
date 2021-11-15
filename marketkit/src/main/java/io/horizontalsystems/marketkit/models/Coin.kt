@@ -15,14 +15,6 @@ data class Coin(
     val marketCapRank: Int? = null,
     val coinGeckoId: String? = null
 ) : Parcelable {
-    constructor(coinResponse: CoinResponse) : this(
-        coinResponse.uid,
-        coinResponse.name,
-        coinResponse.code.uppercase(),
-        coinResponse.marketCapRank,
-        coinResponse.coinGeckoId
-    )
-
     override fun equals(other: Any?): Boolean {
         return other is Coin && other.uid == uid
     }

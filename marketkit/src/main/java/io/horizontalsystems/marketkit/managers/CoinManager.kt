@@ -95,6 +95,7 @@ class CoinManager(
                     overviewRaw.genesisDate,
                     overviewRaw.categoryIds.mapNotNull { categoriesMap[it] },
                     overviewRaw.description ?: "",
+                    overviewRaw.platforms.mapNotNull { it.coinType },
                     links,
                 )
             }

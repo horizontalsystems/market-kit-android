@@ -15,5 +15,6 @@ data class MarketInfoOverview(
     val genesisDate: Date?,
     val categories: List<CoinCategory>,
     val description: String,
+    val coinTypes: List<CoinType>,
     val links: Map<LinkType, String>,
 )

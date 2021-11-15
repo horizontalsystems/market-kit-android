@@ -11,6 +11,7 @@ data class MarketInfoOverviewRaw(
     @SerializedName("category_uids")
     val categoryIds: List<String>,
     val description: String?,
+    val platforms: List<PlatformResponse>,
     val links: Map<String, String>,
     @SerializedName("market_data")
     val marketData: MarketData,
