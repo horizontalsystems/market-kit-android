@@ -162,6 +162,12 @@ class MarketKit(
         return coinManager.marketTickersSingle(coinUid)
     }
 
+    // Details
+
+    fun topHoldersSingle(coinUid: String): Single<List<TokenHolder>> {
+        return coinManager.topHoldersSingle(coinUid)
+    }
+
     // Chart Info
 
     fun chartInfo(coinUid: String, currencyCode: String, chartType: ChartType): ChartInfo? {

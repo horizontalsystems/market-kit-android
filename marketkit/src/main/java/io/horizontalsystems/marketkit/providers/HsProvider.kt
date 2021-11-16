@@ -89,6 +89,10 @@ class HsProvider(
         }
     }
 
+    fun topHoldersSingle(coinUid: String): Single<List<TokenHolder>> {
+        return service.getTopHolders(coinUid)
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -157,6 +161,11 @@ class HsProvider(
             @Query("currency") currency: String,
             @Query("interval") interval: String
         ): Single<List<MarketInfoTvlResponse>>
+
+        @GET("addresses/holders")
+        fun getTopHolders(
+            @Query("coin_uid") coinUid: String
+        ): Single<List<TokenHolder>>
 
         companion object {
             private const val marketInfoFields =

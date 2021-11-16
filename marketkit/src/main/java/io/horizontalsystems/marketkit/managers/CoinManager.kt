@@ -152,6 +152,10 @@ class CoinManager(
         return hsProvider.marketInfoTvlSingle(coinUid,  currencyCode,  timePeriod)
     }
 
+    fun topHoldersSingle(coinUid: String): Single<List<TokenHolder>> {
+        return hsProvider.topHoldersSingle(coinUid)
+    }
+
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
         return try {
             val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
