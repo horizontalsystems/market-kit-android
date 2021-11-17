@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit
 
 import android.content.Context
+import android.os.storage.StorageManager
 import io.horizontalsystems.marketkit.chart.ChartManager
 import io.horizontalsystems.marketkit.chart.ChartSchedulerFactory
 import io.horizontalsystems.marketkit.chart.ChartSyncManager
@@ -192,6 +193,15 @@ class MarketKit(
             hsOldApiBaseUrl: String,
             cryptoCompareApiKey: String? = null
         ): MarketKit {
+            // init cache
+            (context.getSystemService(Context.STORAGE_SERVICE) as StorageManager?)?.let { storageManager ->
+                val cacheDir = context.cacheDir
+                val cacheQuotaBytes = storageManager.getCacheQuotaBytes(storageManager.getUuidForPath(cacheDir))
+
+                HSCache.cacheDir = cacheDir
+                HSCache.cacheQuotaBytes = cacheQuotaBytes
+            }
+
             val marketDatabase = MarketDatabase.getInstance(context)
             val hsProvider = HsProvider(hsApiBaseUrl, hsOldApiBaseUrl)
             val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
