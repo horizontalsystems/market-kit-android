@@ -7,7 +7,7 @@ data class PlatformResponse(
     val symbol: String?
 ) {
     val coinType: CoinType?
-        get() = CoinType.getInstance(type, address, symbol)
+        get() = CoinType.getInstance(type, address, symbol?.uppercase())
 
     fun platform(coinUid: String): Platform? {
         if (decimals == null) return null
