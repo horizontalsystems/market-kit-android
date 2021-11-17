@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.providers
 
 import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.models.CoinTreasury.TreasuryType.*
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -93,6 +94,25 @@ class HsProvider(
         return service.getTopHolders(coinUid)
     }
 
+    fun coinTreasuriesSingle(coinUid: String, currencyCode: String): Single<List<CoinTreasury>> {
+        return service.getCoinTreasuries(coinUid, currencyCode).map { responseList ->
+            responseList.mapNotNull {
+                try {
+                    CoinTreasury(
+                        type = CoinTreasury.TreasuryType.fromString(it.type)!!,
+                        fund = it.fund,
+                        fundUid = it.fundUid,
+                        amount = it.amount,
+                        amountInCurrency = it.amountInCurrency,
+                        countryCode = it.countryCode
+                    )
+                } catch (exception: Exception) {
+                    null
+                }
+            }
+        }
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -140,7 +160,7 @@ class HsProvider(
         @GET("coins/{coinUid}")
         fun getMarketInfoOverview(
             @Path("coinUid") coinUid: String,
-            @Query("currency") currency: String,
+            @Query("currency") currencyCode: String,
             @Query("language") language: String,
         ): Single<MarketInfoOverviewRaw>
 
@@ -152,13 +172,13 @@ class HsProvider(
         @GET("coins/{coinUid}/details")
         fun getMarketInfoDetails(
             @Path("coinUid") coinUid: String,
-            @Query("currency") currency: String
+            @Query("currency") currencyCode: String
         ): Single<MarketInfoDetailsResponse>
 
         @GET("defi-coins/{coinUid}/tvls")
         fun getMarketInfoTvl(
             @Path("coinUid") coinUid: String,
-            @Query("currency") currency: String,
+            @Query("currency") currencyCode: String,
             @Query("interval") interval: String
         ): Single<List<MarketInfoTvlResponse>>
 
@@ -166,6 +186,12 @@ class HsProvider(
         fun getTopHolders(
             @Query("coin_uid") coinUid: String
         ): Single<List<TokenHolder>>
+
+        @GET("funds/treasuries")
+        fun getCoinTreasuries(
+            @Query("coin_uid") coinUid: String,
+            @Query("currency") currencyCode: String
+        ): Single<List<CoinTreasuryResponse>>
 
         companion object {
             private const val marketInfoFields =
