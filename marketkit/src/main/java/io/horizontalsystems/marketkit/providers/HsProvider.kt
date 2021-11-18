@@ -1,7 +1,6 @@
 package io.horizontalsystems.marketkit.providers
 
 import io.horizontalsystems.marketkit.models.*
-import io.horizontalsystems.marketkit.models.CoinTreasury.TreasuryType.*
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -113,6 +112,10 @@ class HsProvider(
         }
     }
 
+    fun investmentsSingle(coinUid: String, currencyCode: String): Single<List<CoinInvestment>> {
+        return service.getInvestments(coinUid, currencyCode)
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -192,6 +195,12 @@ class HsProvider(
             @Query("coin_uid") coinUid: String,
             @Query("currency") currencyCode: String
         ): Single<List<CoinTreasuryResponse>>
+
+        @GET("funds/investments")
+        fun getInvestments(
+            @Query("coin_uid") coinUid: String,
+            @Query("currency") currencyCode: String
+        ): Single<List<CoinInvestment>>
 
         companion object {
             private const val marketInfoFields =

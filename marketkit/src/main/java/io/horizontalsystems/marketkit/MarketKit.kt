@@ -172,6 +172,10 @@ class MarketKit(
         return coinManager.treasuriesSingle(coinUid, currencyCode)
     }
 
+    fun investmentsSingle(coinUid: String, currencyCode: String): Single<List<CoinInvestment>> {
+        return coinManager.investmentsSingle(coinUid, currencyCode)
+    }
+
     // Chart Info
 
     fun chartInfo(coinUid: String, currencyCode: String, chartType: ChartType): ChartInfo? {

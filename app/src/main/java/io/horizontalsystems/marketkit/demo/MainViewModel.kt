@@ -12,6 +12,23 @@ import io.reactivex.schedulers.Schedulers
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
 
+    fun runInvestments() {
+        val coinUid = "bitcoin"
+        val currencyCode = "USD"
+
+        marketKit.investmentsSingle(coinUid, currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ investments ->
+                investments.forEach {
+                    Log.e("AAA", "${it.round}")
+                }
+            }, {
+                Log.e("AAA", "error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     fun runSyncCoins() {
         marketKit.sync()
         marketKit.refreshCoinPrices("USD")

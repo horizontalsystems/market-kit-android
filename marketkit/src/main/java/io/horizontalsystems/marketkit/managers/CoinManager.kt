@@ -160,6 +160,10 @@ class CoinManager(
         return hsProvider.coinTreasuriesSingle(coinUid, currencyCode)
     }
 
+    fun investmentsSingle(coinUid: String, currencyCode: String): Single<List<CoinInvestment>> {
+        return hsProvider.investmentsSingle(coinUid, currencyCode)
+    }
+
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
         return try {
             val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
