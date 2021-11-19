@@ -20,7 +20,23 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe({ investments ->
                 investments.forEach {
-                    Log.e("AAA", "${it.round}")
+                    Log.e("AAA", it.round)
+                }
+            }, {
+                Log.e("AAA", "error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
+    fun runCoinReports() {
+        val coinUid = "bitcoin"
+
+        marketKit.coinReportsSingle(coinUid)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ reports ->
+                reports.forEach {
+                    Log.e("AAA", it.body)
                 }
             }, {
                 Log.e("AAA", "error", it)

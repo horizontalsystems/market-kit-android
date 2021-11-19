@@ -116,6 +116,10 @@ class HsProvider(
         return service.getInvestments(coinUid, currencyCode)
     }
 
+    fun coinReportsSingle(coinUid: String): Single<List<CoinReport>> {
+        return service.getCoinReports(coinUid)
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -201,6 +205,11 @@ class HsProvider(
             @Query("coin_uid") coinUid: String,
             @Query("currency") currencyCode: String
         ): Single<List<CoinInvestment>>
+
+        @GET("reports")
+        fun getCoinReports(
+            @Query("coin_uid") coinUid: String
+        ): Single<List<CoinReport>>
 
         companion object {
             private const val marketInfoFields =
