@@ -171,7 +171,7 @@ class HsProvider(
             @Query("language") language: String,
         ): Single<MarketInfoOverviewRaw>
 
-        @GET("defi-coins")
+        @GET("defi-protocols")
         fun getDefiMarketInfos(
             @Query("currency") currencyCode: String
         ): Single<List<DefiMarketInfoResponse>>
@@ -182,7 +182,7 @@ class HsProvider(
             @Query("currency") currencyCode: String
         ): Single<MarketInfoDetailsResponse>
 
-        @GET("defi-coins/{coinUid}/tvls")
+        @GET("defi-protocols/{coinUid}/tvls")
         fun getMarketInfoTvl(
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
