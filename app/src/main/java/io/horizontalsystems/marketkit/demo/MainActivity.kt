@@ -70,7 +70,8 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
         MarketKit.getInstance(
             context,
             "https://markets-dev.horizontalsystems.xyz",
-            "https://markets.horizontalsystems.xyz"
+            "https://markets.horizontalsystems.xyz",
+            defiYieldApiKey = "87e8671e-8267-427c-92c3-4627833445ae"
         )
     }
 

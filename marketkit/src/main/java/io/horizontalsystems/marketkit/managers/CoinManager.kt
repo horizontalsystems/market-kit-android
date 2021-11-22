@@ -2,6 +2,7 @@ package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
+import io.horizontalsystems.marketkit.providers.DefiYieldProvider
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
 import io.reactivex.Single
@@ -12,6 +13,7 @@ class CoinManager(
     private val hsProvider: HsProvider,
     private val categoryManager: CoinCategoryManager,
     private val coinGeckoProvider: CoinGeckoProvider,
+    private val defiYieldProvider: DefiYieldProvider,
     private val exchangeManager: ExchangeManager
 ) {
     val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
@@ -149,7 +151,7 @@ class CoinManager(
     }
 
     fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
-        return hsProvider.marketInfoTvlSingle(coinUid,  currencyCode,  timePeriod)
+        return hsProvider.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
     }
 
     fun topHoldersSingle(coinUid: String): Single<List<TokenHolder>> {
@@ -166,6 +168,10 @@ class CoinManager(
 
     fun coinReportsSingle(coinUid: String): Single<List<CoinReport>> {
         return hsProvider.coinReportsSingle(coinUid)
+    }
+
+    fun auditReportsSingle(addresses: List<String>): Single<List<Auditor>> {
+        return defiYieldProvider.auditReportsSingle(addresses)
     }
 
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {

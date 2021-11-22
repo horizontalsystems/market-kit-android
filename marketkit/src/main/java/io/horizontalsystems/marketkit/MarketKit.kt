@@ -7,10 +7,7 @@ import io.horizontalsystems.marketkit.chart.ChartSchedulerFactory
 import io.horizontalsystems.marketkit.chart.ChartSyncManager
 import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
-import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
-import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
-import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
-import io.horizontalsystems.marketkit.providers.HsProvider
+import io.horizontalsystems.marketkit.providers.*
 import io.horizontalsystems.marketkit.storage.*
 import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
@@ -180,6 +177,10 @@ class MarketKit(
         return coinManager.coinReportsSingle(coinUid)
     }
 
+    fun auditReportsSingle(addresses: List<String>): Single<List<Auditor>> {
+        return coinManager.auditReportsSingle(addresses)
+    }
+
     // Chart Info
 
     fun chartInfo(coinUid: String, currencyCode: String, chartType: ChartType): ChartInfo? {
@@ -209,7 +210,8 @@ class MarketKit(
             context: Context,
             hsApiBaseUrl: String,
             hsOldApiBaseUrl: String,
-            cryptoCompareApiKey: String? = null
+            cryptoCompareApiKey: String? = null,
+            defiYieldApiKey: String? = null
         ): MarketKit {
             // init cache
             (context.getSystemService(Context.STORAGE_SERVICE) as StorageManager?)?.let { storageManager ->
@@ -224,6 +226,7 @@ class MarketKit(
             val hsProvider = HsProvider(hsApiBaseUrl, hsOldApiBaseUrl)
             val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
+            val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)
             val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
             val exchangeSyncer = ExchangeSyncer(exchangeManager, coinGeckoProvider)
             val coinManager =
@@ -232,6 +235,7 @@ class MarketKit(
                     hsProvider,
                     coinCategoryManager,
                     coinGeckoProvider,
+                    defiYieldProvider,
                     exchangeManager
                 )
             val coinSyncer = CoinSyncer(hsProvider, coinManager)

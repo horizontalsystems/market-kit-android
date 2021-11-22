@@ -12,6 +12,24 @@ import io.reactivex.schedulers.Schedulers
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
 
+    fun runAudits() {
+        val uniswapAddresses = listOf(
+            "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+            "0xbf5140a22578168fd562dccf235e5d43a02ce9b1"
+        )
+        marketKit.auditReportsSingle(uniswapAddresses)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ auditors ->
+                auditors.forEach { auditor ->
+                    Log.e("AAA", auditor.name)
+                }
+            }, {
+                Log.e("AAA", "error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     fun runInvestments() {
         val coinUid = "bitcoin"
         val currencyCode = "USD"
