@@ -104,6 +104,15 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runFilterFullCoins() {
+        val filter = "if"
+        val fullCoins = marketKit.fullCoins(filter, 100)
+        Log.w("AAA", "Using filter $filter and got ${fullCoins.size} coins")
+        fullCoins.forEach {
+            Log.w("AAA", "Coin ${it.coin.code}, ${it.coin.name}, platforms: ${it.platforms}")
+        }
+    }
+
     fun runFetchMarketInfosByTop() {
         val top = 250
         marketKit.advancedMarketInfosSingle(top, "USD")
