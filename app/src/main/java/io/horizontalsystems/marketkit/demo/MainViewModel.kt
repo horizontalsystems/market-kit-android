@@ -160,7 +160,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .subscribe({ posts ->
                 Log.w("AAA", "posts size ${posts.size}")
                 posts.forEach {
-                    Log.w("AAA", "post: ${it.title} - <${it.url}>")
+                    Log.w("AAA", "post: ${it.source}: ${it.title} - <${it.url}>")
                 }
             }, {
                 Log.e("AAA", "postsSingle error", it)

@@ -21,7 +21,7 @@ class CryptoCompareProvider(
         return cryptoCompareService.news(excludeCategories, newsFeeds, extraParams, apiKey)
             .map { postsResponse ->
                 postsResponse.Data.map { postItem ->
-                    Post(postItem.source, postItem.title, postItem.body, postItem.published_on, postItem.url)
+                    Post(postItem.source_info["name"] ?: "", postItem.title, postItem.body, postItem.published_on, postItem.url)
                 }
             }
             .retryWhenError(Throwable::class)
@@ -48,7 +48,7 @@ class CryptoCompareProvider(
         val title: String,
         val url: String,
         val body: String,
-        val source: String,
+        val source_info: Map<String, String>,
         val categories: String,
     )
 
