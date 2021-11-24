@@ -98,10 +98,6 @@ class MarketKit(
         return coinManager.platformCoinsByCoinTypeIds(coinTypeIds)
     }
 
-    fun coins(filter: String, limit: Int = 20): List<Coin> {
-        return coinManager.coins(filter, limit)
-    }
-
     // Categories
 
     val coinCategoriesObservable: Observable<List<CoinCategory>>

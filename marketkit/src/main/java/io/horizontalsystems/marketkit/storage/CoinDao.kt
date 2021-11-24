@@ -40,14 +40,6 @@ interface CoinDao {
     @RawQuery
     fun getPlatformCoins(query: SupportSQLiteQuery): List<PlatformCoin>
 
-    @Query(
-        "SELECT * FROM Coin " +
-                "WHERE name LIKE :filter OR code LIKE :filter " +
-                "ORDER BY CASE WHEN marketCapRank IS NULL THEN 1 ELSE 0 END, marketCapRank ASC " +
-                "LIMIT :limit"
-    )
-    fun getCoins(filter: String, limit: Int): List<Coin>
-
     @Transaction
     fun save(fullCoins: List<FullCoin>) {
         fullCoins.forEach { marketCoin ->

@@ -75,10 +75,6 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         return orderQuery
     }
 
-    fun coins(filter: String, limit: Int): List<Coin> {
-        return coinDao.getCoins("%$filter%", limit)
-    }
-
     fun save(fullCoins: List<FullCoin>) {
         coinDao.save(fullCoins)
     }

@@ -129,10 +129,6 @@ class CoinManager(
         return storage.platformCoinsByCoinTypeIds(coinTypeIds)
     }
 
-    fun coins(filter: String, limit: Int): List<Coin> {
-        return storage.coins(filter, limit)
-    }
-
     fun handleFetched(fullCoins: List<FullCoin>) {
         storage.save(fullCoins)
         fullCoinsUpdatedObservable.onNext(Unit)
