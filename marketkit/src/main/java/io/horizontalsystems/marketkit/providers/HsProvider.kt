@@ -19,8 +19,8 @@ class HsProvider(
         RetrofitUtils.build("${oldBaseUrl}/api/v1/").create(MarketServiceOld::class.java)
     }
 
-    fun getFullCoins(): Single<List<FullCoin>> {
-        return service.getFullCoins()
+    fun getFullCoins(page: Int, limit: Int): Single<List<FullCoin>> {
+        return service.getFullCoins(page, limit)
             .map { responseCoinsList ->
                 responseCoinsList.map { it.fullCoin() }
             }
@@ -123,6 +123,8 @@ class HsProvider(
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
+            @Query("page") page: Int,
+            @Query("limit") limit: Int,
             @Query("fields") fields: String = fullCoinFields,
         ): Single<List<FullCoinResponse>>
 

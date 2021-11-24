@@ -238,7 +238,7 @@ class MarketKit(
                     defiYieldProvider,
                     exchangeManager
                 )
-            val coinSyncer = CoinSyncer(hsProvider, coinManager)
+            val coinSyncer = CoinSyncer(hsProvider, coinManager, marketDatabase.syncerStateDao())
             val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
             val coinPriceSchedulerFactory = CoinPriceSchedulerFactory(coinPriceManager, hsProvider)
