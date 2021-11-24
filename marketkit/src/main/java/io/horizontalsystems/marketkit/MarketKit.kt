@@ -228,7 +228,7 @@ class MarketKit(
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)
             val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
-            val exchangeSyncer = ExchangeSyncer(exchangeManager, coinGeckoProvider)
+            val exchangeSyncer = ExchangeSyncer(exchangeManager, coinGeckoProvider, marketDatabase.syncerStateDao())
             val coinManager =
                 CoinManager(
                     CoinStorage(marketDatabase),
