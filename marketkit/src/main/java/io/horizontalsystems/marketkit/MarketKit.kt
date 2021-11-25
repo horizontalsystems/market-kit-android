@@ -114,8 +114,8 @@ class MarketKit(
 
     fun sync() {
         coinSyncer.sync()
-//        coinCategorySyncer.sync()
-//        exchangeSyncer.sync()
+        coinCategorySyncer.sync()
+        exchangeSyncer.sync()
     }
 
     // Coin Prices
