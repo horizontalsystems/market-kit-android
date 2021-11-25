@@ -45,7 +45,7 @@ abstract class MarketDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): MarketDatabase {
             return Room.databaseBuilder(context, MarketDatabase::class.java, "marketKitDatabase")
-                .createFromAsset("databases/databaseDump_version_1.db")
+                .createFromAsset("databases/coins-data-v1.db")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()
