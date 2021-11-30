@@ -11,7 +11,7 @@ interface CoinCategoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(coinCategories: List<CoinCategory>)
 
-    @Query("SELECT * FROM CoinCategory")
+    @Query("SELECT * FROM CoinCategory ORDER BY `order`")
     fun getCoinCategories(): List<CoinCategory>
 
     @Query("SELECT * FROM CoinCategory WHERE uid IN(:uids)")
