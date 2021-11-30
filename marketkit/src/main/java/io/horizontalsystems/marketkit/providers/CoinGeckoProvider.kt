@@ -24,7 +24,7 @@ class CoinGeckoProvider(private val baseUrl: String) {
         return coinGeckoService.coinMarketChart(
             externalId,
             chartPointKey.currencyCode,
-            2 * chartPointKey.chartType.days,
+            chartPointKey.chartType.coinGeckoDaysParameter,
             interval
         ).map { chartPointsResponse ->
             val intervalInSeconds = chartPointKey.chartType.seconds

@@ -55,6 +55,12 @@ enum class ChartType(val interval: Long, val points: Int, val resource: String) 
             MONTHLY24 -> 720
         }
 
+    val coinGeckoDaysParameter: Int
+        get() = when (this) {
+            TODAY, DAILY, MONTHLY_BY_DAY -> days
+            else -> days * 2
+        }
+
     companion object {
         private val map = values().associateBy(ChartType::name)
 
