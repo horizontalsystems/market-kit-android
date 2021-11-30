@@ -5,7 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.horizontalsystems.marketkit.models.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.logging.Logger
 
 
 @Database(
@@ -34,6 +38,8 @@ abstract class MarketDatabase : RoomDatabase() {
 
     companion object {
 
+        private val logger = Logger.getLogger("MarketDatabase")
+
         @Volatile
         private var INSTANCE: MarketDatabase? = null
 
@@ -44,12 +50,39 @@ abstract class MarketDatabase : RoomDatabase() {
         }
 
         private fun buildDatabase(context: Context): MarketDatabase {
-            return Room.databaseBuilder(context, MarketDatabase::class.java, "marketKitDatabase")
-                .createFromAsset("databases/coins-data-v1.db")
+            val db = Room.databaseBuilder(context, MarketDatabase::class.java, "marketKitDatabase")
+                .addCallback(object : Callback() {
+                    override fun onCreate(db: SupportSQLiteDatabase) {
+                        val loadedCount = loadInitialCoins(db, context)
+                        logger.info("Loaded coins count: $loadedCount")
+                    }
+                })
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()
+
+            // force db creation
+            db.query("select 1", null)
+
+            return db
+        }
+
+        private fun loadInitialCoins(db: SupportSQLiteDatabase, context: Context): Int {
+            val inputStream = context.assets.open("initial_coins_list")
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+            var insertCount = 0
+
+            try {
+                while (bufferedReader.ready()) {
+                    val insertStmt: String = bufferedReader.readLine()
+                    db.execSQL(insertStmt)
+                    insertCount++
+                }
+            } catch (error: Exception) {
+                logger.info("Error in loadInitialCoins(): ${error.message ?: error.javaClass.simpleName}")
+            }
+
+            return insertCount
         }
     }
-
 }
