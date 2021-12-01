@@ -18,6 +18,7 @@ import java.util.logging.Logger
         Platform::class,
         CoinCategory::class,
         CoinPrice::class,
+        CoinHistoricalPrice::class,
         ChartPointEntity::class,
         GlobalMarketInfo::class,
         Exchange::class,
@@ -31,6 +32,7 @@ abstract class MarketDatabase : RoomDatabase() {
     abstract fun coinDao(): CoinDao
     abstract fun coinCategoryDao(): CoinCategoryDao
     abstract fun coinPriceDao(): CoinPriceDao
+    abstract fun coinHistoricalPriceDao(): CoinHistoricalPriceDao
     abstract fun chartPointDao(): ChartPointDao
     abstract fun globalMarketInfoDao(): GlobalMarketInfoDao
     abstract fun exchangeDao(): ExchangeDao

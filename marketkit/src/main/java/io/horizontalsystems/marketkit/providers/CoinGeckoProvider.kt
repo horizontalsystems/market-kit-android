@@ -9,6 +9,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.math.BigDecimal
 import java.util.*
+import kotlin.math.absoluteValue
 
 class CoinGeckoProvider(private val baseUrl: String) {
 
@@ -87,6 +88,39 @@ class CoinGeckoProvider(private val baseUrl: String) {
             }
     }
 
+    fun historicalPriceSingle(
+        id: String,
+        currencyCode: String,
+        timestamp: Long
+    ): Single<BigDecimal> {
+
+        val tsDiff = ((System.currentTimeMillis() / 1000) - timestamp) / 3600 //Diff in hours
+        val startTime =
+            if (tsDiff < 24) timestamp - MINUTES_10_IN_SECONDS else timestamp - HOURS_2_IN_SECONDS
+        val endTime =
+            if (tsDiff < 24) timestamp + MINUTES_10_IN_SECONDS else timestamp + HOURS_2_IN_SECONDS
+
+        return coinGeckoService.coinMarketChartRange(
+            id,
+            currencyCode,
+            startTime,
+            endTime,
+        ).map { result ->
+            // result.price is List<BigDecimal>, where
+            // price.get(0) is timestamp in milliseconds
+            // price.get(1) is coin price
+
+            //find price with nearest timestamp from fetched results
+            val price = result.prices.minByOrNull {
+                val timestampMillis = it[0].toLong()
+
+                (timestampMillis / 1000L - timestamp).absoluteValue
+            }!!.get(1)
+
+            price
+        }
+    }
+
     fun marketTickersSingle(coinGeckoId: String): Single<CoinGeckoCoinResponse> {
         return coinGeckoService.marketTickers(
             coinGeckoId,
@@ -115,6 +149,14 @@ class CoinGeckoProvider(private val baseUrl: String) {
             @Query("interval") interval: String?,
         ): Single<Response.HistoricalMarketData>
 
+        @GET("coins/{coinId}/market_chart/range")
+        fun coinMarketChartRange(
+            @Path("coinId") coinId: String,
+            @Query("vs_currency") vs_currency: String,
+            @Query("from") from: Long,
+            @Query("to") to: Long,
+        ): Single<Response.HistoricalMarketData>
+
         @GET("exchanges")
         fun exchanges(
             @Query("per_page") limit: Int,
@@ -140,6 +182,11 @@ class CoinGeckoProvider(private val baseUrl: String) {
                 val total_volumes: List<List<BigDecimal>>,
             )
         }
+    }
+
+    companion object{
+        private const val MINUTES_10_IN_SECONDS = 60 * 10
+        private const val HOURS_2_IN_SECONDS = 60 * 60 * 2
     }
 
 }

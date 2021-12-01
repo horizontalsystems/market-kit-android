@@ -14,6 +14,7 @@ import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
+import java.math.BigDecimal
 
 class MarketKit(
     private val coinManager: CoinManager,
@@ -21,6 +22,7 @@ class MarketKit(
     private val coinSyncer: CoinSyncer,
     private val coinCategorySyncer: CoinCategorySyncer,
     private val coinPriceManager: CoinPriceManager,
+    private val coinHistoricalPriceManager: CoinHistoricalPriceManager,
     private val coinPriceSyncManager: CoinPriceSyncManager,
     private val postManager: PostManager,
     private val chartManager: ChartManager,
@@ -143,6 +145,20 @@ class MarketKit(
         return coinPriceSyncManager.coinPriceMapObservable(coinUids, currencyCode)
     }
 
+    // Coin Historical Price
+
+    fun coinHistoricalPriceSingle(
+        coinUid: String,
+        currencyCode: String,
+        timestamp: Long
+    ): Single<BigDecimal> {
+        return coinHistoricalPriceManager.coinHistoricalPriceSingle(
+            coinUid,
+            currencyCode,
+            timestamp
+        )
+    }
+
     // Posts
 
     fun postsSingle(): Single<List<Post>> {
@@ -237,6 +253,11 @@ class MarketKit(
             val coinSyncer = CoinSyncer(hsProvider, coinManager, marketDatabase.syncerStateDao())
             val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
+            val coinHistoricalPriceManager = CoinHistoricalPriceManager(
+                CoinHistoricalPriceStorage(marketDatabase),
+                coinManager,
+                coinGeckoProvider
+            )
             val coinPriceSchedulerFactory = CoinPriceSchedulerFactory(coinPriceManager, hsProvider)
             val coinPriceSyncManager = CoinPriceSyncManager(coinPriceSchedulerFactory)
             coinPriceManager.listener = coinPriceSyncManager
@@ -256,6 +277,7 @@ class MarketKit(
                 coinSyncer,
                 coinCategorySyncer,
                 coinPriceManager,
+                coinHistoricalPriceManager,
                 coinPriceSyncManager,
                 postManager,
                 chartManager,
@@ -271,6 +293,7 @@ class MarketKit(
 //Errors
 
 class NoChartInfo : Exception()
+class CoinNotFound : Exception()
 
 sealed class ProviderError : Exception() {
     class ApiRequestLimitExceeded : ProviderError()

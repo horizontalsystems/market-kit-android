@@ -8,6 +8,8 @@ import io.horizontalsystems.marketkit.models.PlatformType
 import io.horizontalsystems.marketkit.models.TimePeriod
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
@@ -241,6 +243,23 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         coinList.forEach {
             Log.w("AAA", "getPlatformCoinsByPlatformType code: ${it.code} name: ${it.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.coinType.id}", )
         }
+    }
+
+    fun runHistoricalPrice() {
+        val dateString = "01-12-2020"
+        val timestamp = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            .parse(dateString)?.time?.div(1000) ?: return
+
+        marketKit.coinHistoricalPriceSingle("bitcoin", "USD", timestamp)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "runHistoricalPrice BTC price for $dateString: $it")
+            }, {
+                Log.e("AAA", "coinHistoricalPriceValueSingle Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
     }
 
     override fun onCleared() {

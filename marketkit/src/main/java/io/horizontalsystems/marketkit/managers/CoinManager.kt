@@ -18,6 +18,8 @@ class CoinManager(
 ) {
     val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
 
+    fun coin(uid: String): Coin? = storage.coin(uid)
+
     fun fullCoins(filter: String, limit: Int): List<FullCoin> {
         return storage.fullCoins(filter, limit)
     }
@@ -146,7 +148,11 @@ class CoinManager(
         }
     }
 
-    fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
+    fun marketInfoTvlSingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: TimePeriod
+    ): Single<List<ChartPoint>> {
         return hsProvider.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
     }
 
