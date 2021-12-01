@@ -33,4 +33,8 @@ class CoinHistoricalPriceManager(
             }
     }
 
+    fun coinHistoricalPrice(coinUid: String, currencyCode: String, timestamp: Long): BigDecimal? {
+        return storage.coinPrice(coinUid, currencyCode, timestamp)?.value
+    }
+
 }

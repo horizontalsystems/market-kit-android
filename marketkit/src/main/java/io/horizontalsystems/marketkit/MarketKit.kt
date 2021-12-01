@@ -159,6 +159,10 @@ class MarketKit(
         )
     }
 
+    fun coinHistoricalPrice(coinUid: String, currencyCode: String, timestamp: Long): BigDecimal? {
+        return coinHistoricalPriceManager.coinHistoricalPrice(coinUid, currencyCode, timestamp)
+    }
+
     // Posts
 
     fun postsSingle(): Single<List<Post>> {
