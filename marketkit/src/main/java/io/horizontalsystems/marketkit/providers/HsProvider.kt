@@ -133,6 +133,7 @@ class HsProvider(
             @Query("limit") top: Int,
             @Query("currency") currencyCode: String,
             @Query("defi") defi: Boolean,
+            @Query("order_by_rank") orderByRank: Boolean = true,
             @Query("fields") fields: String = marketInfoFields,
         ): Single<List<MarketInfoRaw>>
 
@@ -140,6 +141,7 @@ class HsProvider(
         fun getAdvancedMarketInfos(
             @Query("limit") top: Int,
             @Query("currency") currencyCode: String,
+            @Query("order_by_rank") orderByRank: Boolean = true,
             @Query("fields") fields: String = advancedMarketFields,
         ): Single<List<MarketInfoRaw>>
 
