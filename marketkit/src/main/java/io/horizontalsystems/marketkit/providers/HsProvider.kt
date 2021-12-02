@@ -112,8 +112,8 @@ class HsProvider(
         }
     }
 
-    fun investmentsSingle(coinUid: String, currencyCode: String): Single<List<CoinInvestment>> {
-        return service.getInvestments(coinUid, currencyCode)
+    fun investmentsSingle(coinUid: String): Single<List<CoinInvestment>> {
+        return service.getInvestments(coinUid)
     }
 
     fun coinReportsSingle(coinUid: String): Single<List<CoinReport>> {
@@ -207,7 +207,6 @@ class HsProvider(
         @GET("funds/investments")
         fun getInvestments(
             @Query("coin_uid") coinUid: String,
-            @Query("currency") currencyCode: String
         ): Single<List<CoinInvestment>>
 
         @GET("reports")

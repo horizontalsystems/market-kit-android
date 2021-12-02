@@ -33,10 +33,9 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runInvestments() {
-        val coinUid = "bitcoin"
-        val currencyCode = "USD"
+        val coinUid = "ethereum"
 
-        marketKit.investmentsSingle(coinUid, currencyCode)
+        marketKit.investmentsSingle(coinUid)
             .subscribeOn(Schedulers.io())
             .subscribe({ investments ->
                 investments.forEach {

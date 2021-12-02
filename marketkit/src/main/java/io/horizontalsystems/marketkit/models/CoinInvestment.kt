@@ -7,9 +7,7 @@ import java.util.*
 data class CoinInvestment(
     val date: Date,
     val round: String,
-    val amount: BigDecimal,
-    @SerializedName("amount_in_currency")
-    val amountInCurrency: BigDecimal,
+    val amount: BigDecimal?,
     val funds: List<Fund>
 ) {
 

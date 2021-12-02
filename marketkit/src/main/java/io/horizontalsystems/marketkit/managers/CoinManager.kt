@@ -164,8 +164,8 @@ class CoinManager(
         return hsProvider.coinTreasuriesSingle(coinUid, currencyCode)
     }
 
-    fun investmentsSingle(coinUid: String, currencyCode: String): Single<List<CoinInvestment>> {
-        return hsProvider.investmentsSingle(coinUid, currencyCode)
+    fun investmentsSingle(coinUid: String): Single<List<CoinInvestment>> {
+        return hsProvider.investmentsSingle(coinUid)
     }
 
     fun coinReportsSingle(coinUid: String): Single<List<CoinReport>> {

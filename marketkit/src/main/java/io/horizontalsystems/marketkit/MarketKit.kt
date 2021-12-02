@@ -185,8 +185,8 @@ class MarketKit(
         return coinManager.treasuriesSingle(coinUid, currencyCode)
     }
 
-    fun investmentsSingle(coinUid: String, currencyCode: String): Single<List<CoinInvestment>> {
-        return coinManager.investmentsSingle(coinUid, currencyCode)
+    fun investmentsSingle(coinUid: String): Single<List<CoinInvestment>> {
+        return coinManager.investmentsSingle(coinUid)
     }
 
     fun coinReportsSingle(coinUid: String): Single<List<CoinReport>> {
