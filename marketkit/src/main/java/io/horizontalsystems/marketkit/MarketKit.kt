@@ -225,7 +225,6 @@ class MarketKit(
         fun getInstance(
             context: Context,
             hsApiBaseUrl: String,
-            hsOldApiBaseUrl: String,
             cryptoCompareApiKey: String? = null,
             defiYieldApiKey: String? = null
         ): MarketKit {
@@ -239,7 +238,7 @@ class MarketKit(
             }
 
             val marketDatabase = MarketDatabase.getInstance(context)
-            val hsProvider = HsProvider(hsApiBaseUrl, hsOldApiBaseUrl)
+            val hsProvider = HsProvider(hsApiBaseUrl)
             val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase))
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)

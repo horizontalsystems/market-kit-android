@@ -6,17 +6,10 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-class HsProvider(
-    baseUrl: String,
-    oldBaseUrl: String,
-) {
+class HsProvider(baseUrl: String) {
 
     private val service by lazy {
         RetrofitUtils.build("${baseUrl}/v1/").create(MarketService::class.java)
-    }
-
-    private val serviceOld by lazy {
-        RetrofitUtils.build("${oldBaseUrl}/api/v1/").create(MarketServiceOld::class.java)
     }
 
     fun getFullCoins(page: Int, limit: Int): Single<List<FullCoin>> {
@@ -67,7 +60,13 @@ class HsProvider(
         currencyCode: String,
         timePeriod: TimePeriod,
     ): Single<List<GlobalMarketPoint>> {
-        return serviceOld.globalMarketPoints(timePeriod.v, currencyCode)
+        val interval = when (timePeriod) {
+            TimePeriod.Day7 -> "7d"
+            TimePeriod.Day30 -> "30d"
+            else -> "1d"
+        }
+
+        return service.globalMarketPoints(interval, currencyCode)
     }
 
     fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfoResponse>> {
@@ -214,6 +213,12 @@ class HsProvider(
             @Query("coin_uid") coinUid: String
         ): Single<List<CoinReport>>
 
+        @GET("global-markets")
+        fun globalMarketPoints(
+            @Query("interval") timePeriod: String,
+            @Query("currency") currencyCode: String,
+        ): Single<List<GlobalMarketPoint>>
+
         companion object {
             private const val marketInfoFields =
                 "name,code,price,price_change_24h,market_cap_rank,coingecko_id,market_cap,total_volume"
@@ -223,13 +228,4 @@ class HsProvider(
                 "price,market_cap,total_volume,price_change_24h,price_change_7d,price_change_14d,price_change_30d,price_change_200d,price_change_1y,ath_percentage,atl_percentage"
         }
     }
-
-    private interface MarketServiceOld {
-        @GET("markets/global/{timePeriod}")
-        fun globalMarketPoints(
-            @Path("timePeriod") timePeriod: String,
-            @Query("currency_code") currencyCode: String,
-        ): Single<List<GlobalMarketPoint>>
-    }
-
 }

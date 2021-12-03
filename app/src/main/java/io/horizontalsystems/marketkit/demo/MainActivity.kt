@@ -69,8 +69,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
     private val marketKit by lazy {
         MarketKit.getInstance(
             context,
-            "https://markets-dev.horizontalsystems.xyz",
-            "https://markets.horizontalsystems.xyz",
+            "https://api.blocksdecoded.com",
             defiYieldApiKey = "87e8671e-8267-427c-92c3-4627833445ae"
         )
     }
