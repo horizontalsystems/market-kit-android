@@ -6,10 +6,10 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-class HsProvider(baseUrl: String) {
+class HsProvider(baseUrl: String, apiKey: String) {
 
     private val service by lazy {
-        RetrofitUtils.build("${baseUrl}/v1/").create(MarketService::class.java)
+        RetrofitUtils.build("${baseUrl}/v1/", mapOf("apikey" to apiKey)).create(MarketService::class.java)
     }
 
     fun getFullCoins(page: Int, limit: Int): Single<List<FullCoin>> {
