@@ -84,7 +84,27 @@ class HsProvider(baseUrl: String) {
             else -> "1d"
         }
         return service.getMarketInfoTvl(coinUid, currencyCode, interval).map { responseList ->
-            responseList.map { ChartPoint(it.tvl, null, it.timestamp) }
+            responseList.mapNotNull { it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) } }
+        }
+    }
+
+    fun marketInfoGlobalTvlSingle(
+        chain: String,
+        currencyCode: String,
+        timePeriod: TimePeriod
+    ): Single<List<ChartPoint>> {
+        val interval = when (timePeriod) {
+            TimePeriod.Day7 -> "7d"
+            TimePeriod.Day30 -> "30d"
+            else -> "1d"
+        }
+
+        return service.getMarketInfoGlobalTvl(
+            currencyCode,
+            interval,
+            chain = if (chain.isNotBlank()) chain else null
+        ).map { responseList ->
+            responseList.mapNotNull { it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) } }
         }
     }
 
@@ -190,6 +210,13 @@ class HsProvider(baseUrl: String) {
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
             @Query("interval") interval: String
+        ): Single<List<MarketInfoTvlResponse>>
+
+        @GET("global-markets/tvls")
+        fun getMarketInfoGlobalTvl(
+            @Query("currency") currencyCode: String,
+            @Query("interval") interval: String,
+            @Query("chain") chain: String?
         ): Single<List<MarketInfoTvlResponse>>
 
         @GET("addresses/holders")

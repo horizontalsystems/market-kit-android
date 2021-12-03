@@ -156,6 +156,14 @@ class CoinManager(
         return hsProvider.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
     }
 
+    fun marketInfoGlobalTvlSingle(
+        chain: String,
+        currencyCode: String,
+        timePeriod: TimePeriod
+    ): Single<List<ChartPoint>> {
+       return hsProvider.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
+    }
+
     fun topHoldersSingle(coinUid: String): Single<List<TokenHolder>> {
         return hsProvider.topHoldersSingle(coinUid)
     }
