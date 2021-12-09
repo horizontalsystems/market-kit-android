@@ -42,7 +42,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
     fun getCoinPrices(coinUids: List<String>, currencyCode: String): Single<List<CoinPrice>> {
         return service.getCoinPrices(coinUids.joinToString(separator = ","), currencyCode)
             .map { coinPrices ->
-                coinPrices.map { coinPriceResponse ->
+                coinPrices.mapNotNull { coinPriceResponse ->
                     coinPriceResponse.coinPrice(currencyCode)
                 }
             }

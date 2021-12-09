@@ -5,13 +5,14 @@ import java.math.BigDecimal
 
 data class CoinPriceResponse(
     val uid: String,
-    val price: BigDecimal,
+    val price: BigDecimal?,
     @SerializedName("price_change_24h")
-    val priceChange: BigDecimal,
+    val priceChange: BigDecimal?,
     @SerializedName("last_updated")
-    val lastUpdated: Long
+    val lastUpdated: Long?
 ) {
-    fun coinPrice(currencyCode: String): CoinPrice {
-        return CoinPrice(uid, currencyCode, price, priceChange, lastUpdated)
+    fun coinPrice(currencyCode: String) = when {
+        price == null || priceChange == null || lastUpdated == null -> null
+        else -> CoinPrice(uid, currencyCode, price, priceChange, lastUpdated)
     }
 }
