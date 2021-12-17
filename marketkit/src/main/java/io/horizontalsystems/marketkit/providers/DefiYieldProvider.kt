@@ -32,11 +32,13 @@ class DefiYieldProvider(
                     val audits = mutableMapOf<Int, MutableList<PartnerAudit>>()
 
                     info.partnerAudits.forEach { audit ->
-                        val partnerId = audit.partner.id
-                        partners[partnerId] = audit.partner
-                        val partnerAudits = audits[partnerId] ?: mutableListOf()
-                        partnerAudits.add(audit)
-                        audits[partnerId] = partnerAudits
+                        audit.partner?.let{ partner ->
+                            val partnerId = partner.id
+                            partners[partnerId] = partner
+                            val partnerAudits = audits[partnerId] ?: mutableListOf()
+                            partnerAudits.add(audit)
+                            audits[partnerId] = partnerAudits
+                        }
                     }
 
                     partners.mapNotNull { (id, partner) ->
@@ -52,7 +54,7 @@ class DefiYieldProvider(
                                 name = audit.name,
                                 date = date,
                                 issues = audit.techIssues ?: 0,
-                                link = "$fileBaseUrl${audit.auditLink}"
+                                link = audit.auditLink?.let { "$fileBaseUrl$it" }
                             )
                         }
                         auditors.add(Auditor(partner.name, reports))

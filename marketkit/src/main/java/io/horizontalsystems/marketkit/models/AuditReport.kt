@@ -6,5 +6,5 @@ data class AuditReport(
     val name: String,
     val date: Date?,
     val issues: Int,
-    val link: String
+    val link: String?
 )

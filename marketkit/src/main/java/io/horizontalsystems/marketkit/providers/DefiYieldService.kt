@@ -28,8 +28,8 @@ interface DefiYieldService {
         @SerializedName("tech_issues")
         val techIssues: Int?,
         @SerializedName("audit_link")
-        val auditLink: String,
-        val partner: Partner
+        val auditLink: String?,
+        val partner: Partner?
     )
 
     data class Partner(
