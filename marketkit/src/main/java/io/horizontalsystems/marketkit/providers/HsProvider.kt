@@ -252,7 +252,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
             private const val fullCoinFields = "name,code,market_cap_rank,coingecko_id,platforms"
             private const val coinPriceFields = "price,price_change_24h,last_updated"
             private const val advancedMarketFields =
-                "price,market_cap,total_volume,price_change_24h,price_change_7d,price_change_14d,price_change_30d,price_change_200d,price_change_1y,ath_percentage,atl_percentage"
+                "platforms,price,market_cap,total_volume,price_change_24h,price_change_7d,price_change_14d,price_change_30d,price_change_200d,price_change_1y,ath_percentage,atl_percentage"
         }
     }
 }
