@@ -235,6 +235,26 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runGetMarketDefi() {
+        val currencyUsd = "usd"
+        marketKit.defiMarketInfosSingle(currencyUsd)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it
+                    .forEach {
+                        Log.w(
+                            "AAA",
+                            "getMarketDefi: ${it.name} tvl: ${it.tvl} tvlRank: ${it.tvlRank} chainTvls.size: ${it.chainTvls.size}"
+                        )
+                    }
+            }, {
+                Log.e("AAA", "getMarketDefi Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runPlatformCoinsByPlatformType() {
         val platformType = PlatformType.Ethereum
         val filter = "eth"

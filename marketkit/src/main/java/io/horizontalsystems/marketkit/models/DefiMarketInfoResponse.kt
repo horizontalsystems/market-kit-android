@@ -17,5 +17,7 @@ data class DefiMarketInfoResponse(
     val tvlChange7D: BigDecimal?,
     @SerializedName("tvl_change_30d")
     val tvlChange30D: BigDecimal?,
-    val chains: List<String>
+    val chains: List<String>,
+    @SerializedName("chain_tvls")
+    val chainTvls: Map<String, BigDecimal?>,
 )
