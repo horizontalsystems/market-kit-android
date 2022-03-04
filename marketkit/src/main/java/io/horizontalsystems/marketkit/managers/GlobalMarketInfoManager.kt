@@ -2,7 +2,7 @@ package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.models.GlobalMarketInfo
 import io.horizontalsystems.marketkit.models.GlobalMarketPoint
-import io.horizontalsystems.marketkit.models.TimePeriod
+import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.GlobalMarketInfoStorage
 import io.reactivex.Single
@@ -13,7 +13,7 @@ class GlobalMarketInfoManager(
 ) {
     private val expirationInterval = 600 // 10 minutes
 
-    fun globalMarketInfoSingle(currencyCode: String, timePeriod: TimePeriod): Single<List<GlobalMarketPoint>> {
+    fun globalMarketInfoSingle(currencyCode: String, timePeriod: HsTimePeriod): Single<List<GlobalMarketPoint>> {
         val currentTimestamp = System.currentTimeMillis() / 1000
 
         storage.globalMarketInfo(currencyCode, timePeriod)?.let { data ->

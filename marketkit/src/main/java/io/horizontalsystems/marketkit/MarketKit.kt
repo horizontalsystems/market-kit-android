@@ -76,14 +76,18 @@ class MarketKit(
         return coinManager.marketInfoDetailsSingle(coinUid, currencyCode)
     }
 
-    fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
+    fun marketInfoTvlSingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: HsTimePeriod
+    ): Single<List<ChartPoint>> {
         return coinManager.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
     }
 
     fun marketInfoGlobalTvlSingle(
         chain: String,
         currencyCode: String,
-        timePeriod: TimePeriod
+        timePeriod: HsTimePeriod
     ): Single<List<ChartPoint>> {
         return coinManager.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
     }
@@ -225,7 +229,7 @@ class MarketKit(
 
     // Global Market Info
 
-    fun globalMarketPointsSingle(currencyCode: String, timePeriod: TimePeriod): Single<List<GlobalMarketPoint>> {
+    fun globalMarketPointsSingle(currencyCode: String, timePeriod: HsTimePeriod): Single<List<GlobalMarketPoint>> {
         return globalMarketInfoManager.globalMarketInfoSingle(currencyCode, timePeriod)
     }
 

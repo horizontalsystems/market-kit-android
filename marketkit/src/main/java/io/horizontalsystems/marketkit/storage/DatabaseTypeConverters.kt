@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.horizontalsystems.marketkit.models.CoinType
 import io.horizontalsystems.marketkit.models.GlobalMarketPoint
+import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.TimePeriod
 import java.math.BigDecimal
 
@@ -49,6 +50,16 @@ class DatabaseTypeConverters {
     @TypeConverter
     fun toTimePeriod(value: String): TimePeriod {
         return TimePeriod.valueOf(value)
+    }
+
+    @TypeConverter
+    fun fromHsTimePeriod(timePeriod: HsTimePeriod): String {
+        return timePeriod.value
+    }
+
+    @TypeConverter
+    fun toHsTimePeriod(value: String): HsTimePeriod {
+        return HsTimePeriod.values().first { it.value == value }
     }
 
     @TypeConverter

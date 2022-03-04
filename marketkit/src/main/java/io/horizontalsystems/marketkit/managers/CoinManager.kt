@@ -151,7 +151,7 @@ class CoinManager(
     fun marketInfoTvlSingle(
         coinUid: String,
         currencyCode: String,
-        timePeriod: TimePeriod
+        timePeriod: HsTimePeriod
     ): Single<List<ChartPoint>> {
         return hsProvider.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
     }
@@ -159,7 +159,7 @@ class CoinManager(
     fun marketInfoGlobalTvlSingle(
         chain: String,
         currencyCode: String,
-        timePeriod: TimePeriod
+        timePeriod: HsTimePeriod
     ): Single<List<ChartPoint>> {
        return hsProvider.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
     }
