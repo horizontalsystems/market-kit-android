@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.horizontalsystems.marketkit.models.GlobalMarketInfo
-import io.horizontalsystems.marketkit.models.TimePeriod
+import io.horizontalsystems.marketkit.models.HsTimePeriod
 
 @Dao
 interface GlobalMarketInfoDao {
@@ -13,5 +13,5 @@ interface GlobalMarketInfoDao {
     fun insert(globalMarketInfo: GlobalMarketInfo)
 
     @Query("SELECT * FROM GlobalMarketInfo WHERE currencyCode=:currencyCode AND timePeriod=:timePeriod")
-    fun getGlobalMarketInfo(currencyCode: String, timePeriod: TimePeriod): GlobalMarketInfo?
+    fun getGlobalMarketInfo(currencyCode: String, timePeriod: HsTimePeriod): GlobalMarketInfo?
 }

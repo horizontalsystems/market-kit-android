@@ -27,7 +27,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getAdvancedMarketInfos(top, currencyCode)
     }
 
-    fun marketInfosSingle(coinUids: List<String>, currencyCode: String): Single<List<MarketInfoRaw>> {
+    fun marketInfosSingle(
+        coinUids: List<String>,
+        currencyCode: String
+    ): Single<List<MarketInfoRaw>> {
         return service.getMarketInfos(coinUids.joinToString(","), currencyCode)
     }
 
@@ -58,15 +61,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
     fun getGlobalMarketPointsSingle(
         currencyCode: String,
-        timePeriod: TimePeriod,
+        timePeriod: HsTimePeriod,
     ): Single<List<GlobalMarketPoint>> {
-        val interval = when (timePeriod) {
-            TimePeriod.Day7 -> "7d"
-            TimePeriod.Day30 -> "30d"
-            else -> "1d"
-        }
-
-        return service.globalMarketPoints(interval, currencyCode)
+        return service.globalMarketPoints(timePeriod.value, currencyCode)
     }
 
     fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfoResponse>> {
@@ -77,31 +74,28 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getMarketInfoDetails(coinUid, currency)
     }
 
-    fun marketInfoTvlSingle(coinUid: String, currencyCode: String, timePeriod: TimePeriod): Single<List<ChartPoint>> {
-        val interval = when (timePeriod) {
-            TimePeriod.Day7 -> "7d"
-            TimePeriod.Day30 -> "30d"
-            else -> "1d"
-        }
-        return service.getMarketInfoTvl(coinUid, currencyCode, interval).map { responseList ->
-            responseList.mapNotNull { it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) } }
-        }
+    fun marketInfoTvlSingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: HsTimePeriod
+    ): Single<List<ChartPoint>> {
+        return service.getMarketInfoTvl(coinUid, currencyCode, timePeriod.value)
+            .map { responseList ->
+                responseList.mapNotNull {
+                    it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) }
+                }
+            }
     }
 
     fun marketInfoGlobalTvlSingle(
         chain: String,
         currencyCode: String,
-        timePeriod: TimePeriod
+        timePeriod: HsTimePeriod
     ): Single<List<ChartPoint>> {
-        val interval = when (timePeriod) {
-            TimePeriod.Day7 -> "7d"
-            TimePeriod.Day30 -> "30d"
-            else -> "1d"
-        }
 
         return service.getMarketInfoGlobalTvl(
             currencyCode,
-            interval,
+            timePeriod.value,
             chain = if (chain.isNotBlank()) chain else null
         ).map { responseList ->
             responseList.mapNotNull { it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) } }

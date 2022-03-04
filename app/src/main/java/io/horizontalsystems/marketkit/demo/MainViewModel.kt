@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.ChartType
+import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.PlatformType
-import io.horizontalsystems.marketkit.models.TimePeriod
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
@@ -201,7 +201,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runGlobalMarketPoints() {
         val currencyCode = "USD"
-        val timePeriod = TimePeriod.Hour24
+        val timePeriod = HsTimePeriod.Day1
         marketKit.globalMarketPointsSingle(currencyCode, timePeriod)
             .subscribeOn(Schedulers.io())
             .subscribe({
