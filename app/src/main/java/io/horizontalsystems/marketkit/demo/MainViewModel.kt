@@ -244,7 +244,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                     .forEach {
                         Log.w(
                             "AAA",
-                            "getMarketDefi: ${it.name} tvl: ${it.tvl} tvlRank: ${it.tvlRank} chainTvls.size: ${it.chainTvls.size}"
+                            "getMarketDefi: ${it.name} tvl: ${it.tvl} tvlRank: ${it.tvlRank} tvlChange2W: ${it.tvlChange2W} chainTvls.size: ${it.chainTvls.size}"
                         )
                     }
             }, {
