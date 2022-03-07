@@ -5,6 +5,7 @@ import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.math.BigDecimal
 
 class HsProvider(baseUrl: String, apiKey: String) {
 
@@ -49,6 +50,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
                     coinPriceResponse.coinPrice(currencyCode)
                 }
             }
+    }
+
+    fun historicalCoinPriceSingle(
+        coinUid: String,
+        currencyCode: String,
+        timestamp: Long
+    ): Single<HistoricalCoinPriceResponse> {
+        return service.getHistoricalCoinPrice(coinUid, currencyCode, timestamp)
     }
 
     fun getMarketInfoOverview(
@@ -181,6 +190,13 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("fields") fields: String = coinPriceFields,
         ): Single<List<CoinPriceResponse>>
 
+        @GET("coins/{coinUid}/price_history")
+        fun getHistoricalCoinPrice(
+            @Path("coinUid") coinUid: String,
+            @Query("currency") currencyCode: String,
+            @Query("timestamp") timestamp: Long,
+        ): Single<HistoricalCoinPriceResponse>
+
         @GET("coins/{coinUid}")
         fun getMarketInfoOverview(
             @Path("coinUid") coinUid: String,
@@ -250,3 +266,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         }
     }
 }
+
+data class HistoricalCoinPriceResponse(
+    val timestamp: Long,
+    val price: BigDecimal,
+)

@@ -271,8 +271,7 @@ class MarketKit(
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
             val coinHistoricalPriceManager = CoinHistoricalPriceManager(
                 CoinHistoricalPriceStorage(marketDatabase),
-                coinManager,
-                coinGeckoProvider
+                hsProvider,
             )
             val coinPriceSchedulerFactory = CoinPriceSchedulerFactory(coinPriceManager, hsProvider)
             val coinPriceSyncManager = CoinPriceSyncManager(coinPriceSchedulerFactory)
@@ -315,4 +314,5 @@ sealed class ProviderError : Exception() {
     class ApiRequestLimitExceeded : ProviderError()
     class NoDataForCoin : ProviderError()
     class NoCoinGeckoId : ProviderError()
+    class ReturnedTimestampIsVeryInaccurate : ProviderError()
 }
