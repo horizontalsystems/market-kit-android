@@ -1,16 +1,20 @@
 package io.horizontalsystems.marketkit.providers
 
+import com.google.gson.annotations.SerializedName
+import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.math.BigDecimal
+import java.util.*
 
 class HsProvider(baseUrl: String, apiKey: String) {
 
     private val service by lazy {
-        RetrofitUtils.build("${baseUrl}/v1/", mapOf("apikey" to apiKey)).create(MarketService::class.java)
+        RetrofitUtils.build("${baseUrl}/v1/", mapOf("apikey" to apiKey))
+            .create(MarketService::class.java)
     }
 
     fun getFullCoins(page: Int, limit: Int): Single<List<FullCoin>> {
@@ -20,7 +24,11 @@ class HsProvider(baseUrl: String, apiKey: String) {
             }
     }
 
-    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean): Single<List<MarketInfoRaw>> {
+    fun marketInfosSingle(
+        top: Int,
+        currencyCode: String,
+        defi: Boolean
+    ): Single<List<MarketInfoRaw>> {
         return service.getMarketInfos(top, currencyCode, defi)
     }
 
@@ -60,6 +68,20 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getHistoricalCoinPrice(coinUid, currencyCode, timestamp)
     }
 
+    fun coinPriceChartSingle(
+        coinUid: String,
+        currencyCode: String,
+        interval: HsTimePeriod,
+        indicatorPoints: Int
+    ): Single<List<ChartCoinPriceResponse>> {
+        val currentTime = Date().time / 1000
+        val fromTimestamp =
+            HsChartRequestHelper.fromTimestamp(currentTime, interval, indicatorPoints)
+        val pointInterval = HsChartRequestHelper.pointInterval(interval).value
+
+        return service.getCoinPriceChart(coinUid, currencyCode, fromTimestamp, pointInterval)
+    }
+
     fun getMarketInfoOverview(
         coinUid: String,
         currencyCode: String,
@@ -91,7 +113,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getMarketInfoTvl(coinUid, currencyCode, timePeriod.value)
             .map { responseList ->
                 responseList.mapNotNull {
-                    it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) }
+                    it.tvl?.let { tvl -> ChartPoint(tvl, it.timestamp, emptyMap()) }
                 }
             }
     }
@@ -107,7 +129,11 @@ class HsProvider(baseUrl: String, apiKey: String) {
             timePeriod.value,
             chain = if (chain.isNotBlank()) chain else null
         ).map { responseList ->
-            responseList.mapNotNull { it.tvl?.let { tvl -> ChartPoint(tvl, null, it.timestamp) } }
+            responseList.mapNotNull {
+                it.tvl?.let { tvl ->
+                    ChartPoint(tvl, it.timestamp, emptyMap())
+                }
+            }
         }
     }
 
@@ -197,6 +223,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("timestamp") timestamp: Long,
         ): Single<HistoricalCoinPriceResponse>
 
+        @GET("coins/{coinUid}/price_chart")
+        fun getCoinPriceChart(
+            @Path("coinUid") coinUid: String,
+            @Query("currency") currencyCode: String,
+            @Query("from_timestamp") timestamp: Long,
+            @Query("interval") interval: String,
+        ): Single<List<ChartCoinPriceResponse>>
+
         @GET("coins/{coinUid}")
         fun getMarketInfoOverview(
             @Path("coinUid") coinUid: String,
@@ -271,3 +305,19 @@ data class HistoricalCoinPriceResponse(
     val timestamp: Long,
     val price: BigDecimal,
 )
+
+data class ChartCoinPriceResponse(
+    val timestamp: Long,
+    val price: BigDecimal,
+    @SerializedName("volume")
+    val totalVolume: BigDecimal?
+) {
+    val chartPoint: ChartPoint
+        get() {
+            return ChartPoint(
+                price,
+                timestamp,
+                totalVolume?.let { mapOf(ChartPointType.Volume to it) } ?: emptyMap()
+            )
+        }
+}

@@ -84,15 +84,15 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runGetChartInfo() {
-        val coinUid = "coin-oracle"
+        val coinUid = "ethereum"
         val currencyCode = "USD"
-        val chartType = ChartType.MONTHLY
+        val interval = HsTimePeriod.Month1
         //get stored chart info
-        val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, chartType)
+        val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, interval)
         Log.w("AAA", "storedChartInfo: ${storedChartInfo?.points}")
 
         //fetch chartInfo from API
-        marketKit.getChartInfoAsync(coinUid, currencyCode, chartType)
+        marketKit.getChartInfoAsync(coinUid, currencyCode, interval)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.w("AAA", "fetchChartInfo: ${it.points}")

@@ -211,20 +211,20 @@ class MarketKit(
 
     // Chart Info
 
-    fun chartInfo(coinUid: String, currencyCode: String, chartType: ChartType): ChartInfo? {
-        return chartManager.getChartInfo(coinUid, currencyCode, chartType)
+    fun chartInfo(coinUid: String, currencyCode: String, interval: HsTimePeriod): ChartInfo? {
+        return chartManager.getChartInfo(coinUid, currencyCode, interval)
     }
 
-    fun chartInfoSingle(coinUid: String, currencyCode: String, chartType: ChartType): Single<ChartInfo> {
-        return chartManager.chartInfoSingle(coinUid, currencyCode, chartType)
+    fun chartInfoSingle(coinUid: String, currencyCode: String, interval: HsTimePeriod): Single<ChartInfo> {
+        return chartManager.chartInfoSingle(coinUid, currencyCode, interval)
     }
 
     fun getChartInfoAsync(
         coinUid: String,
         currencyCode: String,
-        chartType: ChartType
+        interval: HsTimePeriod
     ): Observable<ChartInfo> {
-        return chartSyncManager.chartInfoObservable(coinUid, currencyCode, chartType)
+        return chartSyncManager.chartInfoObservable(coinUid, currencyCode, interval)
     }
 
     // Global Market Info
@@ -238,6 +238,7 @@ class MarketKit(
             context: Context,
             hsApiBaseUrl: String,
             hsApiKey: String,
+            indicatorPoints: Int = 50,
             cryptoCompareApiKey: String? = null,
             defiYieldApiKey: String? = null
         ): MarketKit {
@@ -278,8 +279,8 @@ class MarketKit(
             coinPriceManager.listener = coinPriceSyncManager
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
-            val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase), coinGeckoProvider)
-            val chartSchedulerFactory = ChartSchedulerFactory(chartManager, coinGeckoProvider)
+            val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase), hsProvider, indicatorPoints)
+            val chartSchedulerFactory = ChartSchedulerFactory(chartManager, hsProvider, indicatorPoints)
             val chartSyncManager = ChartSyncManager(coinManager, chartSchedulerFactory).also {
                 chartManager.listener = it
             }
@@ -307,12 +308,11 @@ class MarketKit(
 
 //Errors
 
+class NoChartData : Exception()
 class NoChartInfo : Exception()
-class CoinNotFound : Exception()
 
 sealed class ProviderError : Exception() {
     class ApiRequestLimitExceeded : ProviderError()
     class NoDataForCoin : ProviderError()
-    class NoCoinGeckoId : ProviderError()
     class ReturnedTimestampIsVeryInaccurate : ProviderError()
 }

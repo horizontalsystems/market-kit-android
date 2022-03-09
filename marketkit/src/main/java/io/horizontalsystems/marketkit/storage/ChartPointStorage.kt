@@ -1,7 +1,8 @@
 package io.horizontalsystems.marketkit.storage
 
+import io.horizontalsystems.marketkit.models.ChartInfoKey
 import io.horizontalsystems.marketkit.models.ChartPointEntity
-import io.horizontalsystems.marketkit.models.ChartType
+import io.horizontalsystems.marketkit.models.HsTimePeriod
 
 class ChartPointStorage(marketDatabase: MarketDatabase) {
     private val chartPointDao = marketDatabase.chartPointDao()
@@ -13,16 +14,12 @@ class ChartPointStorage(marketDatabase: MarketDatabase) {
     fun getList(
         coinUid: String,
         currencyCode: String,
-        chartType: ChartType
+        interval: HsTimePeriod
     ): List<ChartPointEntity> {
-        return chartPointDao.getList(coinUid, currencyCode, chartType)
+        return chartPointDao.getList(coinUid, currencyCode, interval.value)
     }
 
-    fun delete(
-        coinUid: String,
-        currencyCode: String,
-        chartType: ChartType
-    ) {
-        chartPointDao.delete(coinUid, currencyCode, chartType)
+    fun delete(key: ChartInfoKey) {
+        chartPointDao.delete(key.coin.uid, key.currencyCode, key.interval.value)
     }
 }
