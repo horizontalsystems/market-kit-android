@@ -2,15 +2,16 @@ package io.horizontalsystems.marketkit.chart
 
 import io.horizontalsystems.marketkit.ProviderError
 import io.horizontalsystems.marketkit.models.ChartInfoKey
-import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
 import io.horizontalsystems.marketkit.chart.scheduler.IChartSchedulerProvider
+import io.horizontalsystems.marketkit.providers.HsProvider
 import io.reactivex.Single
 
 class ChartSchedulerProvider(
     override val retryInterval: Long,
     private val key: ChartInfoKey,
-    private val provider: CoinGeckoProvider,
-    private val manager: ChartManager
+    private val provider: HsProvider,
+    private val manager: ChartManager,
+    private val indicatorPoints: Int
 ) : IChartSchedulerProvider {
 
     override val id = key.toString()
@@ -19,11 +20,12 @@ class ChartSchedulerProvider(
         get() = manager.getLastSyncTimestamp(key)
 
     override val expirationInterval: Long
-        get() = key.chartType.seconds
+        get() = key.interval.expiration
 
     override val syncSingle: Single<Unit>
-        get() = provider.chartPointsSingle(key)
-            .doOnSuccess { points ->
+        get() = provider.coinPriceChartSingle(key.coin.uid, key.currencyCode, key.interval, indicatorPoints)
+            .doOnSuccess { response ->
+                val points = response.map { it.chartPoint }
                 manager.update(points, key)
             }
             .doOnError {

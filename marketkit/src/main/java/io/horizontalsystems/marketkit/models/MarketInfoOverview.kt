@@ -11,7 +11,7 @@ data class MarketInfoOverview(
     val volume24h: BigDecimal?,
     val dilutedMarketCap: BigDecimal?,
     val tvl: BigDecimal?,
-    val performance: Map<String, Map<TimePeriod, BigDecimal>>,
+    val performance: Map<String, Map<HsTimePeriod, BigDecimal>>,
     val genesisDate: Date?,
     val categories: List<CoinCategory>,
     val description: String,

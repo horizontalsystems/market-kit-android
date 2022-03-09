@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken
 import io.horizontalsystems.marketkit.models.CoinType
 import io.horizontalsystems.marketkit.models.GlobalMarketPoint
 import io.horizontalsystems.marketkit.models.HsTimePeriod
-import io.horizontalsystems.marketkit.models.TimePeriod
 import java.math.BigDecimal
 
 class DatabaseTypeConverters {
@@ -40,16 +39,6 @@ class DatabaseTypeConverters {
     @TypeConverter
     fun toBigDecimal(value: String?): BigDecimal? {
         return value?.let { BigDecimal(value) }
-    }
-
-    @TypeConverter
-    fun fromTimePeriod(timePeriod: TimePeriod): String {
-        return timePeriod.name
-    }
-
-    @TypeConverter
-    fun toTimePeriod(value: String): TimePeriod {
-        return TimePeriod.valueOf(value)
     }
 
     @TypeConverter
