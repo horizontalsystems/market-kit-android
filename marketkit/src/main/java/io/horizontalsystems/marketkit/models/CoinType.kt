@@ -21,15 +21,21 @@ sealed class CoinType : Parcelable {
     @Parcelize
     object Polygon : CoinType()
     @Parcelize
+    object EthereumOptimism : CoinType()
+    @Parcelize
+    object EthereumArbitrumOne : CoinType()
+    @Parcelize
     class Erc20(val address: String) : CoinType()
     @Parcelize
     class Bep20(val address: String) : CoinType()
     @Parcelize
     class Mrc20(val address: String) : CoinType()
     @Parcelize
-    class Bep2(val symbol: String) : CoinType()
+    class OptimismErc20(val address: String) : CoinType()
     @Parcelize
-    class ArbitrumOne(val address: String) : CoinType()
+    class ArbitrumOneErc20(val address: String) : CoinType()
+    @Parcelize
+    class Bep2(val symbol: String) : CoinType()
     @Parcelize
     class Avalanche(val address: String) : CoinType()
     @Parcelize
@@ -65,11 +71,14 @@ sealed class CoinType : Parcelable {
             is Ethereum -> "ethereum"
             is BinanceSmartChain -> "binanceSmartChain"
             is Polygon -> "polygon"
+            is EthereumOptimism -> "ethereumOptimism"
+            is EthereumArbitrumOne -> "ethereumArbitrumOne"
             is Erc20 -> "erc20|$address"
             is Bep20 -> "bep20|$address"
             is Mrc20 -> "mrc20|$address"
+            is OptimismErc20 -> "optimismErc20|$address"
+            is ArbitrumOneErc20 -> "arbitrumOneErc20|$address"
             is Bep2 -> "bep2|$symbol"
-            is ArbitrumOne -> "arbitrumOne|$address"
             is Avalanche -> "avalanche|$address"
             is Fantom -> "fantom|$address"
             is HarmonyShard0 -> "harmonyShard0|$address"
@@ -101,11 +110,14 @@ sealed class CoinType : Parcelable {
         Ethereum -> "ethereum"
         BinanceSmartChain -> "binanceSmartChain"
         Polygon -> "polygon"
+        EthereumOptimism -> "ethereumOptimism"
+        EthereumArbitrumOne -> "ethereumArbitrumOne"
         is Erc20 -> "erc20|${address.take(4)}...${address.takeLast(2)}"
         is Bep20 -> "bep20|${address.take(4)}...${address.takeLast(2)}"
         is Mrc20 -> "mrc20|${address.take(4)}...${address.takeLast(2)}"
+        is OptimismErc20 -> "optimismErc20|${address.take(4)}...${address.takeLast(2)}"
+        is ArbitrumOneErc20 -> "arbitrumOneErc20|${address.take(4)}...${address.takeLast(2)}"
         is Bep2 -> "bep2|$symbol"
-        is ArbitrumOne -> "arbitrumOne|${address.take(4)}...${address.takeLast(2)}"
         is Avalanche -> "avalanche|${address.take(4)}...${address.takeLast(2)}"
         is Fantom -> "fantom|${address.take(4)}...${address.takeLast(2)}"
         is HarmonyShard0 -> "harmonyShard0|${address.take(4)}...${address.takeLast(2)}"
@@ -130,10 +142,13 @@ sealed class CoinType : Parcelable {
             "ethereum" -> Ethereum
             "binance-smart-chain" -> BinanceSmartChain
             "polygon" -> Polygon
+            "ethereum-optimism" -> EthereumOptimism
+            "ethereum-arbitrum-one" -> EthereumArbitrumOne
             "erc20" -> address?.let { Erc20(it) }
             "bep20" -> address?.let { Bep20(it) }
+            "optimistic-ethereum" -> symbol?.let { OptimismErc20(it) }
+            "arbitrum-one" -> symbol?.let { ArbitrumOneErc20(it) }
             "bep2" -> symbol?.let { Bep2(it) }
-            "arbitrum-one" -> address?.let { ArbitrumOne(it) }
             "avalanche" -> address?.let { Avalanche(it) }
             "fantom" -> address?.let { Fantom(it) }
             "harmony-shard-0" -> address?.let { HarmonyShard0(it) }
@@ -162,6 +177,8 @@ sealed class CoinType : Parcelable {
                     "ethereum" -> Ethereum
                     "binanceSmartChain" -> BinanceSmartChain
                     "polygon" -> Polygon
+                    "ethereumOptimism" -> EthereumOptimism
+                    "ethereumArbitrumOne" -> EthereumArbitrumOne
                     else -> Unsupported(chunks[0])
                 }
             } else {
@@ -170,7 +187,8 @@ sealed class CoinType : Parcelable {
                     "bep2" -> Bep2(chunks[1])
                     "bep20" -> Bep20(chunks[1])
                     "mrc20" -> Mrc20(chunks[1])
-                    "arbitrum-one" -> ArbitrumOne(chunks[1])
+                    "optimismErc20" -> OptimismErc20(chunks[1])
+                    "arbitrumOneErc20" -> ArbitrumOneErc20(chunks[1])
                     "avalanche" -> Avalanche(chunks[1])
                     "fantom" -> Fantom(chunks[1])
                     "harmony-shard-0" -> HarmonyShard0(chunks[1])
