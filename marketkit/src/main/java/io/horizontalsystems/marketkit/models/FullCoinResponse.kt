@@ -10,6 +10,7 @@ data class FullCoinResponse(
     val marketCapRank: Int?,
     @SerializedName("coingecko_id")
     val coinGeckoId: String,
+    @SerializedName("all_platforms")
     val platforms: List<PlatformResponse>,
 ) {
 
