@@ -6,58 +6,85 @@ import kotlinx.parcelize.Parcelize
 sealed class CoinType : Parcelable {
     @Parcelize
     object Bitcoin : CoinType()
+
     @Parcelize
     object BitcoinCash : CoinType()
+
     @Parcelize
     object Litecoin : CoinType()
+
     @Parcelize
     object Dash : CoinType()
+
     @Parcelize
     object Zcash : CoinType()
+
     @Parcelize
     object Ethereum : CoinType()
+
     @Parcelize
     object BinanceSmartChain : CoinType()
+
     @Parcelize
     object Polygon : CoinType()
+
     @Parcelize
     object EthereumOptimism : CoinType()
+
     @Parcelize
     object EthereumArbitrumOne : CoinType()
+
     @Parcelize
     class Erc20(val address: String) : CoinType()
+
     @Parcelize
     class Bep20(val address: String) : CoinType()
+
     @Parcelize
     class Mrc20(val address: String) : CoinType()
+
     @Parcelize
     class OptimismErc20(val address: String) : CoinType()
+
     @Parcelize
     class ArbitrumOneErc20(val address: String) : CoinType()
+
     @Parcelize
     class Bep2(val symbol: String) : CoinType()
+
     @Parcelize
     class Avalanche(val address: String) : CoinType()
+
     @Parcelize
     class Fantom(val address: String) : CoinType()
+
     @Parcelize
     class HarmonyShard0(val address: String) : CoinType()
+
     @Parcelize
     class HuobiToken(val address: String) : CoinType()
+
     @Parcelize
     class Iotex(val address: String) : CoinType()
+
     @Parcelize
     class Moonriver(val address: String) : CoinType()
+
     @Parcelize
     class OkexChain(val address: String) : CoinType()
+
     @Parcelize
     class Solana(val address: String) : CoinType()
+
     @Parcelize
     class Sora(val address: String) : CoinType()
+
     @Parcelize
     class Tomochain(val address: String) : CoinType()
+
     @Parcelize
     class Xdai(val address: String) : CoinType()
+
     @Parcelize
     class Unsupported(val type: String) : CoinType()
 
@@ -112,24 +139,28 @@ sealed class CoinType : Parcelable {
         Polygon -> "polygon"
         EthereumOptimism -> "ethereumOptimism"
         EthereumArbitrumOne -> "ethereumArbitrumOne"
-        is Erc20 -> "erc20|${address.take(4)}...${address.takeLast(2)}"
-        is Bep20 -> "bep20|${address.take(4)}...${address.takeLast(2)}"
-        is Mrc20 -> "mrc20|${address.take(4)}...${address.takeLast(2)}"
-        is OptimismErc20 -> "optimismErc20|${address.take(4)}...${address.takeLast(2)}"
-        is ArbitrumOneErc20 -> "arbitrumOneErc20|${address.take(4)}...${address.takeLast(2)}"
+        is Erc20 -> shorted("erc20", address)
+        is Bep20 -> shorted("bep20", address)
+        is Mrc20 -> shorted("mrc20", address)
+        is OptimismErc20 -> shorted("optimismErc20", address)
+        is ArbitrumOneErc20 -> shorted("arbitrumOneErc20", address)
         is Bep2 -> "bep2|$symbol"
-        is Avalanche -> "avalanche|${address.take(4)}...${address.takeLast(2)}"
-        is Fantom -> "fantom|${address.take(4)}...${address.takeLast(2)}"
-        is HarmonyShard0 -> "harmonyShard0|${address.take(4)}...${address.takeLast(2)}"
-        is HuobiToken -> "huobiToken|${address.take(4)}...${address.takeLast(2)}"
-        is Iotex -> "iotex|${address.take(4)}...${address.takeLast(2)}"
-        is Moonriver -> "moonriver|${address.take(4)}...${address.takeLast(2)}"
-        is OkexChain -> "okexChain|${address.take(4)}...${address.takeLast(2)}"
-        is Solana -> "solana|${address.take(4)}...${address.takeLast(2)}"
-        is Sora -> "sora|${address.take(4)}...${address.takeLast(2)}"
-        is Tomochain -> "tomochain|${address.take(4)}...${address.takeLast(2)}"
-        is Xdai -> "xdai|${address.take(4)}...${address.takeLast(2)}"
+        is Avalanche -> shorted("avalanche", address)
+        is Fantom -> shorted("fantom", address)
+        is HarmonyShard0 -> shorted("harmonyShard0", address)
+        is HuobiToken -> shorted("huobiToken", address)
+        is Iotex -> shorted("iotex", address)
+        is Moonriver -> shorted("moonriver", address)
+        is OkexChain -> shorted("okexChain", address)
+        is Solana -> shorted("solana", address)
+        is Sora -> shorted("sora", address)
+        is Tomochain -> shorted("tomochain", address)
+        is Xdai -> shorted("xdai", address)
         is Unsupported -> "unsupported|$type"
+    }
+
+    private fun shorted(prefix: String, address: String): String {
+        return "$prefix|${address.take(4)}...${address.takeLast(2)}"
     }
 
     companion object {
