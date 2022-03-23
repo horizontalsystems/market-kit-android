@@ -58,6 +58,12 @@ abstract class MarketDatabase : RoomDatabase() {
                         val loadedCount = loadInitialCoins(db, context)
                         logger.info("Loaded coins count: $loadedCount")
                     }
+
+                    override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                        super.onDestructiveMigration(db)
+                        val loadedCount = loadInitialCoins(db, context)
+                        logger.info("Loaded coins count: $loadedCount")
+                    }
                 })
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
@@ -81,7 +87,7 @@ abstract class MarketDatabase : RoomDatabase() {
                     insertCount++
                 }
             } catch (error: Exception) {
-                logger.info("Error in loadInitialCoins(): ${error.message ?: error.javaClass.simpleName}")
+                logger.warning("Error in loadInitialCoins(): ${error.message ?: error.javaClass.simpleName}")
             }
 
             return insertCount
