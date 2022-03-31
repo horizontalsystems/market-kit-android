@@ -42,7 +42,7 @@ class CoinStorage(marketDatabase: MarketDatabase) {
 
     fun platformCoins(platformType: PlatformType, filter: String, limit: Int): List<PlatformCoin> {
         val platformCondition =
-            platformType.coinTypeIdPrefixes.joinToString(" OR ") { "platform.coinType LIKE '$it%'" }
+            "platform.coinType LIKE '${platformType.evmCoinTypeIdPrefix}%' OR platform.coinType = '${platformType.baseCoinType.id}%'"
 
         val query =
             """

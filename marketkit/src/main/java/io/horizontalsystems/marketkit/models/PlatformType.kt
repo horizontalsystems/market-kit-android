@@ -7,12 +7,21 @@ enum class PlatformType {
     Optimism,
     ArbitrumOne;
 
-    val coinTypeIdPrefixes: List<String>
+    val baseCoinType: CoinType
         get() = when (this) {
-            Ethereum -> listOf("ethereum", "erc20")
-            BinanceSmartChain -> listOf("binanceSmartChain", "bep20")
-            Polygon -> listOf("polygon", "mrc20")
-            Optimism -> listOf("ethereumOptimism", "optimismErc20")
-            ArbitrumOne -> listOf("ethereumArbitrumOne", "arbitrumOneErc20")
+            Ethereum -> CoinType.Ethereum
+            BinanceSmartChain -> CoinType.BinanceSmartChain
+            Polygon -> CoinType.Polygon
+            Optimism -> CoinType.EthereumOptimism
+            ArbitrumOne -> CoinType.EthereumArbitrumOne
+        }
+
+    val evmCoinTypeIdPrefix: String
+        get() = when (this) {
+            Ethereum -> "erc20"
+            BinanceSmartChain -> "bep20"
+            Polygon -> "mrc20"
+            Optimism -> "optimismErc20"
+            ArbitrumOne -> "arbitrumOneErc20"
         }
 }

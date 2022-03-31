@@ -37,6 +37,7 @@ interface CoinDao {
     @Query("SELECT * FROM Platform WHERE coinType = :coinType")
     fun getPlatformCoin(coinType: CoinType): PlatformCoin?
 
+    @Transaction
     @RawQuery
     fun getPlatformCoins(query: SupportSQLiteQuery): List<PlatformCoin>
 
