@@ -75,7 +75,9 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         return orderQuery
     }
 
-    fun save(fullCoins: List<FullCoin>) {
+    fun update(fullCoins: List<FullCoin>) {
+        coinDao.deleteAllCoins()
+        coinDao.deleteAllPlatforms()
         coinDao.save(fullCoins)
     }
 

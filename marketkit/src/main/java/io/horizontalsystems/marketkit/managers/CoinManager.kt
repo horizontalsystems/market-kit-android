@@ -135,7 +135,7 @@ class CoinManager(
     }
 
     fun handleFetched(fullCoins: List<FullCoin>) {
-        storage.save(fullCoins)
+        storage.update(fullCoins)
         fullCoinsUpdatedObservable.onNext(Unit)
     }
 

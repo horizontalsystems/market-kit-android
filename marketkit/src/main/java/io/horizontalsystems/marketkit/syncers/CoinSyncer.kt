@@ -33,7 +33,7 @@ class CoinSyncer(
                 coinManager.handleFetched(fullCoins)
                 syncerStateDao.save(keyLastSyncTimestamp, currentTimestamp.toString())
             }, {
-                Log.e("AAA", "CoinSyncer error", it)
+                Log.e("CoinSyncer", "sync() error", it)
             })
     }
 
