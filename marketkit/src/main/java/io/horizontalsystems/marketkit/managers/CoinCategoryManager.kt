@@ -1,11 +1,15 @@
 package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.models.CoinCategory
+import io.horizontalsystems.marketkit.models.CoinCategoryMarketData
+import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinCategoryStorage
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 
 class CoinCategoryManager(
-    private val storage: CoinCategoryStorage
+    private val storage: CoinCategoryStorage,
+    private val hsProvider: HsProvider
 ) {
     val coinCategoriesObservable = PublishSubject.create<List<CoinCategory>>()
 
@@ -24,5 +28,9 @@ class CoinCategoryManager(
     fun handleFetched(coinCategories: List<CoinCategory>) {
         storage.save(coinCategories)
         coinCategoriesObservable.onNext(coinCategories)
+    }
+
+    fun categoryMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
+        return hsProvider.coinCategoriesMarketDataSingle(currencyCode)
     }
 }
