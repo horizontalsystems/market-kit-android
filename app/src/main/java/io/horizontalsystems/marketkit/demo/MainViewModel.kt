@@ -164,6 +164,22 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runCategoriesMarketData() {
+        val currencyCode = "USD"
+        marketKit.categoriesMarketDataSingle(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "Category: ${it.uid} marketCap: ${it.marketCap} diff24H: ${it.diff24H}")
+                }
+            }, {
+                Log.e("AAA", "runCategoriesMarketData Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runFetchPosts() {
         marketKit.postsSingle()
             .subscribeOn(Schedulers.io())
