@@ -3,7 +3,6 @@ package io.horizontalsystems.marketkit.demo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.marketkit.MarketKit
-import io.horizontalsystems.marketkit.models.ChartType
 import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.PlatformType
 import io.reactivex.disposables.CompositeDisposable
@@ -164,9 +163,9 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    fun runCategoriesMarketData() {
+    fun runCoinCategoriesMarketData() {
         val currencyCode = "USD"
-        marketKit.categoriesMarketDataSingle(currencyCode)
+        marketKit.coinCategoriesMarketDataSingle(currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -174,6 +173,23 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 }
             }, {
                 Log.e("AAA", "runCategoriesMarketData Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    fun runCoinCategoryMarketPoints() {
+        val categoryUid = "oracles"
+        val interval = HsTimePeriod.Week1
+        marketKit.coinCategoryMarketPointsSingle(categoryUid, interval)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "Category Market Point: ${categoryUid} marketCap: ${it.marketCap} timestamp: ${it.timestamp}")
+                }
+            }, {
+                Log.e("AAA", "runCoinCategoryMarketPoints Error", it)
             })
             .let {
                 disposables.add(it)

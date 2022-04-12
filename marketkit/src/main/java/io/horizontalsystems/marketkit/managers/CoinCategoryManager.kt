@@ -2,6 +2,7 @@ package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.models.CoinCategory
 import io.horizontalsystems.marketkit.models.CoinCategoryMarketData
+import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinCategoryStorage
 import io.reactivex.Single
@@ -30,7 +31,10 @@ class CoinCategoryManager(
         coinCategoriesObservable.onNext(coinCategories)
     }
 
-    fun categoryMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
+    fun coinCategoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
         return hsProvider.coinCategoriesMarketDataSingle(currencyCode)
     }
+
+    fun coinCategoryMarketPointsSingle(categoryUid: String, interval: HsTimePeriod) =
+        hsProvider.coinCategoryMarketPointsSingle(categoryUid, interval)
 }

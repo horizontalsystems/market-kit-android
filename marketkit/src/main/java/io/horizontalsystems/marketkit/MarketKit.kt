@@ -126,9 +126,12 @@ class MarketKit(
         return coinCategoryManager.coinCategory(uid)
     }
 
-    fun categoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
-        return coinCategoryManager.categoryMarketDataSingle(currencyCode)
+    fun coinCategoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
+        return coinCategoryManager.coinCategoriesMarketDataSingle(currencyCode)
     }
+
+    fun coinCategoryMarketPointsSingle(categoryUid: String, interval: HsTimePeriod) =
+        coinCategoryManager.coinCategoryMarketPointsSingle(categoryUid, interval)
 
     fun sync() {
         coinSyncer.sync()
