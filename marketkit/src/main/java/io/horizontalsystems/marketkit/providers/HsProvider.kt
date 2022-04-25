@@ -179,6 +179,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getCoinReports(coinUid)
     }
 
+    fun topPlatformsSingle(): Single<List<TopPlatformResponse>> {
+        return service.getTopPlatforms()
+    }
+
+    fun topPlatformMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
+        return service.getTopPlatformMarketCapPoints(chain)
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -311,6 +319,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("interval") timePeriod: String,
             @Query("currency") currencyCode: String,
         ): Single<List<GlobalMarketPoint>>
+
+        @GET("top-platforms")
+        fun getTopPlatforms(): Single<List<TopPlatformResponse>>
+
+        @GET("top-platforms/{chain}/chart")
+        fun getTopPlatformMarketCapPoints(
+            @Path("chain") chain: String
+        ): Single<List<TopPlatformMarketCapPoint>>
 
         companion object {
             private const val marketInfoFields =

@@ -240,6 +240,14 @@ class MarketKit(
         return globalMarketInfoManager.globalMarketInfoSingle(currencyCode, timePeriod)
     }
 
+    fun topPlatformsSingle(): Single<List<TopPlatform>> {
+        return coinManager.topPlatformsSingle()
+    }
+
+    fun topPlatformsMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
+        return coinManager.topPlatformsMarketCapPointsSingle(chain)
+    }
+
     companion object {
         fun getInstance(
             context: Context,
