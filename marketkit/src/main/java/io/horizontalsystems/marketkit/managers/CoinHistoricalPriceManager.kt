@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.managers
 
 import io.horizontalsystems.marketkit.ProviderError
+import io.horizontalsystems.marketkit.models.CoinHistoricalPrice
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinHistoricalPriceStorage
 import io.reactivex.Single
@@ -25,6 +26,8 @@ class CoinHistoricalPriceManager(
         return hsProvider.historicalCoinPriceSingle(coinUid, currencyCode, timestamp)
             .flatMap { response ->
                 if (abs(timestamp - response.timestamp) < 24 * 60 * 60) {
+                    val coinHistoricalPrice = CoinHistoricalPrice(coinUid, currencyCode, response.price, timestamp)
+                    storage.save(coinHistoricalPrice)
                     Single.just(response.price)
                 } else {
                     Single.error(ProviderError.ReturnedTimestampIsVeryInaccurate())
