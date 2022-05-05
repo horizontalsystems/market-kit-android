@@ -4,9 +4,11 @@ import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
 data class TopPlatformResponse(
+    val uid: String,
     val name: String,
+    val rank: Int,
+    val protocols: Int,
     @SerializedName("market_cap")
     val marketCap: BigDecimal,
-    val rank: Int,
     val stats: Map<String, BigDecimal?>,
 )

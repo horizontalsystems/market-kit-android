@@ -314,12 +314,12 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runTopPlatforms() {
-
-        marketKit.topPlatformsSingle()
+        val currencyCode = "eur"
+        marketKit.topPlatformsSingle(currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({ platforms ->
                 platforms.forEach {
-                    Log.e("AAA", "${it.coin.coin.name} marketCap: ${it.marketCap} rank: ${it.rank}")
+                    Log.e("AAA", "topPlatformsSingle ${it.name} marketCap: ${it.marketCap} rank: ${it.rank}")
                 }
             }, {
                 Log.e("AAA", "topPlatformsSingle error", it)

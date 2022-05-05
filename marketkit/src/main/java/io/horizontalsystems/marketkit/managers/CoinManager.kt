@@ -187,34 +187,29 @@ class CoinManager(
         return defiYieldProvider.auditReportsSingle(addresses)
     }
 
-    fun topPlatformsSingle(): Single<List<TopPlatform>> {
-        return hsProvider.topPlatformsSingle().map {
-            getTopPlatforms(it)
-        }
+    fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatform>> {
+        return hsProvider.topPlatformsSingle(currencyCode)
+            .map { responseList ->
+                responseList.map {
+                    TopPlatform(
+                        it.uid,
+                        it.name,
+                        it.rank,
+                        it.protocols,
+                        it.marketCap,
+                        it.stats["rank_1d"]?.toInt(),
+                        it.stats["rank_1w"]?.toInt(),
+                        it.stats["rank_1m"]?.toInt(),
+                        it.stats["change_1d"],
+                        it.stats["change_1w"],
+                        it.stats["change_1m"],
+                    )
+                }
+            }
     }
 
     fun topPlatformsMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
         return hsProvider.topPlatformMarketCapPointsSingle(chain)
-    }
-
-    private fun getTopPlatforms(topPlatformsResponseList: List<TopPlatformResponse>): List<TopPlatform> {
-        val fullCoins = storage.fullCoins(topPlatformsResponseList.map { it.name })
-        val hashMap = fullCoins.map { it.coin.uid to it }.toMap()
-        return topPlatformsResponseList.mapNotNull { response ->
-            val fullCoin = hashMap[response.name] ?: return@mapNotNull null
-            TopPlatform(
-                fullCoin,
-                response.marketCap,
-                response.rank,
-                response.stats["rank_1d"]?.toInt(),
-                response.stats["rank_1w"]?.toInt(),
-                response.stats["rank_1m"]?.toInt(),
-                response.stats["change_1d"],
-                response.stats["change_1w"],
-                response.stats["change_1m"],
-                response.stats["protocols"]?.toInt(),
-            )
-        }
     }
 
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {

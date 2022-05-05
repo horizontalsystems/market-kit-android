@@ -179,8 +179,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getCoinReports(coinUid)
     }
 
-    fun topPlatformsSingle(): Single<List<TopPlatformResponse>> {
-        return service.getTopPlatforms()
+    fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatformResponse>> {
+        return service.getTopPlatforms(currencyCode)
     }
 
     fun topPlatformMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
@@ -321,7 +321,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
         ): Single<List<GlobalMarketPoint>>
 
         @GET("top-platforms")
-        fun getTopPlatforms(): Single<List<TopPlatformResponse>>
+        fun getTopPlatforms(
+            @Query("currency") currencyCode: String
+        ): Single<List<TopPlatformResponse>>
 
         @GET("top-platforms/{chain}/chart")
         fun getTopPlatformMarketCapPoints(
