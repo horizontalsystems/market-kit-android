@@ -4,9 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 import java.math.BigDecimal
 import java.util.*
 
@@ -187,6 +185,22 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getTopPlatformMarketCapPoints(chain)
     }
 
+    fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexLiquiditiesResponse> {
+        return service.getDexLiquidities(sessionKey?.let { "Bearer ${it}" }, coinUid, timePeriod.value)
+    }
+
+    fun dexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexVolumesResponse> {
+        return service.getDexVolumes(sessionKey?.let { "Bearer ${it}" }, coinUid, timePeriod.value)
+    }
+
+    fun transactionDataSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, platform: String?, sessionKey: String?): Single<TransactionsDataResponse> {
+        return service.getTransactions(sessionKey?.let { "Bearer ${it}" }, coinUid, timePeriod.value, platform)
+    }
+
+    fun activeAddressesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<ActiveAddressesDataResponse> {
+        return service.getActiveAddresses(sessionKey?.let { "Bearer ${it}" }, coinUid, timePeriod.value)
+    }
+
     private interface MarketService {
         @GET("coins")
         fun getFullCoins(
@@ -278,6 +292,35 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String
         ): Single<MarketInfoDetailsResponse>
+
+        @GET("transactions/dex-liquidity")
+        fun getDexLiquidities(
+            @Header("authorization") auth: String?,
+            @Query("coin_uid") coinUid: String,
+            @Query("interval") interval: String
+        ): Single<DexLiquiditiesResponse>
+
+        @GET("transactions/dex-volumes")
+        fun getDexVolumes(
+            @Header("authorization") auth: String?,
+            @Query("coin_uid") coinUid: String,
+            @Query("interval") interval: String
+        ): Single<DexVolumesResponse>
+
+        @GET("transactions")
+        fun getTransactions(
+            @Header("authorization") auth: String?,
+            @Query("coin_uid") coinUid: String,
+            @Query("interval") interval: String,
+            @Query("platform") platform: String?
+        ): Single<TransactionsDataResponse>
+
+        @GET("addresses")
+        fun getActiveAddresses(
+            @Header("authorization") auth: String?,
+            @Query("coin_uid") coinUid: String,
+            @Query("interval") interval: String
+        ): Single<ActiveAddressesDataResponse>
 
         @GET("defi-protocols/{coinUid}/tvls")
         fun getMarketInfoTvl(
