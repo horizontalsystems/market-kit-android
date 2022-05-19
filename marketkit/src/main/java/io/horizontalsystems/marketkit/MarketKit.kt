@@ -216,6 +216,24 @@ class MarketKit(
         return coinManager.auditReportsSingle(addresses)
     }
 
+    // Pro Details
+
+    fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexLiquiditiesResponse> {
+        return coinManager.dexLiquiditySingle(coinUid, currencyCode, timePeriod, sessionKey)
+    }
+
+    fun dexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexVolumesResponse> {
+        return coinManager.dexVolumesSingle(coinUid, currencyCode, timePeriod, sessionKey)
+    }
+
+    fun transactionDataSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, platform: String?, sessionKey: String?): Single<TransactionsDataResponse> {
+        return coinManager.transactionDataSingle(coinUid, currencyCode, timePeriod, platform, sessionKey)
+    }
+
+    fun activeAddressesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<ActiveAddressesDataResponse> {
+        return coinManager.activeAddressesSingle(coinUid, currencyCode, timePeriod, sessionKey)
+    }
+
     // Chart Info
 
     fun chartInfo(coinUid: String, currencyCode: String, interval: HsTimePeriod): ChartInfo? {
