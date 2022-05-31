@@ -11,7 +11,6 @@ import io.reactivex.subjects.PublishSubject
 class CoinManager(
     private val storage: CoinStorage,
     private val hsProvider: HsProvider,
-    private val categoryManager: CoinCategoryManager,
     private val coinGeckoProvider: CoinGeckoProvider,
     private val defiYieldProvider: DefiYieldProvider,
     private val exchangeManager: ExchangeManager
@@ -64,48 +63,6 @@ class CoinManager(
         language: String
     ): Single<MarketInfoOverview> {
         return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language)
-            .map { overviewRaw ->
-                val categoriesMap = categoryManager.coinCategories(overviewRaw.categoryIds)
-                    .map { it.uid to it }
-                    .toMap()
-
-                val performance = overviewRaw.performance.map { (vsCurrency, v) ->
-                    vsCurrency to v.mapNotNull { (timePeriodRaw, performance) ->
-                        if (performance == null) return@mapNotNull null
-
-                        val timePeriod = when (timePeriodRaw) {
-                            "7d" -> HsTimePeriod.Week1
-                            "30d" -> HsTimePeriod.Month1
-                            else -> return@mapNotNull null
-                        }
-
-                        timePeriod to performance
-                    }.toMap()
-                }.toMap()
-
-                val links = overviewRaw.links
-                    .mapNotNull { (linkTypeRaw, link) ->
-                        LinkType.fromString(linkTypeRaw)?.let {
-                            it to link
-                        }
-                    }.toMap()
-
-                MarketInfoOverview(
-                    overviewRaw.marketData.marketCap,
-                    overviewRaw.marketData.marketCapRank,
-                    overviewRaw.marketData.totalSupply,
-                    overviewRaw.marketData.circulatingSupply,
-                    overviewRaw.marketData.volume24h,
-                    overviewRaw.marketData.dilutedMarketCap,
-                    overviewRaw.marketData.tvl,
-                    performance,
-                    overviewRaw.genesisDate,
-                    overviewRaw.categoryIds.mapNotNull { categoriesMap[it] },
-                    overviewRaw.description ?: "",
-                    overviewRaw.platforms.mapNotNull { it.coinType },
-                    links,
-                )
-            }
     }
 
     fun marketTickersSingle(coinUid: String): Single<List<MarketTicker>> {
@@ -281,5 +238,18 @@ class CoinManager(
     ): Single<ActiveAddressesDataResponse> {
         return hsProvider.activeAddressesSingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
+
+    fun topMoversSingle(currencyCode: String): Single<TopMovers> =
+        hsProvider.topMoversRawSingle(currencyCode)
+            .map { raw ->
+                TopMovers(
+                    gainers100 = getMarketInfos(raw.gainers100),
+                    gainers200 = getMarketInfos(raw.gainers200),
+                    gainers300 = getMarketInfos(raw.gainers300),
+                    losers100 = getMarketInfos(raw.losers100),
+                    losers200 = getMarketInfos(raw.losers200),
+                    losers300 = getMarketInfos(raw.losers300)
+                )
+            }
 
 }

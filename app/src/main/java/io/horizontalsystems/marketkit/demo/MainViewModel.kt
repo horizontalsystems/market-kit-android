@@ -217,6 +217,22 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         doMarketInfoOverview("tether")
     }
 
+    fun runMarketOverview() {
+        Log.w("AAA", "doMarketOverview")
+        marketKit.marketOverviewSingle("USD")
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "marketOverview global: ${it.globalMarketPoints}")
+                Log.w("AAA", "marketOverview coinCategories: ${it.coinCategories}")
+                Log.w("AAA", "marketOverview topPlatforms: ${it.topPlatforms}")
+            }, {
+                Log.e("AAA", "marketOverview Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     private fun doMarketInfoOverview(coinUid: String) {
         Log.w("AAA", "doMarketInfoOverview coinUid: $coinUid")
         marketKit.marketInfoOverviewSingle(coinUid, "USD", "en")

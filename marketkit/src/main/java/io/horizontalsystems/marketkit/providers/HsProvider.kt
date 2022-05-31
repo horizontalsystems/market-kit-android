@@ -95,8 +95,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         coinUid: String,
         currencyCode: String,
         language: String,
-    ): Single<MarketInfoOverviewRaw> {
-        return service.getMarketInfoOverview(coinUid, currencyCode, language)
+    ): Single<MarketInfoOverview> {
+        return service.getMarketInfoOverview(coinUid, currencyCode, language).map { it.marketInfoOverview }
     }
 
     fun getGlobalMarketPointsSingle(
@@ -199,6 +199,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
     fun activeAddressesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<ActiveAddressesDataResponse> {
         return service.getActiveAddresses(sessionKey?.let { "Bearer ${it}" }, coinUid, timePeriod.value)
+    }
+
+    fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> {
+        return service.getMarketOverview(currencyCode).map { it.marketOverview }
+    }
+
+    fun topMoversRawSingle(currencyCode: String): Single<TopMoversRaw> {
+        return service.getTopMovers(currencyCode)
     }
 
     private interface MarketService {
@@ -372,6 +380,16 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getTopPlatformMarketCapPoints(
             @Path("chain") chain: String
         ): Single<List<TopPlatformMarketCapPoint>>
+
+        @GET("markets/overview")
+        fun getMarketOverview(
+            @Query("currency") currencyCode: String
+        ): Single<MarketOverviewResponse>
+
+        @GET("coins/top-movers")
+        fun getTopMovers(
+            @Query("currency") currencyCode: String
+        ): Single<TopMoversRaw>
 
         companion object {
             private const val marketInfoFields =

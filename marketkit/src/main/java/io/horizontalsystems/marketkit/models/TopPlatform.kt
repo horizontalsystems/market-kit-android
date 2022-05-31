@@ -13,5 +13,5 @@ data class TopPlatform(
     val rank1M: Int?,
     val change1D: BigDecimal?,
     val change1W: BigDecimal?,
-    val change1M: BigDecimal?,
+    val change1M: BigDecimal?
 )

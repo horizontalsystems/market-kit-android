@@ -16,7 +16,6 @@ import java.util.logging.Logger
     entities = [
         Coin::class,
         Platform::class,
-        CoinCategory::class,
         CoinPrice::class,
         CoinHistoricalPrice::class,
         ChartPointEntity::class,
@@ -30,7 +29,6 @@ import java.util.logging.Logger
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class MarketDatabase : RoomDatabase() {
     abstract fun coinDao(): CoinDao
-    abstract fun coinCategoryDao(): CoinCategoryDao
     abstract fun coinPriceDao(): CoinPriceDao
     abstract fun coinHistoricalPriceDao(): CoinHistoricalPriceDao
     abstract fun chartPointDao(): ChartPointDao
