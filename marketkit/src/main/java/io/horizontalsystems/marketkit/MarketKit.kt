@@ -9,7 +9,6 @@ import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.*
 import io.horizontalsystems.marketkit.storage.*
-import io.horizontalsystems.marketkit.syncers.CoinCategorySyncer
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.reactivex.Observable
@@ -18,9 +17,7 @@ import java.math.BigDecimal
 
 class MarketKit(
     private val coinManager: CoinManager,
-    private val coinCategoryManager: CoinCategoryManager,
     private val coinSyncer: CoinSyncer,
-    private val coinCategorySyncer: CoinCategorySyncer,
     private val coinPriceManager: CoinPriceManager,
     private val coinHistoricalPriceManager: CoinHistoricalPriceManager,
     private val coinPriceSyncManager: CoinPriceSyncManager,
@@ -28,7 +25,8 @@ class MarketKit(
     private val chartManager: ChartManager,
     private val exchangeSyncer: ExchangeSyncer,
     private val chartSyncManager: ChartSyncManager,
-    private val globalMarketInfoManager: GlobalMarketInfoManager
+    private val globalMarketInfoManager: GlobalMarketInfoManager,
+    private val hsProvider: HsProvider
 ) {
     // Coins
 
@@ -69,7 +67,7 @@ class MarketKit(
         currencyCode: String,
         language: String
     ): Single<MarketInfoOverview> {
-        return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
+        return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language)
     }
 
     fun marketInfoDetailsSingle(coinUid: String, currencyCode: String): Single<MarketInfoDetails> {
@@ -114,28 +112,14 @@ class MarketKit(
 
     // Categories
 
-    val coinCategoriesObservable: Observable<List<CoinCategory>>
-        get() = coinCategoryManager.coinCategoriesObservable
-
-
-    fun coinCategories(): List<CoinCategory> {
-        return coinCategoryManager.coinCategories()
-    }
-
-    fun coinCategory(uid: String): CoinCategory? {
-        return coinCategoryManager.coinCategory(uid)
-    }
-
-    fun coinCategoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
-        return coinCategoryManager.coinCategoriesMarketDataSingle(currencyCode)
-    }
+    fun coinCategoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> =
+        hsProvider.coinCategoriesMarketDataSingle(currencyCode)
 
     fun coinCategoryMarketPointsSingle(categoryUid: String, interval: HsTimePeriod) =
-        coinCategoryManager.coinCategoryMarketPointsSingle(categoryUid, interval)
+        hsProvider.coinCategoryMarketPointsSingle(categoryUid, interval)
 
     fun sync() {
         coinSyncer.sync()
-        coinCategorySyncer.sync()
         exchangeSyncer.sync()
     }
 
@@ -234,6 +218,14 @@ class MarketKit(
         return coinManager.activeAddressesSingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
 
+    // Overview
+    fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
+        hsProvider.marketOverviewSingle(currencyCode)
+
+
+    fun topMoversSingle(currencyCode: String): Single<TopMovers> =
+        coinManager.topMoversSingle(currencyCode)
+
     // Chart Info
 
     fun chartInfo(coinUid: String, currencyCode: String, interval: HsTimePeriod): ChartInfo? {
@@ -286,7 +278,6 @@ class MarketKit(
 
             val marketDatabase = MarketDatabase.getInstance(context)
             val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey)
-            val coinCategoryManager = CoinCategoryManager(CoinCategoryStorage(marketDatabase), hsProvider)
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)
             val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
@@ -295,13 +286,11 @@ class MarketKit(
                 CoinManager(
                     CoinStorage(marketDatabase),
                     hsProvider,
-                    coinCategoryManager,
                     coinGeckoProvider,
                     defiYieldProvider,
                     exchangeManager
                 )
             val coinSyncer = CoinSyncer(hsProvider, coinManager, marketDatabase.syncerStateDao())
-            val coinCategorySyncer = CoinCategorySyncer(hsProvider, coinCategoryManager)
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
             val coinHistoricalPriceManager = CoinHistoricalPriceManager(
                 CoinHistoricalPriceStorage(marketDatabase),
@@ -322,9 +311,7 @@ class MarketKit(
 
             return MarketKit(
                 coinManager,
-                coinCategoryManager,
                 coinSyncer,
-                coinCategorySyncer,
                 coinPriceManager,
                 coinHistoricalPriceManager,
                 coinPriceSyncManager,
@@ -333,6 +320,7 @@ class MarketKit(
                 exchangeSyncer,
                 chartSyncManager,
                 globalMarketInfoManager,
+                hsProvider
             )
         }
     }

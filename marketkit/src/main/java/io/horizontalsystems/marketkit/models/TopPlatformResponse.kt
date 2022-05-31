@@ -11,4 +11,22 @@ data class TopPlatformResponse(
     @SerializedName("market_cap")
     val marketCap: BigDecimal,
     val stats: Map<String, BigDecimal?>,
-)
+) {
+
+    val topPlatform: TopPlatform
+        get() =
+            TopPlatform(
+                uid,
+                name,
+                rank,
+                protocols,
+                marketCap,
+                stats["rank_1d"]?.toInt(),
+                stats["rank_1w"]?.toInt(),
+                stats["rank_1m"]?.toInt(),
+                stats["change_1d"],
+                stats["change_1w"],
+                stats["change_1m"]
+            )
+
+}
