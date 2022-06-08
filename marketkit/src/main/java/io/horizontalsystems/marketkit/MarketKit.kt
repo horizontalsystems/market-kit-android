@@ -16,6 +16,8 @@ import io.reactivex.Single
 import java.math.BigDecimal
 
 class MarketKit(
+    private val nftManager: NftManager,
+    private val marketOverviewManager: MarketOverviewManager,
     private val coinManager: CoinManager,
     private val coinSyncer: CoinSyncer,
     private val coinPriceManager: CoinPriceManager,
@@ -220,7 +222,7 @@ class MarketKit(
 
     // Overview
     fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
-        hsProvider.marketOverviewSingle(currencyCode)
+        marketOverviewManager.marketOverviewSingle(currencyCode)
 
 
     fun topMoversSingle(currencyCode: String): Single<TopMovers> =
@@ -258,6 +260,27 @@ class MarketKit(
         return coinManager.topPlatformsMarketCapPointsSingle(chain)
     }
 
+    // NFT
+
+    suspend fun nftAssetCollection(address: String): NftAssetCollection =
+        nftManager.assetCollection(address)
+
+    suspend fun nftCollection(uid: String): NftCollection =
+        nftManager.collection(uid)
+
+    suspend fun nftCollections(): List<NftCollection> =
+        nftManager.collections()
+
+    suspend fun nftAsset(contractAddress: String, tokenId: String): NftAsset =
+        nftManager.asset(contractAddress, tokenId)
+
+    suspend fun nftAssets(collectionUid: String, cursor: String? = null): PagedNftAssets =
+        nftManager.assets(collectionUid, cursor)
+
+    suspend fun nftEvents(collectionUid: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents =
+        nftManager.eventsSingle(collectionUid, eventType, cursor)
+
+
     companion object {
         fun getInstance(
             context: Context,
@@ -278,6 +301,7 @@ class MarketKit(
 
             val marketDatabase = MarketDatabase.getInstance(context)
             val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey)
+            val hsNftProvider = HsNftProvider(hsApiBaseUrl, hsApiKey)
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)
             val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
@@ -290,6 +314,8 @@ class MarketKit(
                     defiYieldProvider,
                     exchangeManager
                 )
+            val nftManager = NftManager(coinManager, hsNftProvider)
+            val marketOverviewManager = MarketOverviewManager(nftManager, hsProvider)
             val coinSyncer = CoinSyncer(hsProvider, coinManager, marketDatabase.syncerStateDao())
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
             val coinHistoricalPriceManager = CoinHistoricalPriceManager(
@@ -310,6 +336,8 @@ class MarketKit(
             val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
 
             return MarketKit(
+                nftManager,
+                marketOverviewManager,
                 coinManager,
                 coinSyncer,
                 coinPriceManager,
