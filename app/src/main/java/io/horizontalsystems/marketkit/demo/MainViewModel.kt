@@ -2,11 +2,13 @@ package io.horizontalsystems.marketkit.demo
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.PlatformType
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -225,12 +227,23 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.w("AAA", "marketOverview global: ${it.globalMarketPoints}")
                 Log.w("AAA", "marketOverview coinCategories: ${it.coinCategories}")
                 Log.w("AAA", "marketOverview topPlatforms: ${it.topPlatforms}")
+                Log.w("AAA", "marketOverview nft collections: ${it.collections}")
             }, {
                 Log.e("AAA", "marketOverview Error", it)
             })
             .let {
                 disposables.add(it)
             }
+    }
+
+    fun runCollections() {
+        Log.w("AAA", "doCollections")
+        viewModelScope.launch {
+            val collections = marketKit.nftCollections()
+
+            Log.w("AAA", "collections count: ${collections.size}")
+            Log.w("AAA", "first collection: ${collections.firstOrNull()}")
+        }
     }
 
     private fun doMarketInfoOverview(coinUid: String) {

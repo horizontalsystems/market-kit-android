@@ -201,8 +201,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getActiveAddresses(sessionKey?.let { "Bearer ${it}" }, coinUid, timePeriod.value)
     }
 
-    fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> {
-        return service.getMarketOverview(currencyCode).map { it.marketOverview }
+    fun marketOverviewSingle(currencyCode: String): Single<MarketOverviewResponse> {
+        return service.getMarketOverview(currencyCode)
     }
 
     fun topMoversRawSingle(currencyCode: String): Single<TopMoversRaw> {
