@@ -167,7 +167,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runCoinCategoriesMarketData() {
         val currencyCode = "USD"
-        marketKit.coinCategoriesMarketDataSingle(currencyCode)
+        marketKit.coinCategoriesSingle(currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {

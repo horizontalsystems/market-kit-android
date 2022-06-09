@@ -114,8 +114,8 @@ class MarketKit(
 
     // Categories
 
-    fun coinCategoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> =
-        hsProvider.coinCategoriesMarketDataSingle(currencyCode)
+    fun coinCategoriesSingle(currencyCode: String): Single<List<CoinCategory>> =
+        hsProvider.getCoinCategories(currencyCode)
 
     fun coinCategoryMarketPointsSingle(categoryUid: String, interval: HsTimePeriod) =
         hsProvider.coinCategoryMarketPointsSingle(categoryUid, interval)
