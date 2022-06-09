@@ -45,12 +45,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getMarketInfosByCategory(categoryUid, currencyCode)
     }
 
-    fun getCoinCategories(): Single<List<CoinCategory>> {
-        return service.getCategories()
-    }
-
-    fun coinCategoriesMarketDataSingle(currencyCode: String): Single<List<CoinCategoryMarketData>> {
-        return service.getCategoriesMarketData(currencyCode)
+    fun getCoinCategories(currencyCode: String): Single<List<CoinCategory>> {
+        return service.getCategories(currencyCode)
     }
 
     fun coinCategoryMarketPointsSingle(
@@ -248,12 +244,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
         ): Single<List<MarketInfoRaw>>
 
         @GET("categories")
-        fun getCategories(): Single<List<CoinCategory>>
-
-        @GET("categories")
-        fun getCategoriesMarketData(
+        fun getCategories(
             @Query("currency") currencyCode: String
-        ): Single<List<CoinCategoryMarketData>>
+        ): Single<List<CoinCategory>>
 
         @GET("categories/{categoryUid}/market_cap")
         fun coinCategoryMarketPoints(
