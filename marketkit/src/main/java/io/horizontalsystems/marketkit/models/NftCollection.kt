@@ -13,7 +13,7 @@ data class NftCollection(
     val discordUrl: String?,
     val twitterUsername: String?,
 
-    val stats: NftCollectionStats?,
+    val stats: NftCollectionStats,
     val statCharts: NftCollectionStatCharts?
 ) {
 

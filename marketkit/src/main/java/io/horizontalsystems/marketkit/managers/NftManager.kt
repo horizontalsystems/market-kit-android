@@ -232,12 +232,10 @@ class NftManager(
     }
 
     private fun collectionStats(
-        stats: HsNftApiV1Response.Collection.Stats?,
+        stats: HsNftApiV1Response.Collection.Stats,
         ethereumPlatformCoin: PlatformCoin?
-    ): NftCollection.NftCollectionStats? {
-        if (stats == null) return null
-
-        return NftCollection.NftCollectionStats(
+    ): NftCollection.NftCollectionStats =
+        NftCollection.NftCollectionStats(
             count = stats.count,
             ownersCount = stats.num_owners,
             totalSupply = stats.total_supply,
@@ -262,7 +260,6 @@ class NftManager(
                 HsTimePeriod.Month1 to stats.thirty_day_change
             )
         )
-    }
 
     private fun statCharts(
         statChartPoints: List<HsNftApiV1Response.Collection.ChartPoint>?,

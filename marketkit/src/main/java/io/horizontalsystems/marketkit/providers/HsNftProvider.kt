@@ -107,7 +107,7 @@ object HsNftApiV1Response {
         val description: String?,
         val image_data: ImageData?,
         val links: Links?,
-        val stats: Stats?,
+        val stats: Stats,
         val stats_chart: List<ChartPoint>?
     ) {
         data class ImageData(
