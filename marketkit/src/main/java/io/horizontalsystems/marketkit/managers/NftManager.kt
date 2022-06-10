@@ -258,6 +258,11 @@ class NftManager(
                 HsTimePeriod.Day1 to stats.one_day_change,
                 HsTimePeriod.Week1 to stats.seven_day_change,
                 HsTimePeriod.Month1 to stats.thirty_day_change
+            ),
+            sales = mapOf(
+                HsTimePeriod.Day1 to stats.one_day_sales,
+                HsTimePeriod.Week1 to stats.seven_day_sales,
+                HsTimePeriod.Month1 to stats.thirty_day_sales
             )
         )
 
