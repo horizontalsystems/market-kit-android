@@ -139,7 +139,10 @@ object HsNftApiV1Response {
             val market_cap: BigDecimal,
             val one_day_volume: BigDecimal,
             val seven_day_volume: BigDecimal,
-            val thirty_day_volume: BigDecimal
+            val thirty_day_volume: BigDecimal,
+            val one_day_sales: Int,
+            val seven_day_sales: Int,
+            val thirty_day_sales: Int
         )
 
         data class ChartPoint(

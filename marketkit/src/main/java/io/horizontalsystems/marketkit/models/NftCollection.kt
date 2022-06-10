@@ -35,6 +35,7 @@ data class NftCollection(
 
         val volumes: Map<HsTimePeriod, NftPrice>,
         val changes: Map<HsTimePeriod, BigDecimal>,
+        val sales: Map<HsTimePeriod, Int>,
     )
 
     data class NftCollectionStatCharts(

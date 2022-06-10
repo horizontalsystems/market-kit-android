@@ -236,13 +236,22 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    fun runCollections() {
+    fun runNftCollections() {
         Log.w("AAA", "doCollections")
         viewModelScope.launch {
             val collections = marketKit.nftCollections()
 
             Log.w("AAA", "collections count: ${collections.size}")
             Log.w("AAA", "first collection: ${collections.firstOrNull()}")
+        }
+    }
+
+    fun runNftCollection() {
+        Log.w("AAA", "doCollection")
+        viewModelScope.launch {
+            val collection = marketKit.nftCollection("goblintownwtf")
+
+            Log.w("AAA", "collection: ${collection}")
         }
     }
 
