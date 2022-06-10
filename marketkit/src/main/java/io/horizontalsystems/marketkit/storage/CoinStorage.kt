@@ -85,4 +85,8 @@ class CoinStorage(marketDatabase: MarketDatabase) {
         return coinDao.coin(coinUid)
     }
 
+    fun coins(coinUids: List<String>): List<Coin> {
+        return coinDao.coins(coinUids)
+    }
+
 }

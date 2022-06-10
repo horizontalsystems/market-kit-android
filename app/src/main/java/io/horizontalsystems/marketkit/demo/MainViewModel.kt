@@ -256,7 +256,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                     .forEach {
                         Log.w(
                             "AAA",
-                            "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target}"
+                            "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target} tradeUrl: ${it.tradeUrl}"
                         )
                     }
             }, {

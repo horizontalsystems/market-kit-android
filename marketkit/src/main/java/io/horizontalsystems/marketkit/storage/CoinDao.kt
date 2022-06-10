@@ -54,6 +54,9 @@ interface CoinDao {
     @Query("SELECT * FROM Coin WHERE uid IN (:coinUid)")
     fun coin(coinUid: String): Coin?
 
+    @Query("SELECT * FROM Coin WHERE uid IN (:coinUids)")
+    fun coins(coinUids: List<String>): List<Coin>
+
     @Query("DELETE FROM Coin")
     fun deleteAllCoins()
 

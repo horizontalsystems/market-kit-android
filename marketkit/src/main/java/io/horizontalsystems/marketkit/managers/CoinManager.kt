@@ -113,8 +113,11 @@ class CoinManager(
 
         return coinGeckoProvider.marketTickersSingle(coinGeckoId)
             .map { response ->
+                val coinUids =
+                    (response.tickers.map { it.coinId } + response.tickers.mapNotNull { it.targetCoinId }).distinct()
+                val coins = storage.coins(coinUids)
                 val imageUrls = exchangeManager.imageUrlsMap(response.exchangeIds)
-                response.marketTickers(imageUrls)
+                response.marketTickers(imageUrls, coins)
             }
     }
 
@@ -236,19 +239,46 @@ class CoinManager(
         }
     }
 
-    fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexLiquiditiesResponse> {
+    fun dexLiquiditySingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: HsTimePeriod,
+        sessionKey: String?
+    ): Single<DexLiquiditiesResponse> {
         return hsProvider.dexLiquiditySingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
 
-    fun dexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexVolumesResponse> {
+    fun dexVolumesSingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: HsTimePeriod,
+        sessionKey: String?
+    ): Single<DexVolumesResponse> {
         return hsProvider.dexVolumesSingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
 
-    fun transactionDataSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, platform: String?, sessionKey: String?): Single<TransactionsDataResponse> {
-        return hsProvider.transactionDataSingle(coinUid, currencyCode, timePeriod, platform, sessionKey)
+    fun transactionDataSingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: HsTimePeriod,
+        platform: String?,
+        sessionKey: String?
+    ): Single<TransactionsDataResponse> {
+        return hsProvider.transactionDataSingle(
+            coinUid,
+            currencyCode,
+            timePeriod,
+            platform,
+            sessionKey
+        )
     }
 
-    fun activeAddressesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<ActiveAddressesDataResponse> {
+    fun activeAddressesSingle(
+        coinUid: String,
+        currencyCode: String,
+        timePeriod: HsTimePeriod,
+        sessionKey: String?
+    ): Single<ActiveAddressesDataResponse> {
         return hsProvider.activeAddressesSingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
 

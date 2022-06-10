@@ -8,5 +8,6 @@ data class MarketTicker(
     val marketName: String,
     val marketImageUrl: String?,
     val rate: BigDecimal,
-    val volume: BigDecimal
+    val volume: BigDecimal,
+    val tradeUrl: String?,
 )
