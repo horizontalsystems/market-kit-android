@@ -1,8 +1,11 @@
 package io.horizontalsystems.marketkit.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 
+@Parcelize
 data class CoinCategory(
     val uid: String,
     val name: String,
@@ -14,7 +17,7 @@ data class CoinCategory(
     val diff1W: BigDecimal?,
     @SerializedName("change_1m")
     val diff1M: BigDecimal?,
-) {
+) : Parcelable {
 
     override fun toString(): String {
         return "CoinCategory [uid: $uid; name: $name; descriptionCount: ${description.size}]"
