@@ -48,7 +48,7 @@ class HsNftProvider(baseUrl: String, apiKey: String) {
         service.assets(collectionUid = uid, cursor = cursor, limit = 50)
 
     suspend fun collectionEvents(uid: String, type: NftEvent.EventType?, cursor: String?): HsNftApiV1Response.Events =
-        service.events(uid, type?.name, cursor)
+        service.events(uid, type?.value, cursor)
 
 }
 
@@ -168,7 +168,7 @@ object HsNftApiV1Response {
         val image_data: ImageData?,
         val description: String?,
         val links: Links?,
-        val attributes: List<Attribute>,
+        val attributes: List<Attribute>?,
         val markets_data: MarketsData
     ) {
         data class Contract(
