@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.HsTimePeriod
+import io.horizontalsystems.marketkit.models.NftEvent
 import io.horizontalsystems.marketkit.models.PlatformType
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -252,6 +253,15 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             val collection = marketKit.nftCollection("goblintownwtf")
 
             Log.w("AAA", "collection: ${collection}")
+        }
+    }
+
+    fun runNftEvents() {
+        Log.w("AAA", "doNFTEvents")
+        viewModelScope.launch {
+            val nftEvents = marketKit.nftEvents("cryptopunks", NftEvent.EventType.Sale)
+
+            Log.w("AAA", "nftEvents: $nftEvents")
         }
     }
 

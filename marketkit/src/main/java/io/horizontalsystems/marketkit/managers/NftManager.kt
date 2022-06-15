@@ -126,7 +126,7 @@ class NftManager(
             description = response.description,
             externalLink = response.links?.external_link,
             permalink = response.links?.permalink,
-            traits = response.attributes.map { NftAsset.Trait(it.trait_type, it.value, it.trait_count) },
+            traits = response.attributes?.map { NftAsset.Trait(it.trait_type, it.value, it.trait_count) } ?: listOf(),
             lastSalePrice = response.markets_data.last_sale?.let { nftPrice(platformCoinMapResolved[it.payment_token.address], it.total_price, true) },
             onSale = response.markets_data.last_sale != null,
             orders = assetOrders(response.markets_data.orders, platformCoinMapResolved)
