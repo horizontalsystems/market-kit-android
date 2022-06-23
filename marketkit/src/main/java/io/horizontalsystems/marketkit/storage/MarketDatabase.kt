@@ -9,13 +9,15 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import io.horizontalsystems.marketkit.models.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
+//import java.util.concurrent.Executors
 import java.util.logging.Logger
 
 
 @Database(
     entities = [
         Coin::class,
-        Platform::class,
+        BlockchainEntity::class,
+        TokenEntity::class,
         CoinPrice::class,
         CoinHistoricalPrice::class,
         ChartPointEntity::class,
@@ -23,7 +25,7 @@ import java.util.logging.Logger
         Exchange::class,
         SyncerState::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
@@ -63,6 +65,9 @@ abstract class MarketDatabase : RoomDatabase() {
                         logger.info("Loaded coins count: $loadedCount")
                     }
                 })
+//                .setQueryCallback({ sqlQuery, bindArgs ->
+//                    println("SQL Query: $sqlQuery SQL Args: $bindArgs")
+//                }, Executors.newSingleThreadExecutor())
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()

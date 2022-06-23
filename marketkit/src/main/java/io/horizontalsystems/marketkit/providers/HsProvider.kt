@@ -4,7 +4,10 @@ import com.google.gson.annotations.SerializedName
 import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
+import retrofit2.http.Query
 import java.math.BigDecimal
 import java.util.*
 
@@ -13,13 +16,6 @@ class HsProvider(baseUrl: String, apiKey: String) {
     private val service by lazy {
         RetrofitUtils.build("${baseUrl}/v1/", mapOf("apikey" to apiKey))
             .create(MarketService::class.java)
-    }
-
-    fun getFullCoins(page: Int, limit: Int): Single<List<FullCoin>> {
-        return service.getFullCoins(page, limit)
-            .map { responseCoinsList ->
-                responseCoinsList.map { it.fullCoin() }
-            }
     }
 
     fun marketInfosSingle(
@@ -91,8 +87,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         coinUid: String,
         currencyCode: String,
         language: String,
-    ): Single<MarketInfoOverview> {
-        return service.getMarketInfoOverview(coinUid, currencyCode, language).map { it.marketInfoOverview }
+    ): Single<MarketInfoOverviewRaw> {
+        return service.getMarketInfoOverview(coinUid, currencyCode, language)
     }
 
     fun getGlobalMarketPointsSingle(
@@ -205,13 +201,23 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getTopMovers(currencyCode)
     }
 
+    fun statusSingle(): Single<HsStatus> {
+        return service.getStatus()
+    }
+
+    fun allCoinsSingle(): Single<List<Coin>> {
+        return service.getAllCoins()
+    }
+
+    fun allBlockchainsSingle(): Single<List<BlockchainEntity>> {
+        return service.getAllBlockchains()
+    }
+
+    fun allTokensSingle(): Single<List<TokenEntity>> {
+        return service.getAllTokens()
+    }
+
     private interface MarketService {
-        @GET("coins")
-        fun getFullCoins(
-            @Query("page") page: Int,
-            @Query("limit") limit: Int,
-            @Query("fields") fields: String = fullCoinFields,
-        ): Single<List<FullCoinResponse>>
 
         @GET("coins")
         fun getMarketInfos(
@@ -384,10 +390,21 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("currency") currencyCode: String
         ): Single<TopMoversRaw>
 
+        @GET("status/updates")
+        fun getStatus(): Single<HsStatus>
+
+        @GET("coins/list")
+        fun getAllCoins(): Single<List<Coin>>
+
+        @GET("blockchains/list")
+        fun getAllBlockchains(): Single<List<BlockchainEntity>>
+
+        @GET("tokens/list")
+        fun getAllTokens(): Single<List<TokenEntity>>
+
         companion object {
             private const val marketInfoFields =
                 "name,code,price,price_change_24h,market_cap_rank,coingecko_id,market_cap,total_volume"
-            private const val fullCoinFields = "name,code,market_cap_rank,coingecko_id,all_platforms"
             private const val coinPriceFields = "price,price_change_24h,last_updated"
             private const val advancedMarketFields =
                 "all_platforms,price,market_cap,total_volume,price_change_24h,price_change_7d,price_change_14d,price_change_30d,price_change_200d,price_change_1y,ath_percentage,atl_percentage"

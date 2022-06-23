@@ -3,23 +3,12 @@ package io.horizontalsystems.marketkit.storage
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import io.horizontalsystems.marketkit.models.CoinType
 import io.horizontalsystems.marketkit.models.GlobalMarketPoint
 import io.horizontalsystems.marketkit.models.HsTimePeriod
 import java.math.BigDecimal
 
 class DatabaseTypeConverters {
     private val gson by lazy { Gson() }
-
-    @TypeConverter
-    fun fromCoinType(coinType: CoinType?): String {
-        return coinType?.id ?: ""
-    }
-
-    @TypeConverter
-    fun toCoinType(value: String): CoinType {
-        return CoinType.fromId(value)
-    }
 
     @TypeConverter
     fun fromMap(map: Map<String, String>): String {

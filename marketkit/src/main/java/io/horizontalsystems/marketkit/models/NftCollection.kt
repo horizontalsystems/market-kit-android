@@ -48,7 +48,7 @@ data class NftCollection(
         class PricePoint(
             timestamp: Long,
             value: BigDecimal,
-            val coin: PlatformCoin?
+            val token: Token?
         ) : Point(timestamp, value)
 
         open class Point(
@@ -61,7 +61,7 @@ data class NftCollection(
 }
 
 data class NftPrice(
-    val platformCoin: PlatformCoin,
+    val token: Token,
     val value: BigDecimal
 )
 

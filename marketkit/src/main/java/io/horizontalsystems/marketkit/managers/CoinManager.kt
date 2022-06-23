@@ -6,7 +6,6 @@ import io.horizontalsystems.marketkit.providers.DefiYieldProvider
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
 import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
 
 class CoinManager(
     private val storage: CoinStorage,
@@ -15,29 +14,39 @@ class CoinManager(
     private val defiYieldProvider: DefiYieldProvider,
     private val exchangeManager: ExchangeManager
 ) {
-    val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
 
-    fun coin(uid: String): Coin? = storage.coin(uid)
+    fun fullCoin(uid: String): FullCoin? =
+        storage.fullCoin(uid)
 
-    fun fullCoins(filter: String, limit: Int): List<FullCoin> {
-        return storage.fullCoins(filter, limit)
-    }
+    fun fullCoins(filter: String, limit: Int): List<FullCoin> =
+        storage.fullCoins(filter, limit)
 
-    fun fullCoins(coinUids: List<String>): List<FullCoin> {
-        return storage.fullCoins(coinUids)
-    }
-
-    fun fullCoinsByCoinTypes(coinTypes: List<CoinType>): List<FullCoin> {
-        val platformCoins = storage.platformCoins(coinTypes)
-
-        return storage.fullCoins(platformCoins.map { it.coin.uid })
-    }
+    fun fullCoins(coinUids: List<String>): List<FullCoin> =
+        storage.fullCoins(coinUids)
 
     fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean): Single<List<MarketInfo>> {
         return hsProvider.marketInfosSingle(top, currencyCode, defi).map {
             getMarketInfos(it)
         }
     }
+
+    fun token(query: TokenQuery): Token? =
+        storage.getToken(query)
+
+    fun tokens(queries: List<TokenQuery>): List<Token> =
+        storage.getTokens(queries)
+
+    fun tokens(reference: String): List<Token> =
+        storage.getTokens(reference)
+
+    fun tokens(blockchainType: BlockchainType, filter: String, limit: Int): List<Token> =
+        storage.getTokens(blockchainType, filter, limit)
+
+    fun blockchain(uid: String): Blockchain? =
+        storage.getBlockchain(uid)
+
+    fun blockchains(uids: List<String>): List<Blockchain> =
+        storage.getBlockchains(uids)
 
     fun advancedMarketInfosSingle(top: Int, currencyCode: String): Single<List<MarketInfo>> {
         return hsProvider.advancedMarketInfosSingle(top, currencyCode).map {
@@ -62,7 +71,11 @@ class CoinManager(
         currencyCode: String,
         language: String
     ): Single<MarketInfoOverview> {
-        return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language)
+        return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language).map { rawOverview ->
+            val fullCoin = fullCoin(coinUid) ?: throw Exception("No Full Coin")
+
+            rawOverview.marketInfoOverview(fullCoin)
+        }
     }
 
     fun marketTickersSingle(coinUid: String): Single<List<MarketTicker>> {
@@ -76,27 +89,6 @@ class CoinManager(
                 val imageUrls = exchangeManager.imageUrlsMap(response.exchangeIds)
                 response.marketTickers(imageUrls, coins)
             }
-    }
-
-    fun platformCoin(coinType: CoinType): PlatformCoin? {
-        return storage.platformCoin(coinType)
-    }
-
-    fun platformCoins(platformType: PlatformType, filter: String, limit: Int): List<PlatformCoin> {
-        return storage.platformCoins(platformType, filter, limit)
-    }
-
-    fun platformCoins(coinTypes: List<CoinType>): List<PlatformCoin> {
-        return storage.platformCoins(coinTypes)
-    }
-
-    fun platformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin> {
-        return storage.platformCoinsByCoinTypeIds(coinTypeIds)
-    }
-
-    fun handleFetched(fullCoins: List<FullCoin>) {
-        storage.update(fullCoins)
-        fullCoinsUpdatedObservable.onNext(Unit)
     }
 
     fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {

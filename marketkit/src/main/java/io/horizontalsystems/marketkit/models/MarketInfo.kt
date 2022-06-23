@@ -14,8 +14,7 @@ data class MarketInfo(
     val marketCap: BigDecimal?,
     val totalVolume: BigDecimal?,
     val athPercentage: BigDecimal?,
-    val atlPercentage: BigDecimal?,
-    val coinTypes: List<CoinType>?,
+    val atlPercentage: BigDecimal?
 ) {
     constructor(marketInfoRaw: MarketInfoRaw, fullCoin: FullCoin) : this(
         fullCoin,
@@ -30,6 +29,5 @@ data class MarketInfo(
         marketInfoRaw.totalVolume,
         marketInfoRaw.athPercentage,
         marketInfoRaw.atlPercentage,
-        marketInfoRaw.platforms?.mapNotNull { it.coinType }
     )
 }
