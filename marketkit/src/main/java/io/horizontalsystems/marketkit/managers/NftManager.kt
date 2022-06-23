@@ -14,7 +14,7 @@ class NftManager(
     private val zeroAddress = "0x0000000000000000000000000000000000000000"
 
     fun collectionsFromResponses(responses: List<HsNftApiV1Response.Collection>): List<NftCollection> {
-        val ethereumPlatformCoin = coinManager.platformCoin(CoinType.Ethereum)
+        val ethereumPlatformCoin = coinManager.token(TokenQuery(BlockchainType.Ethereum, TokenType.Native))
 
         return responses.map { response ->
             collectionFromResponse(response, ethereumPlatformCoin)
@@ -64,14 +64,14 @@ class NftManager(
             }
         }
 
-        val platformCoinMap = platformCoinMapFromAddresses(addresses)
+        val tokenMap = tokenMapFromAddresses(addresses)
 
         return events.mapNotNull { event ->
             var amount: NftPrice? = null
 
             val paymentToken = event.markets_data.payment_token
             if (paymentToken != null) {
-                amount = nftPrice(platformCoinMap[paymentToken.address], event.amount, true)
+                amount = nftPrice(tokenMap[paymentToken.address], event.amount, true)
             }
 
             return@mapNotNull NftEvent(
@@ -92,16 +92,16 @@ class NftManager(
             }
         }
 
-        val platformCoinMap = platformCoinMapFromAddresses(addresses)
+        val tokenMap = tokenMapFromAddresses(addresses)
 
         return assetResponses.map { response ->
-            assetFromResponse(response, platformCoinMap)
+            assetFromResponse(response, tokenMap)
         }
     }
 
-    private fun assetFromResponse(response: HsNftApiV1Response.Asset, platformCoinMap: Map<String, PlatformCoin>? = null): NftAsset {
-        val platformCoinMapResolved: Map<String, PlatformCoin> = if (platformCoinMap != null) {
-            platformCoinMap
+    private fun assetFromResponse(response: HsNftApiV1Response.Asset, tokenMap: Map<String, Token>? = null): NftAsset {
+        val tokenMapResolved: Map<String, Token> = if (tokenMap != null) {
+            tokenMap
         } else {
             val addresses: MutableList<String> = mutableListOf()
 
@@ -113,7 +113,7 @@ class NftManager(
                 addresses.add(order.payment_token_contract.address)
             }
 
-            platformCoinMapFromAddresses(addresses)
+            tokenMapFromAddresses(addresses)
         }
 
         return NftAsset(
@@ -127,18 +127,18 @@ class NftManager(
             externalLink = response.links?.external_link,
             permalink = response.links?.permalink,
             traits = response.attributes?.map { NftAsset.Trait(it.trait_type, it.value, it.trait_count) } ?: listOf(),
-            lastSalePrice = response.markets_data.last_sale?.let { nftPrice(platformCoinMapResolved[it.payment_token.address], it.total_price, true) },
+            lastSalePrice = response.markets_data.last_sale?.let { nftPrice(tokenMapResolved[it.payment_token.address], it.total_price, true) },
             onSale = response.markets_data.last_sale != null,
-            orders = assetOrders(response.markets_data.orders, platformCoinMapResolved)
+            orders = assetOrders(response.markets_data.orders, tokenMapResolved)
         )
     }
 
-    private fun assetOrders(orders: List<HsNftApiV1Response.Asset.MarketsData.Order>?, platformCoinMap: Map<String, PlatformCoin>): List<AssetOrder> =
+    private fun assetOrders(orders: List<HsNftApiV1Response.Asset.MarketsData.Order>?, tokenMap: Map<String, Token>): List<AssetOrder> =
         orders?.map { order ->
             val price = order.current_price.movePointLeft(order.payment_token_contract.decimals)
             AssetOrder(
                 closingDate = stringToDate(order.closing_date),
-                price = platformCoinMap[order.payment_token_contract.address]?.let { nftPrice(it, price, true) },
+                price = tokenMap[order.payment_token_contract.address]?.let { nftPrice(it, price, true) },
                 emptyTaker = order.taker.address == zeroAddress,
                 side = order.side,
                 v = order.v,
@@ -146,29 +146,31 @@ class NftManager(
             )
         } ?: listOf()
 
-    private fun platformCoinMapFromAddresses(addresses: MutableList<String>): Map<String, PlatformCoin> =
+    private fun tokenMapFromAddresses(addresses: MutableList<String>): Map<String, Token> {
         try {
-            val map: MutableMap<String, PlatformCoin> = mutableMapOf()
+            if (addresses.isEmpty()) return mapOf()
 
-            val coinTypes = addresses.map { getCoinTypeId(it) }
-            val platformCoins = coinManager.platformCoins(coinTypes)
+            val map: MutableMap<String, Token> = mutableMapOf()
 
-            platformCoins.forEach { platformCoin ->
-                when (platformCoin.coinType) {
-                    CoinType.Ethereum ->
-                        map[zeroAddress] = platformCoin
-                    is CoinType.Erc20 ->
-                        map[(platformCoin.coinType as CoinType.Erc20).address.lowercase()] =
-                            platformCoin
+            val tokenTypes = addresses.map { getTokenType(it) }
+            val tokens = coinManager.tokens(tokenTypes.map { TokenQuery(BlockchainType.Ethereum, it) })
+
+            tokens.forEach { token ->
+                when (token.type) {
+                    TokenType.Native ->
+                        map[zeroAddress] = token
+                    is TokenType.Eip20 ->
+                        map[token.type.address.lowercase()] = token
 
                     else -> {}
                 }
             }
 
-            map
+            return map
         } catch (e: Exception) {
-            mutableMapOf()
+            return mutableMapOf()
         }
+    }
 
     private fun stringToDate(date: String) = try {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
@@ -179,10 +181,10 @@ class NftManager(
         null
     }
 
-    private fun getCoinTypeId(paymentTokenAddress: String): CoinType {
+    private fun getTokenType(paymentTokenAddress: String): TokenType {
         val coinType = when (paymentTokenAddress) {
-            zeroAddress -> CoinType.Ethereum
-            else -> CoinType.Erc20(paymentTokenAddress.lowercase())
+            zeroAddress -> TokenType.Native
+            else -> TokenType.Eip20(paymentTokenAddress.lowercase())
         }
 
         return coinType
@@ -190,10 +192,9 @@ class NftManager(
 
     private fun collectionFromResponse(
         response: HsNftApiV1Response.Collection,
-        ethereumPlatformCoin: PlatformCoin? = null
+        ethereumToken: Token? = null
     ): NftCollection {
-        val ethereumPlatformCoin =
-            ethereumPlatformCoin ?: coinManager.platformCoin(CoinType.Ethereum)
+        val ethereumToken = ethereumToken ?: coinManager.token(TokenQuery(BlockchainType.Ethereum, TokenType.Native))
 
         return NftCollection(
             asset_contracts = response.asset_contracts?.let { contracts ->
@@ -212,44 +213,44 @@ class NftManager(
             externalUrl = response.links?.external_url,
             discordUrl = response.links?.discord_url,
             twitterUsername = response.links?.twitter_username,
-            stats = collectionStats(response.stats, ethereumPlatformCoin),
-            statCharts = statCharts(response.stats_chart, ethereumPlatformCoin)
+            stats = collectionStats(response.stats, ethereumToken),
+            statCharts = statCharts(response.stats_chart, ethereumToken)
         )
     }
 
     private fun nftPrice(
-        platformCoin: PlatformCoin?,
+        token: Token?,
         value: BigDecimal?,
         shift: Boolean
     ): NftPrice? {
-        val platformCoin = platformCoin ?: return null
+        val token = token ?: return null
         val value = value ?: return null
 
         return NftPrice(
-            platformCoin,
-            if (shift) value.movePointLeft(platformCoin.decimals) else value
+            token,
+            if (shift) value.movePointLeft(token.decimals) else value
         )
     }
 
     private fun collectionStats(
         stats: HsNftApiV1Response.Collection.Stats,
-        ethereumPlatformCoin: PlatformCoin?
+        ethereumToken: Token?
     ): NftCollection.NftCollectionStats =
         NftCollection.NftCollectionStats(
             count = stats.count,
             ownersCount = stats.num_owners,
             totalSupply = stats.total_supply,
-            averagePrice1d = nftPrice(ethereumPlatformCoin, stats.one_day_average_price, false),
-            averagePrice7d = nftPrice(ethereumPlatformCoin, stats.seven_day_average_price, false),
-            averagePrice30d = nftPrice(ethereumPlatformCoin, stats.thirty_day_average_price, false),
-            floorPrice = nftPrice(ethereumPlatformCoin, stats.floor_price, false),
+            averagePrice1d = nftPrice(ethereumToken, stats.one_day_average_price, false),
+            averagePrice7d = nftPrice(ethereumToken, stats.seven_day_average_price, false),
+            averagePrice30d = nftPrice(ethereumToken, stats.thirty_day_average_price, false),
+            floorPrice = nftPrice(ethereumToken, stats.floor_price, false),
             totalVolume = stats.total_volume,
-            marketCap = nftPrice(ethereumPlatformCoin, stats.market_cap, false),
+            marketCap = nftPrice(ethereumToken, stats.market_cap, false),
             volumes = mapOf(
-                HsTimePeriod.Day1 to nftPrice(ethereumPlatformCoin, stats.one_day_volume, false),
-                HsTimePeriod.Week1 to nftPrice(ethereumPlatformCoin, stats.seven_day_volume, false),
+                HsTimePeriod.Day1 to nftPrice(ethereumToken, stats.one_day_volume, false),
+                HsTimePeriod.Week1 to nftPrice(ethereumToken, stats.seven_day_volume, false),
                 HsTimePeriod.Month1 to nftPrice(
-                    ethereumPlatformCoin,
+                    ethereumToken,
                     stats.thirty_day_volume,
                     false
                 )
@@ -268,7 +269,7 @@ class NftManager(
 
     private fun statCharts(
         statChartPoints: List<HsNftApiV1Response.Collection.ChartPoint>?,
-        ethereumPlatformCoin: PlatformCoin?
+        ethereumToken: Token?
     ): NftCollection.NftCollectionStatCharts? {
         val statChartPoints = statChartPoints ?: return null
 
@@ -277,7 +278,7 @@ class NftManager(
                 NftCollection.NftCollectionStatCharts.PricePoint(
                     point.timestamp,
                     it,
-                    ethereumPlatformCoin
+                    ethereumToken
                 )
             }
         }
@@ -286,7 +287,7 @@ class NftManager(
                 NftCollection.NftCollectionStatCharts.PricePoint(
                     point.timestamp,
                     it,
-                    ethereumPlatformCoin
+                    ethereumToken
                 )
             }
         }
@@ -295,7 +296,7 @@ class NftManager(
                 NftCollection.NftCollectionStatCharts.PricePoint(
                     point.timestamp,
                     it,
-                    ethereumPlatformCoin
+                    ethereumToken
                 )
             }
         }

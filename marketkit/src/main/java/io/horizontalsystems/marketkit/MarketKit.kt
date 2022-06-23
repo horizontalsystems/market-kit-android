@@ -11,6 +11,7 @@ import io.horizontalsystems.marketkit.providers.*
 import io.horizontalsystems.marketkit.storage.*
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
+import io.horizontalsystems.marketkit.syncers.HsDataSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.math.BigDecimal
@@ -28,13 +29,13 @@ class MarketKit(
     private val exchangeSyncer: ExchangeSyncer,
     private val chartSyncManager: ChartSyncManager,
     private val globalMarketInfoManager: GlobalMarketInfoManager,
-    private val hsProvider: HsProvider
+    private val hsProvider: HsProvider,
+    private val hsDataSyncer: HsDataSyncer
 ) {
     // Coins
 
     val fullCoinsUpdatedObservable: Observable<Unit>
-        get() = coinManager.fullCoinsUpdatedObservable
-
+        get() = coinSyncer.fullCoinsUpdatedObservable
 
     fun fullCoins(filter: String, limit: Int = 20): List<FullCoin> {
         return coinManager.fullCoins(filter, limit)
@@ -44,9 +45,23 @@ class MarketKit(
         return coinManager.fullCoins(coinUids)
     }
 
-    fun fullCoinsByCoinTypes(coinTypes: List<CoinType>): List<FullCoin> {
-        return coinManager.fullCoinsByCoinTypes(coinTypes)
-    }
+    fun token(query: TokenQuery): Token? =
+        coinManager.token(query)
+
+    fun tokens(queries: List<TokenQuery>): List<Token> =
+        coinManager.tokens(queries)
+
+    fun tokens(reference: String): List<Token> =
+        coinManager.tokens(reference)
+
+    fun tokens(blockchainType: BlockchainType, filter: String, limit: Int = 20): List<Token> =
+        coinManager.tokens(blockchainType, filter, limit)
+
+    fun blockchains(uids: List<String>): List<Blockchain> =
+        coinManager.blockchains(uids)
+
+    fun blockchain(uid: String): Blockchain? =
+        coinManager.blockchain(uid)
 
     fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean = false): Single<List<MarketInfo>> {
         return coinManager.marketInfosSingle(top, currencyCode, defi)
@@ -69,7 +84,7 @@ class MarketKit(
         currencyCode: String,
         language: String
     ): Single<MarketInfoOverview> {
-        return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language)
+        return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
     }
 
     fun marketInfoDetailsSingle(coinUid: String, currencyCode: String): Single<MarketInfoDetails> {
@@ -96,22 +111,6 @@ class MarketKit(
         return coinManager.defiMarketInfosSingle(currencyCode)
     }
 
-    fun platformCoin(coinType: CoinType): PlatformCoin? {
-        return coinManager.platformCoin(coinType)
-    }
-
-    fun platformCoins(platformType: PlatformType, filter: String, limit: Int = 20): List<PlatformCoin> {
-        return coinManager.platformCoins(platformType, filter, limit)
-    }
-
-    fun platformCoins(coinTypes: List<CoinType>): List<PlatformCoin> {
-        return coinManager.platformCoins(coinTypes)
-    }
-
-    fun platformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin> {
-        return coinManager.platformCoinsByCoinTypeIds(coinTypeIds)
-    }
-
     // Categories
 
     fun coinCategoriesSingle(currencyCode: String): Single<List<CoinCategory>> =
@@ -121,7 +120,7 @@ class MarketKit(
         hsProvider.coinCategoryMarketPointsSingle(categoryUid, interval)
 
     fun sync() {
-        coinSyncer.sync()
+        hsDataSyncer.sync()
         exchangeSyncer.sync()
     }
 
@@ -306,17 +305,11 @@ class MarketKit(
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)
             val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
             val exchangeSyncer = ExchangeSyncer(exchangeManager, coinGeckoProvider, marketDatabase.syncerStateDao())
-            val coinManager =
-                CoinManager(
-                    CoinStorage(marketDatabase),
-                    hsProvider,
-                    coinGeckoProvider,
-                    defiYieldProvider,
-                    exchangeManager
-                )
+            val coinStorage = CoinStorage(marketDatabase)
+            val coinManager = CoinManager(coinStorage, hsProvider, coinGeckoProvider, defiYieldProvider, exchangeManager)
             val nftManager = NftManager(coinManager, hsNftProvider)
             val marketOverviewManager = MarketOverviewManager(nftManager, hsProvider)
-            val coinSyncer = CoinSyncer(hsProvider, coinManager, marketDatabase.syncerStateDao())
+            val coinSyncer = CoinSyncer(hsProvider, coinStorage, marketDatabase.syncerStateDao())
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
             val coinHistoricalPriceManager = CoinHistoricalPriceManager(
                 CoinHistoricalPriceStorage(marketDatabase),
@@ -334,6 +327,7 @@ class MarketKit(
             }
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
             val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
+            val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)
 
             return MarketKit(
                 nftManager,
@@ -348,7 +342,8 @@ class MarketKit(
                 exchangeSyncer,
                 chartSyncManager,
                 globalMarketInfoManager,
-                hsProvider
+                hsProvider,
+                hsDataSyncer
             )
         }
     }

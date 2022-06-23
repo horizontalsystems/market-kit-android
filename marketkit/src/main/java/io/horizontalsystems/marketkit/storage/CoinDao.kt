@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.storage
 
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import io.horizontalsystems.marketkit.models.*
 
@@ -11,56 +12,121 @@ interface CoinDao {
     fun insert(coin: Coin)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(platform: Platform)
+    fun insert(blockchainEntity: BlockchainEntity)
 
-    @Transaction
-    @Query(
-        "SELECT * FROM Coin " +
-                "WHERE name LIKE :filter OR code LIKE :filter " +
-                "ORDER BY CASE WHEN marketCapRank IS NULL THEN 1 ELSE 0 END, marketCapRank ASC " +
-                "LIMIT :limit"
-    )
-    fun getMarketCoins(filter: String, limit: Int): List<FullCoin>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(tokenEntity: TokenEntity)
+
+    @Query("SELECT * FROM Coin WHERE uid = :uid LIMIT 1")
+    fun getCoin(uid: String): Coin?
+
+    @Query("SELECT * FROM Coin WHERE uid IN (:uids)")
+    fun getCoins(uids: List<String>): List<Coin>
 
     @RawQuery
-    fun getMarketCoins(query: SupportSQLiteQuery): List<FullCoin>
+    fun getFullCoins(query: SupportSQLiteQuery): List<FullCoinWrapper>
 
-    @Transaction
-    @Query("SELECT * FROM Platform WHERE coinType IN (:coinTypes)")
-    fun getPlatformCoins(coinTypes: List<CoinType>): List<PlatformCoin>
+    @Query("SELECT * FROM Coin WHERE uid = :uid LIMIT 1")
+    fun getFullCoin(uid: String): FullCoinWrapper?
 
-    @Transaction
-    @Query("SELECT * FROM Platform WHERE coinType IN (:coinTypeIds)")
-    fun getPlatformCoinsByCoinTypeIds(coinTypeIds: List<String>): List<PlatformCoin>
+    @Query("SELECT * FROM Coin WHERE uid IN (:uids)")
+    fun getFullCoins(uids: List<String>): List<FullCoinWrapper>
 
-    @Transaction
-    @Query("SELECT * FROM Platform WHERE coinType = :coinType")
-    fun getPlatformCoin(coinType: CoinType): PlatformCoin?
-
-    @Transaction
     @RawQuery
-    fun getPlatformCoins(query: SupportSQLiteQuery): List<PlatformCoin>
+    fun getToken(query: SupportSQLiteQuery): TokenWrapper?
 
-    @Transaction
-    fun save(fullCoins: List<FullCoin>) {
-        fullCoins.forEach { marketCoin ->
-            insert(marketCoin.coin)
-            marketCoin.platforms.forEach { platform ->
-                insert(platform)
-            }
-        }
-    }
+    @RawQuery
+    fun getTokens(filter: SimpleSQLiteQuery): List<TokenWrapper>
 
-    @Query("SELECT * FROM Coin WHERE uid IN (:coinUid)")
-    fun coin(coinUid: String): Coin?
+    @Query("SELECT * FROM BlockchainEntity WHERE uid = :uid LIMIT 1")
+    fun getBlockchain(uid: String): BlockchainEntity?
 
-    @Query("SELECT * FROM Coin WHERE uid IN (:coinUids)")
-    fun coins(coinUids: List<String>): List<Coin>
+    @Query("SELECT * FROM BlockchainEntity WHERE uid IN (:uids)")
+    fun getBlockchains(uids: List<String>): List<BlockchainEntity>
 
     @Query("DELETE FROM Coin")
     fun deleteAllCoins()
 
-    @Query("DELETE FROM Platform")
-    fun deleteAllPlatforms()
+    @Query("DELETE FROM BlockchainEntity")
+    fun deleteAllBlockchains()
+
+    @Query("DELETE FROM TokenEntity")
+    fun deleteAllTokens()
+
+    data class FullCoinWrapper(
+        @Embedded
+        val coin: Coin,
+
+        @Relation(
+            entity = TokenEntity::class,
+            parentColumn = "uid",
+            entityColumn = "coinUid"
+        )
+        val tokens: List<TokenEntityWrapper>
+    ) {
+
+        val fullCoin: FullCoin
+        get() = FullCoin(
+            coin,
+            tokens.map { it.token(coin) }
+        )
+
+    }
+
+    data class TokenEntityWrapper(
+        @Embedded
+        val tokenEntity: TokenEntity,
+
+        @Relation(
+            parentColumn = "blockchainUid",
+            entityColumn = "uid"
+        )
+        val blockchainEntity: BlockchainEntity
+    ) {
+
+        fun token(coin: Coin): Token {
+            val tokenType = if (tokenEntity.decimals != null) {
+                TokenType.fromType(
+                    tokenEntity.type,
+                    tokenEntity.reference
+                )
+            } else {
+                TokenType.Unsupported(
+                    tokenEntity.type,
+                    tokenEntity.reference
+                )
+            }
+
+            return Token(
+                coin,
+                blockchainEntity.blockchain,
+                tokenType,
+                tokenEntity.decimals ?: 0
+            )
+        }
+
+    }
+
+    data class TokenWrapper(
+        @Embedded
+        val tokenEntity: TokenEntity,
+
+        @Relation(
+            parentColumn = "coinUid",
+            entityColumn = "uid"
+        )
+        val coin: Coin,
+
+        @Relation(
+            parentColumn = "blockchainUid",
+            entityColumn = "uid"
+        )
+        val blockchainEntity: BlockchainEntity,
+    ) {
+
+        val token: Token
+            get() = TokenEntityWrapper(tokenEntity, blockchainEntity).token(coin)
+
+    }
 
 }

@@ -10,14 +10,12 @@ data class MarketInfoOverviewRaw(
     val genesisDate: Date?,
     val categories: List<CoinCategory>,
     val description: String?,
-    val platforms: List<PlatformResponse>,
     val links: Map<String, String>,
     @SerializedName("market_data")
     val marketData: MarketData,
 ) {
 
-    val marketInfoOverview: MarketInfoOverview
-        get() {
+    fun marketInfoOverview(fullCoin: FullCoin): MarketInfoOverview {
             val performance = performance.map { (vsCurrency, v) ->
                 vsCurrency to v.mapNotNull { (timePeriodRaw, performance) ->
                     if (performance == null) return@mapNotNull null
@@ -40,6 +38,7 @@ data class MarketInfoOverviewRaw(
                 }.toMap()
 
             return MarketInfoOverview(
+                fullCoin,
                 marketData.marketCap,
                 marketData.marketCapRank,
                 marketData.totalSupply,
@@ -51,7 +50,6 @@ data class MarketInfoOverviewRaw(
                 genesisDate,
                 categories,
                 description ?: "",
-                platforms.mapNotNull { it.coinType },
                 links,
             )
         }

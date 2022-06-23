@@ -4,9 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.marketkit.MarketKit
-import io.horizontalsystems.marketkit.models.HsTimePeriod
-import io.horizontalsystems.marketkit.models.NftEvent
-import io.horizontalsystems.marketkit.models.PlatformType
+import io.horizontalsystems.marketkit.models.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
@@ -112,7 +110,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         val fullCoins = marketKit.fullCoins(filter, 100)
         Log.w("AAA", "Using filter $filter and got ${fullCoins.size} coins")
         fullCoins.forEach {
-            Log.w("AAA", "Coin ${it.coin.code}, ${it.coin.name}, platforms: ${it.platforms}")
+            Log.w("AAA", "Coin ${it.coin.code}, ${it.coin.name}, platforms: ${it.tokens}")
         }
     }
 
@@ -335,12 +333,46 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    fun runPlatformCoinsByPlatformType() {
-        val platformType = PlatformType.Ethereum
-        val filter = "eth"
-        val coinList = marketKit.platformCoins(platformType, filter, 30)
+    fun runTokensByBlockchainType() {
+        val blockchainType = BlockchainType.Ethereum
+        val coinList = marketKit.tokens(blockchainType, "eth", 30)
+        Log.w("AAA", "tokensByBlockchainType ${coinList.size} coins found")
         coinList.forEach {
-            Log.w("AAA", "getPlatformCoinsByPlatformType code: ${it.code} name: ${it.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.coinType.id}", )
+            Log.w("AAA", "tokensByBlockchainType code: ${it.coin.code} name: ${it.coin.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.type.id}")
+        }
+    }
+
+    fun runBlockchainsType() {
+        val blockchains = marketKit.blockchains(listOf("bitcoin", "ethereum"))
+        Log.w("AAA", "runBlockchainsType ${blockchains.size} coins found")
+        blockchains.forEach {
+            Log.w("AAA", "runBlockchainsType name: ${it.name}")
+        }
+    }
+
+    fun runFullCoins() {
+        val fullCoins = marketKit.fullCoins(listOf("bitcoin", "ethereum"))
+        Log.w("AAA", "runFullCoins ${fullCoins.size} coins found")
+        fullCoins.forEach {
+            Log.w("AAA", "runFullCoins name: ${it.coin.name} tokens: ${it.tokens.size}")
+        }
+    }
+
+    fun runTokenByTokenQuery() {
+        val blockchainType = BlockchainType.Ethereum
+        val coin = marketKit.token(TokenQuery(blockchainType, TokenType.Native))
+        Log.w("AAA", "runTokenByTokenQuery $coin")
+    }
+
+    fun runTokensByTokenQuery() {
+        val queries = listOf(
+            TokenQuery(BlockchainType.Ethereum, TokenType.Native),
+            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native),
+        )
+
+        val coinsList = marketKit.tokens(queries)
+        coinsList.forEach {
+            Log.w("AAA", "runTokensByTokenQuery code: ${it.coin.code} name: ${it.coin.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.type.id}")
         }
     }
 
