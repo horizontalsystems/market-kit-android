@@ -1,13 +1,16 @@
 package io.horizontalsystems.marketkit.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
+@Parcelize
 data class Token(
     val coin: Coin,
     val blockchain: Blockchain,
     val type: TokenType,
     val decimals: Int
-) {
+) : Parcelable {
 
     val blockchainType: BlockchainType
         get() = blockchain.type

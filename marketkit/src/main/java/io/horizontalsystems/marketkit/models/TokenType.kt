@@ -1,10 +1,20 @@
 package io.horizontalsystems.marketkit.models
 
-sealed class TokenType {
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+sealed class TokenType : Parcelable {
+
+    @Parcelize
     object Native : TokenType()
+
+    @Parcelize
     class Eip20(val address: String) : TokenType()
+
+    @Parcelize
     class Bep2(val symbol: String) : TokenType()
+
+    @Parcelize
     class Unsupported(val type: String, val reference: String?) : TokenType()
 
     val id: String
