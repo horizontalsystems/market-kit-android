@@ -1,9 +1,7 @@
 package io.horizontalsystems.marketkit.syncers
 
 import android.util.Log
-import io.horizontalsystems.marketkit.models.BlockchainEntity
-import io.horizontalsystems.marketkit.models.Coin
-import io.horizontalsystems.marketkit.models.TokenEntity
+import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
 import io.horizontalsystems.marketkit.storage.SyncerStateDao
@@ -37,9 +35,20 @@ class CoinSyncer(
 
         if (!coinsOutdated && !blockchainsOutdated && !tokensOutdated) return
 
-        val coinsSingle = if (coinsOutdated) hsProvider.allCoinsSingle() else Single.just(listOf())
-        val blockchainsSingle = if (blockchainsOutdated) hsProvider.allBlockchainsSingle() else Single.just(listOf())
-        val tokensSingle = if (tokensOutdated) hsProvider.allTokensSingle() else Single.just(listOf())
+        val coinsSingle = if (coinsOutdated)
+            hsProvider.allCoinsSingle().map { it.map { coinResponse -> coinEntity(coinResponse) } }
+        else
+            Single.just(listOf())
+
+        val blockchainsSingle = if (blockchainsOutdated)
+            hsProvider.allBlockchainsSingle().map { it.map { blockchainResponse -> blockchainEntity(blockchainResponse) } }
+        else
+            Single.just(listOf())
+
+        val tokensSingle = if (tokensOutdated)
+            hsProvider.allTokensSingle().map { it.map { tokenResponse -> tokenEntity(tokenResponse) } }
+        else
+            Single.just(listOf())
 
         disposable = Single.zip(coinsSingle, blockchainsSingle, tokensSingle) { r1, r2, r3 -> Triple(r1, r2, r3) }
             .subscribeOn(Schedulers.io())
@@ -51,6 +60,32 @@ class CoinSyncer(
                 Log.e("CoinSyncer", "sync() error", it)
             })
     }
+
+    private fun coinEntity(response: CoinResponse): Coin =
+        Coin(
+            response.uid,
+            response.name,
+            response.code,
+            response.market_cap_rank,
+            response.coingecko_id
+        )
+
+    private fun blockchainEntity(response: BlockchainResponse): BlockchainEntity =
+        BlockchainEntity(response.uid, response.name)
+
+    private fun tokenEntity(response: TokenResponse): TokenEntity =
+        TokenEntity(
+            response.coin_uid,
+            response.blockchain_uid,
+            response.type,
+            response.decimals,
+
+            when (response.type) {
+                "eip20" -> response.address
+                "bep2" -> response.symbol
+                else -> response.address
+            }
+        )
 
     fun stop() {
         disposable?.dispose()

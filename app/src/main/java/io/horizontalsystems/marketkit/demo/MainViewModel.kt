@@ -367,12 +367,19 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runTokensByTokenQuery() {
         val queries = listOf(
             TokenQuery(BlockchainType.Ethereum, TokenType.Native),
-            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native),
+            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)
         )
 
         val coinsList = marketKit.tokens(queries)
         coinsList.forEach {
             Log.w("AAA", "runTokensByTokenQuery code: ${it.coin.code} name: ${it.coin.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.type.id}")
+        }
+    }
+
+    fun runTokensReference() {
+        val coinsList = marketKit.tokens("0x11cdb42b0eb46d95f990bedd4695a6e3fa034978")
+        coinsList.forEach {
+            Log.w("AAA", "runTokensReference code: ${it.coin.code} name: ${it.coin.name} marketCapRank: ${it.coin.marketCapRank} coinType.id: ${it.type.id}")
         }
     }
 
