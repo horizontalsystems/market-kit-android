@@ -205,15 +205,15 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getStatus()
     }
 
-    fun allCoinsSingle(): Single<List<Coin>> {
+    fun allCoinsSingle(): Single<List<CoinResponse>> {
         return service.getAllCoins()
     }
 
-    fun allBlockchainsSingle(): Single<List<BlockchainEntity>> {
+    fun allBlockchainsSingle(): Single<List<BlockchainResponse>> {
         return service.getAllBlockchains()
     }
 
-    fun allTokensSingle(): Single<List<TokenEntity>> {
+    fun allTokensSingle(): Single<List<TokenResponse>> {
         return service.getAllTokens()
     }
 
@@ -394,13 +394,13 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getStatus(): Single<HsStatus>
 
         @GET("coins/list")
-        fun getAllCoins(): Single<List<Coin>>
+        fun getAllCoins(): Single<List<CoinResponse>>
 
         @GET("blockchains/list")
-        fun getAllBlockchains(): Single<List<BlockchainEntity>>
+        fun getAllBlockchains(): Single<List<BlockchainResponse>>
 
         @GET("tokens/list")
-        fun getAllTokens(): Single<List<TokenEntity>>
+        fun getAllTokens(): Single<List<TokenResponse>>
 
         companion object {
             private const val marketInfoFields =

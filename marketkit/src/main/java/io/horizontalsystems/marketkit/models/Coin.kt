@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -18,9 +17,7 @@ data class Coin(
     val uid: String,
     val name: String,
     val code: String,
-    @SerializedName("market_cap_rank")
     val marketCapRank: Int? = null,
-    @SerializedName("coingecko_id")
     val coinGeckoId: String? = null
 ) : Parcelable {
     override fun equals(other: Any?): Boolean {
