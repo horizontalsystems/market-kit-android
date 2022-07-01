@@ -49,6 +49,8 @@ class CoinStorage(marketDatabase: MarketDatabase) {
     }
 
     fun getTokens(queries: List<TokenQuery>): List<Token> {
+        if (queries.isEmpty()) return listOf()
+
         val queriesStr = queries.toSet().toList().map { filterByTokenQuery(it) }.joinToString(" OR ")
         val sql = "SELECT * FROM TokenEntity WHERE $queriesStr"
 
