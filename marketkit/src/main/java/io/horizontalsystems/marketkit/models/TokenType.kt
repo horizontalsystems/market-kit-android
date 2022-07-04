@@ -9,13 +9,13 @@ sealed class TokenType : Parcelable {
     object Native : TokenType()
 
     @Parcelize
-    class Eip20(val address: String) : TokenType()
+    data class Eip20(val address: String) : TokenType()
 
     @Parcelize
-    class Bep2(val symbol: String) : TokenType()
+    data class Bep2(val symbol: String) : TokenType()
 
     @Parcelize
-    class Unsupported(val type: String, val reference: String?) : TokenType()
+    data class Unsupported(val type: String, val reference: String?) : TokenType()
 
     val id: String
         get() = when (this) {
