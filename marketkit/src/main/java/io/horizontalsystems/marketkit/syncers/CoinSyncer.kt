@@ -65,7 +65,7 @@ class CoinSyncer(
         Coin(
             response.uid,
             response.name,
-            response.code,
+            response.code.uppercase(),
             response.market_cap_rank,
             response.coingecko_id
         )
