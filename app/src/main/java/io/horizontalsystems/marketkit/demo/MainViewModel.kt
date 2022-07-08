@@ -257,7 +257,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runNftEvents() {
         Log.w("AAA", "doNFTEvents")
         viewModelScope.launch {
-            val nftEvents = marketKit.nftEvents("cryptopunks", NftEvent.EventType.Sale)
+            val nftEvents = marketKit.nftEvents("cryptopunks", NftEvent.EventType.Sale, null)
 
             Log.w("AAA", "nftEvents: $nftEvents")
         }

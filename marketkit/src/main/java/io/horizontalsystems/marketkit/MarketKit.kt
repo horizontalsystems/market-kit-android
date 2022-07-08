@@ -276,8 +276,8 @@ class MarketKit(
     suspend fun nftAssets(collectionUid: String, cursor: String? = null): PagedNftAssets =
         nftManager.assets(collectionUid, cursor)
 
-    suspend fun nftEvents(collectionUid: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents =
-        nftManager.eventsSingle(collectionUid, eventType, cursor)
+    suspend fun nftEvents(collectionUid: String, eventType: NftEvent.EventType?, tokenId: String?, cursor: String? = null): PagedNftEvents =
+        nftManager.eventsSingle(collectionUid, eventType, tokenId, cursor)
 
 
     companion object {

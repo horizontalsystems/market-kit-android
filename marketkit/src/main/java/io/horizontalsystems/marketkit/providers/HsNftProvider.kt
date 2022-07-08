@@ -47,8 +47,8 @@ class HsNftProvider(baseUrl: String, apiKey: String) {
     suspend fun collectionAssets(uid: String, cursor: String?): HsNftApiV1Response.Assets =
         service.assets(collectionUid = uid, cursor = cursor, limit = 50)
 
-    suspend fun collectionEvents(uid: String, type: NftEvent.EventType?, cursor: String?): HsNftApiV1Response.Events =
-        service.events(uid, type?.value, cursor)
+    suspend fun collectionEvents(uid: String, type: NftEvent.EventType?, tokenId: String?, cursor: String?): HsNftApiV1Response.Events =
+        service.events(uid, type?.value, tokenId, cursor)
 
 }
 
@@ -92,6 +92,7 @@ interface HsNftApiV1 {
     suspend fun events(
         @Query("collection_uid") collectionUid: String,
         @Query("event_type") eventType: String?,
+        @Query("token_id") tokenId: String?,
         @Query("cursor") cursor: String? = null
     ): HsNftApiV1Response.Events
 
