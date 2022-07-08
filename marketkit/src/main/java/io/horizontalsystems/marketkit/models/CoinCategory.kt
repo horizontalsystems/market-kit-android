@@ -10,6 +10,7 @@ data class CoinCategory(
     val uid: String,
     val name: String,
     val description: Map<String, String>,
+    @SerializedName("market_cap")
     val marketCap: BigDecimal?,
     @SerializedName("change_24h")
     val diff24H: BigDecimal?,
