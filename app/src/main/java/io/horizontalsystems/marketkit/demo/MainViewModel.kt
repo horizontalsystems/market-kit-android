@@ -254,12 +254,21 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         }
     }
 
-    fun runNftEvents() {
-        Log.w("AAA", "doNFTEvents")
+    fun runNftCollectionEvents() {
+        Log.w("AAA", "doNftCollectionEvents")
         viewModelScope.launch {
-            val nftEvents = marketKit.nftEvents("cryptopunks", NftEvent.EventType.Sale, null)
+            val nftEvents = marketKit.nftCollectionEvents("cryptopunks", NftEvent.EventType.Sale, null)
 
-            Log.w("AAA", "nftEvents: $nftEvents")
+            Log.w("AAA", "runNftCollectionEvents: $nftEvents")
+        }
+    }
+
+    fun runNftAssetEvents() {
+        Log.w("AAA", "doRunNftAssetEvents")
+        viewModelScope.launch {
+            val nftEvents = marketKit.nftAssetEvents("0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb", "9872", null)
+
+            Log.w("AAA", "runNftAssetEvents: $nftEvents")
         }
     }
 

@@ -276,9 +276,11 @@ class MarketKit(
     suspend fun nftAssets(collectionUid: String, cursor: String? = null): PagedNftAssets =
         nftManager.assets(collectionUid, cursor)
 
-    suspend fun nftEvents(collectionUid: String, eventType: NftEvent.EventType?, tokenId: String?, cursor: String? = null): PagedNftEvents =
-        nftManager.eventsSingle(collectionUid, eventType, tokenId, cursor)
+    suspend fun nftCollectionEvents(collectionUid: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents =
+        nftManager.collectionEvents(collectionUid, eventType, cursor)
 
+    suspend fun nftAssetEvents(contractAddress: String, tokenId: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents =
+        nftManager.assetEvents(contractAddress, tokenId, eventType, cursor)
 
     companion object {
         fun getInstance(

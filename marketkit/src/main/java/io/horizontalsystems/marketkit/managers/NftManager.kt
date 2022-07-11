@@ -46,8 +46,17 @@ class NftManager(
         )
     }
 
-    suspend fun eventsSingle(collectionUid: String, eventType: NftEvent.EventType?, tokenId: String?, cursor: String? = null): PagedNftEvents {
-        val eventResponses = provider.collectionEvents(collectionUid, eventType, tokenId, cursor)
+    suspend fun collectionEvents(collectionUid: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents {
+        val eventResponses = provider.collectionEvents(collectionUid, eventType, cursor)
+
+        return PagedNftEvents(
+            eventsFromResponses(eventResponses.events),
+            eventResponses.cursor.next
+        )
+    }
+
+    suspend fun assetEvents(contractAddress: String, tokenId: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents {
+        val eventResponses = provider.assetEvents(contractAddress, tokenId, eventType, cursor)
 
         return PagedNftEvents(
             eventsFromResponses(eventResponses.events),
