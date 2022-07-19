@@ -29,7 +29,7 @@ class NftManager(
     }
 
     suspend fun collection(uid: String): NftCollection =
-        collectionFromResponse(provider.collection(uid))
+        collectionFromResponse(provider.collection(uid), coinManager.token(TokenQuery(BlockchainType.Ethereum, TokenType.Native)))
 
     suspend fun collections(): List<NftCollection> =
         collectionsFromResponses(provider.allCollections())
@@ -201,10 +201,8 @@ class NftManager(
 
     private fun collectionFromResponse(
         response: HsNftApiV1Response.Collection,
-        ethereumToken: Token? = null
+        ethereumToken: Token?
     ): NftCollection {
-        val ethereumToken = ethereumToken ?: coinManager.token(TokenQuery(BlockchainType.Ethereum, TokenType.Native))
-
         return NftCollection(
             asset_contracts = response.asset_contracts?.let { contracts ->
                 contracts.map { contract ->
@@ -223,7 +221,8 @@ class NftManager(
             discordUrl = response.links?.discord_url,
             twitterUsername = response.links?.twitter_username,
             stats = collectionStats(response.stats, ethereumToken),
-            statCharts = statCharts(response.stats_chart, ethereumToken)
+            statCharts = statCharts(response.stats_chart, ethereumToken),
+            lastUpdated = response.last_updated
         )
     }
 

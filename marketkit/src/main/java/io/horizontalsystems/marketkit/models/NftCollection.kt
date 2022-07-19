@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.models
 
 import java.math.BigDecimal
+import java.util.*
 
 data class NftCollection(
     val asset_contracts: List<Contract>?,
@@ -14,7 +15,8 @@ data class NftCollection(
     val twitterUsername: String?,
 
     val stats: NftCollectionStats,
-    val statCharts: NftCollectionStatCharts?
+    val statCharts: NftCollectionStatCharts?,
+    val lastUpdated: Date?
 ) {
 
     data class Contract(

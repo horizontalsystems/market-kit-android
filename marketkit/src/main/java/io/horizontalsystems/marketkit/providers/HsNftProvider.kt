@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.math.BigDecimal
+import java.util.*
 
 class HsNftProvider(baseUrl: String, apiKey: String) {
 
@@ -113,7 +114,8 @@ object HsNftApiV1Response {
         val image_data: ImageData?,
         val links: Links?,
         val stats: Stats,
-        val stats_chart: List<ChartPoint>?
+        val stats_chart: List<ChartPoint>?,
+        val last_updated: Date?
     ) {
         data class ImageData(
             val image_url: String?,
