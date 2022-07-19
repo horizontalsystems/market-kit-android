@@ -14,8 +14,6 @@ data class CoinGeckoCoinResponse(
 ) {
 
     private fun isSmartContractAddress(v: String): Boolean {
-        if (v.length != 42) return false
-
         return v.matches("^0[xX][A-z0-9]+$".toRegex())
     }
 
