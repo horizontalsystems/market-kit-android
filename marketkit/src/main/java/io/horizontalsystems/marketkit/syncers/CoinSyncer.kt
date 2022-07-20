@@ -71,7 +71,7 @@ class CoinSyncer(
         )
 
     private fun blockchainEntity(response: BlockchainResponse): BlockchainEntity =
-        BlockchainEntity(response.uid, response.name)
+        BlockchainEntity(response.uid, response.name, response.url)
 
     private fun tokenEntity(response: TokenResponse): TokenEntity =
         TokenEntity(

@@ -12,10 +12,11 @@ import androidx.room.PrimaryKey
 data class BlockchainEntity(
     @PrimaryKey
     val uid: String,
-    val name: String
+    val name: String,
+    val explorerUrl: String?
 ) {
 
     val blockchain: Blockchain
-        get() = Blockchain(BlockchainType.fromUid(uid), name)
+        get() = Blockchain(BlockchainType.fromUid(uid), name, explorerUrl)
 
 }
