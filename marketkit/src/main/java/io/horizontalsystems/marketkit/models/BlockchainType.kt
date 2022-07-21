@@ -32,6 +32,9 @@ sealed class BlockchainType : Parcelable {
     object Polygon : BlockchainType()
 
     @Parcelize
+    object Avalanche : BlockchainType()
+
+    @Parcelize
     object Optimism : BlockchainType()
 
     @Parcelize
@@ -51,6 +54,7 @@ sealed class BlockchainType : Parcelable {
             is BinanceSmartChain -> "binance-smart-chain"
             is BinanceChain -> "binancecoin"
             is Polygon -> "polygon-pos"
+            is Avalanche -> "avalanche"
             is Optimism -> "optimistic-ethereum"
             is ArbitrumOne -> "arbitrum-one"
             is Unsupported -> this._uid
@@ -73,6 +77,7 @@ sealed class BlockchainType : Parcelable {
         Ethereum -> "ethereum"
         BinanceSmartChain -> "binanceSmartChain"
         Polygon -> "polygon"
+        Avalanche -> "avalanche"
         ArbitrumOne -> "arbitrumOne"
         BinanceChain -> "binanceChain"
         Optimism -> "optimism"
@@ -92,6 +97,7 @@ sealed class BlockchainType : Parcelable {
                 "binance-smart-chain" -> BinanceSmartChain
                 "binancecoin" -> BinanceChain
                 "polygon-pos" -> Polygon
+                "avalanche" -> Avalanche
                 "optimistic-ethereum" -> Optimism
                 "arbitrum-one" -> ArbitrumOne
                 else -> Unsupported(uid)
