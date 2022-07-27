@@ -35,22 +35,11 @@ class CoinSyncer(
 
         if (!coinsOutdated && !blockchainsOutdated && !tokensOutdated) return
 
-        val coinsSingle = if (coinsOutdated)
-            hsProvider.allCoinsSingle().map { it.map { coinResponse -> coinEntity(coinResponse) } }
-        else
-            Single.just(listOf())
-
-        val blockchainsSingle = if (blockchainsOutdated)
-            hsProvider.allBlockchainsSingle().map { it.map { blockchainResponse -> blockchainEntity(blockchainResponse) } }
-        else
-            Single.just(listOf())
-
-        val tokensSingle = if (tokensOutdated)
+        disposable = Single.zip(
+            hsProvider.allCoinsSingle().map { it.map { coinResponse -> coinEntity(coinResponse) } },
+            hsProvider.allBlockchainsSingle().map { it.map { blockchainResponse -> blockchainEntity(blockchainResponse) } },
             hsProvider.allTokensSingle().map { it.map { tokenResponse -> tokenEntity(tokenResponse) } }
-        else
-            Single.just(listOf())
-
-        disposable = Single.zip(coinsSingle, blockchainsSingle, tokensSingle) { r1, r2, r3 -> Triple(r1, r2, r3) }
+        ) { r1, r2, r3 -> Triple(r1, r2, r3) }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe({ coinsData ->
