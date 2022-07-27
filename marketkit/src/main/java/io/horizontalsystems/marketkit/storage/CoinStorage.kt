@@ -3,7 +3,7 @@ package io.horizontalsystems.marketkit.storage
 import androidx.sqlite.db.SimpleSQLiteQuery
 import io.horizontalsystems.marketkit.models.*
 
-class CoinStorage(marketDatabase: MarketDatabase) {
+class CoinStorage(val marketDatabase: MarketDatabase) {
 
     private val coinDao = marketDatabase.coinDao()
 
@@ -98,12 +98,14 @@ class CoinStorage(marketDatabase: MarketDatabase) {
     }
 
     fun update(coins: List<Coin>, blockchainEntities: List<BlockchainEntity>, tokenEntities: List<TokenEntity>) {
-        coinDao.deleteAllCoins()
-        coinDao.deleteAllBlockchains()
-        coinDao.deleteAllTokens()
-        coins.forEach { coinDao.insert(it) }
-        blockchainEntities.forEach { coinDao.insert(it) }
-        tokenEntities.forEach { coinDao.insert(it) }
+        marketDatabase.runInTransaction {
+            coinDao.deleteAllCoins()
+            coinDao.deleteAllBlockchains()
+            coinDao.deleteAllTokens()
+            coins.forEach { coinDao.insert(it) }
+            blockchainEntities.forEach { coinDao.insert(it) }
+            tokenEntities.forEach { coinDao.insert(it) }
+        }
     }
 
 }
