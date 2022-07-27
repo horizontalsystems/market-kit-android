@@ -242,7 +242,7 @@ object HsNftApiV1Response {
     )
 
     data class Event(
-        val asset: Asset,
+        val asset: Asset?,
         val date: String,
         val type: String,
         val amount: BigDecimal,

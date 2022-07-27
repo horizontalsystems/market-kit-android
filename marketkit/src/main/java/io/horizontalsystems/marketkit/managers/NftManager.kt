@@ -76,6 +76,8 @@ class NftManager(
         val tokenMap = tokenMapFromAddresses(addresses)
 
         return events.mapNotNull { event ->
+            if (event.asset == null) return@mapNotNull null
+
             var amount: NftPrice? = null
 
             val paymentToken = event.markets_data.payment_token
