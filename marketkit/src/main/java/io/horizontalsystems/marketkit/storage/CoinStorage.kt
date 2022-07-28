@@ -16,20 +16,8 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
     fun fullCoins(filter: String, limit: Int): List<FullCoin> {
         val sql = """
             SELECT * FROM Coin
-            WHERE name LIKE '%$filter%' OR code LIKE '%$filter%'
-            ORDER BY
-                CASE
-                    WHEN `coin`.`code` LIKE '$filter' THEN 1
-                    WHEN `coin`.`code` LIKE '$filter%' THEN 2
-                    WHEN `coin`.`name` LIKE '$filter%' THEN 3
-                    ELSE 4 
-                END,
-                CASE 
-                    WHEN `coin`.`marketCapRank` IS NULL THEN 1
-                    ELSE 0 
-                END,
-                `coin`.`marketCapRank` ASC,
-                `coin`.`name` ASC
+            WHERE ${filterWhereStatement(filter)}
+            ORDER BY ${filterOrderByStatement(filter)}
             LIMIT $limit
         """.trimIndent()
 
@@ -67,9 +55,11 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
     fun getTokens(blockchainType: BlockchainType, filter: String, limit: Int): List<Token> {
         val sql = """
             SELECT * FROM TokenEntity
+            JOIN Coin ON `Coin`.`uid` = `TokenEntity`.`coinUid`
             WHERE 
               `TokenEntity`.`blockchainUid` = '${blockchainType.uid}'
-              AND coinUid IN (SELECT uid FROM Coin WHERE name LIKE '%$filter%' OR code LIKE '%$filter%')
+              AND (${filterWhereStatement(filter)})
+            ORDER BY ${filterOrderByStatement(filter)}
             LIMIT $limit
         """.trimIndent()
 
@@ -96,6 +86,24 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
 
         return conditions.joinToString(" AND ", "(", ")")
     }
+
+    private fun filterWhereStatement(filter: String) =
+        "`Coin`.`name` LIKE '%$filter%' OR `Coin`.`code` LIKE '%$filter%'"
+
+    private fun filterOrderByStatement(filter: String) = """
+        CASE 
+            WHEN `Coin`.`code` LIKE '$filter' THEN 1 
+            WHEN `Coin`.`code` LIKE '$filter%' THEN 2 
+            WHEN `Coin`.`name` LIKE '$filter%' THEN 3 
+            ELSE 4 
+        END, 
+        CASE 
+            WHEN `Coin`.`marketCapRank` IS NULL THEN 1 
+            ELSE 0 
+        END, 
+        `Coin`.`marketCapRank` ASC, 
+        `Coin`.`name` ASC 
+    """
 
     fun update(coins: List<Coin>, blockchainEntities: List<BlockchainEntity>, tokenEntities: List<TokenEntity>) {
         marketDatabase.runInTransaction {
