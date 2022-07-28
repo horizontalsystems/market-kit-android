@@ -12,6 +12,7 @@ data class MarketInfo(
     val priceChange200d: BigDecimal?,
     val priceChange1y: BigDecimal?,
     val marketCap: BigDecimal?,
+    val marketCapRank: Int?,
     val totalVolume: BigDecimal?,
     val athPercentage: BigDecimal?,
     val atlPercentage: BigDecimal?
@@ -26,6 +27,7 @@ data class MarketInfo(
         marketInfoRaw.priceChange200d,
         marketInfoRaw.priceChange1y,
         marketInfoRaw.marketCap,
+        marketInfoRaw.marketCapRank,
         marketInfoRaw.totalVolume,
         marketInfoRaw.athPercentage,
         marketInfoRaw.atlPercentage,
