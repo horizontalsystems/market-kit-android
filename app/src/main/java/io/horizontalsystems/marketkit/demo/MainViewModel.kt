@@ -424,16 +424,33 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
-    fun runTopPlatformsMarketCapPoints() {
+    fun runTopPlatformMarketCapPoints() {
         val chain = "ethereum"
-        marketKit.topPlatformsMarketCapPointsSingle(chain)
+        val currencyCode = "rub"
+        marketKit.topPlatformMarketCapPointsSingle(chain, HsTimePeriod.Day1, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({ points ->
                 points.forEach {
-                    Log.e("AAA", "date: ${it.date} marketCap: ${it.marketCap} ")
+                    Log.e("AAA", "timestamp: ${it.timestamp} marketCap: ${it.marketCap} ")
                 }
             }, {
                 Log.e("AAA", "topPlatformsMarketCapPointsSingle error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
+    fun runTopPlatformCoinList() {
+        val chain = "ethereum"
+        val currencyCode = "eur"
+        marketKit.topPlatformCoinListSingle(chain, currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ points ->
+                points.forEach {
+                    Log.e("AAA", "coin: ${it.fullCoin.coin.code} marketCap: ${it.marketCap} ")
+                }
+            }, {
+                Log.e("AAA", "runTopPlatformCoinList error", it)
             }).let {
                 disposables.add(it)
             }

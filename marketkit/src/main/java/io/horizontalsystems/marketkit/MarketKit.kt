@@ -255,8 +255,12 @@ class MarketKit(
         return coinManager.topPlatformsSingle(currencyCode)
     }
 
-    fun topPlatformsMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
-        return coinManager.topPlatformsMarketCapPointsSingle(chain)
+    fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {
+        return coinManager.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
+    }
+
+    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>> {
+        return coinManager.topPlatformCoinListSingle(chain, currencyCode)
     }
 
     // NFT

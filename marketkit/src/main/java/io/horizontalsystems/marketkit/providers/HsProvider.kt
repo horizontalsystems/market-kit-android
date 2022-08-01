@@ -173,8 +173,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getTopPlatforms(currencyCode)
     }
 
-    fun topPlatformMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
-        return service.getTopPlatformMarketCapPoints(chain)
+    fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {
+        return service.getTopPlatformMarketCapPoints(chain, timePeriod.value, currencyCode)
+    }
+
+    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfoRaw>> {
+        return service.getTopPlatformCoinList(chain, currencyCode)
     }
 
     fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexLiquiditiesResponse> {
@@ -377,8 +381,16 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
         @GET("top-platforms/{chain}/chart")
         fun getTopPlatformMarketCapPoints(
-            @Path("chain") chain: String
+            @Path("chain") chain: String,
+            @Query("interval") timePeriod: String,
+            @Query("currency") currencyCode: String,
         ): Single<List<TopPlatformMarketCapPoint>>
+
+        @GET("top-platforms/{chain}/list")
+        fun getTopPlatformCoinList(
+            @Path("chain") chain: String,
+            @Query("currency") currencyCode: String,
+        ): Single<List<MarketInfoRaw>>
 
         @GET("markets/overview")
         fun getMarketOverview(

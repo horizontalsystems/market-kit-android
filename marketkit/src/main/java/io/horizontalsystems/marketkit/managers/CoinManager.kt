@@ -160,8 +160,13 @@ class CoinManager(
             }
     }
 
-    fun topPlatformsMarketCapPointsSingle(chain: String): Single<List<TopPlatformMarketCapPoint>> {
-        return hsProvider.topPlatformMarketCapPointsSingle(chain)
+    fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {
+        return hsProvider.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
+    }
+
+    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>>{
+        return hsProvider.topPlatformCoinListSingle(chain, currencyCode)
+            .map { getMarketInfos(it) }
     }
 
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
