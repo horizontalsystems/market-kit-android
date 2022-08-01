@@ -439,6 +439,21 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runTopPlatformCoinList() {
+        val chain = "ethereum"
+        marketKit.topPlatformCoinListSingle(chain)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ points ->
+                points.forEach {
+                    Log.e("AAA", "coin: ${it.fullCoin.coin.code} marketCap: ${it.marketCap} ")
+                }
+            }, {
+                Log.e("AAA", "runTopPlatformCoinList error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }

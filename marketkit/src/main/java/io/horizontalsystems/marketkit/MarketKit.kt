@@ -259,6 +259,10 @@ class MarketKit(
         return coinManager.topPlatformsMarketCapPointsSingle(chain)
     }
 
+    fun topPlatformCoinListSingle(chain: String): Single<List<MarketInfo>> {
+        return coinManager.topPlatformCoinListSingle(chain)
+    }
+
     // NFT
 
     suspend fun nftAssetCollection(address: String): NftAssetCollection =

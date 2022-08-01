@@ -164,6 +164,11 @@ class CoinManager(
         return hsProvider.topPlatformMarketCapPointsSingle(chain)
     }
 
+    fun topPlatformCoinListSingle(chain: String): Single<List<MarketInfo>>{
+        return hsProvider.topPlatformCoinListSingle(chain)
+            .map { getMarketInfos(it) }
+    }
+
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
         return try {
             val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
