@@ -48,8 +48,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
     fun coinCategoryMarketPointsSingle(
         categoryUid: String,
         timePeriod: HsTimePeriod,
+        currencyCode: String,
     ): Single<List<CoinCategoryMarketPoint>> {
-        return service.coinCategoryMarketPoints(categoryUid, timePeriod.value)
+        return service.coinCategoryMarketPoints(categoryUid, timePeriod.value, currencyCode)
     }
 
     fun getCoinPrices(coinUids: List<String>, currencyCode: String): Single<List<CoinPrice>> {
@@ -261,7 +262,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         @GET("categories/{categoryUid}/market_cap")
         fun coinCategoryMarketPoints(
             @Path("categoryUid") categoryUid: String,
-            @Query("interval") interval: String
+            @Query("interval") interval: String,
+            @Query("currency") currencyCode: String,
         ): Single<List<CoinCategoryMarketPoint>>
 
         @GET("coins")

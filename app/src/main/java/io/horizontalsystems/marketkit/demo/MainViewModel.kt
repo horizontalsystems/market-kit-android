@@ -183,7 +183,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runCoinCategoryMarketPoints() {
         val categoryUid = "oracles"
         val interval = HsTimePeriod.Week1
-        marketKit.coinCategoryMarketPointsSingle(categoryUid, interval)
+        val currencyCode = "RUB"
+        marketKit.coinCategoryMarketPointsSingle(categoryUid, interval, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
