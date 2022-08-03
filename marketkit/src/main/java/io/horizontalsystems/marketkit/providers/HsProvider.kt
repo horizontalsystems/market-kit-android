@@ -129,7 +129,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getMarketInfoGlobalTvl(
             currencyCode,
             timePeriod.value,
-            chain = if (chain.isNotBlank()) chain else null
+            blockchain = if (chain.isNotBlank()) chain else null
         ).map { responseList ->
             responseList.mapNotNull {
                 it.tvl?.let { tvl ->
@@ -346,7 +346,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getMarketInfoGlobalTvl(
             @Query("currency") currencyCode: String,
             @Query("interval") interval: String,
-            @Query("chain") chain: String?
+            @Query("blockchain") blockchain: String?
         ): Single<List<MarketInfoTvlResponse>>
 
         @GET("addresses/holders")
