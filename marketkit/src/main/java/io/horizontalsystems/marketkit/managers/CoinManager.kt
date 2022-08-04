@@ -164,22 +164,26 @@ class CoinManager(
         return hsProvider.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
     }
 
-    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>>{
+    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>> {
         return hsProvider.topPlatformCoinListSingle(chain, currencyCode)
             .map { getMarketInfos(it) }
     }
 
     private fun getMarketInfos(rawMarketInfos: List<MarketInfoRaw>): List<MarketInfo> {
-        return try {
-            val fullCoins = storage.fullCoins(rawMarketInfos.map { it.uid })
-            val hashMap = fullCoins.map { it.coin.uid to it }.toMap()
+        return buildList {
+            rawMarketInfos.chunked(700).forEach { chunkedRawMarketInfos ->
+                try {
+                    val fullCoins = storage.fullCoins(chunkedRawMarketInfos.map { it.uid })
+                    val hashMap = fullCoins.associateBy { it.coin.uid }
 
-            rawMarketInfos.mapNotNull { rawMarketInfo ->
-                val fullCoin = hashMap[rawMarketInfo.uid] ?: return@mapNotNull null
-                MarketInfo(rawMarketInfo, fullCoin)
+                    addAll(
+                        chunkedRawMarketInfos.mapNotNull { rawMarketInfo ->
+                            val fullCoin = hashMap[rawMarketInfo.uid] ?: return@mapNotNull null
+                            MarketInfo(rawMarketInfo, fullCoin)
+                        }
+                    )
+                } catch (e: Exception) { }
             }
-        } catch (e: Exception) {
-            emptyList()
         }
     }
 
