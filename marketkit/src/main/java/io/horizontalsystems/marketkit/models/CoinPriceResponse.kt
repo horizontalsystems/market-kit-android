@@ -12,7 +12,7 @@ data class CoinPriceResponse(
     val lastUpdated: Long?
 ) {
     fun coinPrice(currencyCode: String) = when {
-        price == null || priceChange == null || lastUpdated == null -> null
+        price == null || lastUpdated == null -> null
         else -> CoinPrice(uid, currencyCode, price, priceChange, lastUpdated)
     }
 }

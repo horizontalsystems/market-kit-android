@@ -25,7 +25,7 @@ import java.util.logging.Logger
         Exchange::class,
         SyncerState::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)

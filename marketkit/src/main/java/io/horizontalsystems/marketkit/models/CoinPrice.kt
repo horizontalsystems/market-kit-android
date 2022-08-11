@@ -9,7 +9,7 @@ data class CoinPrice(
     val coinUid: String,
     val currencyCode: String,
     val value: BigDecimal,
-    val diff: BigDecimal,
+    val diff: BigDecimal?,
     val timestamp: Long
 ) {
     val expired: Boolean
