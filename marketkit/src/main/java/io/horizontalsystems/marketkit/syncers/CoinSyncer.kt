@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.syncers
 
 import android.util.Log
+import io.horizontalsystems.marketkit.SyncInfo
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
@@ -90,6 +91,14 @@ class CoinSyncer(
         syncerStateDao.save(keyCoinsLastSyncTimestamp, coins.toString())
         syncerStateDao.save(keyBlockchainsLastSyncTimestamp, blockchains.toString())
         syncerStateDao.save(keyTokensLastSyncTimestamp, tokens.toString())
+    }
+
+    fun syncInfo(): SyncInfo {
+        return SyncInfo(
+            coinsTimestamp = syncerStateDao.get(keyCoinsLastSyncTimestamp),
+            blockchainsTimestamp = syncerStateDao.get(keyBlockchainsLastSyncTimestamp),
+            tokensTimestamp = syncerStateDao.get(keyTokensLastSyncTimestamp)
+        )
     }
 
 }

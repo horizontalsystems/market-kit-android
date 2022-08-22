@@ -286,6 +286,12 @@ class MarketKit(
     suspend fun nftAssetEvents(contractAddress: String, tokenId: String, eventType: NftEvent.EventType?, cursor: String? = null): PagedNftEvents =
         nftManager.assetEvents(contractAddress, tokenId, eventType, cursor)
 
+    //Misc
+
+    fun syncInfo() : SyncInfo {
+        return coinSyncer.syncInfo()
+    }
+
     companion object {
         fun getInstance(
             context: Context,
@@ -366,3 +372,9 @@ sealed class ProviderError : Exception() {
     class NoDataForCoin : ProviderError()
     class ReturnedTimestampIsVeryInaccurate : ProviderError()
 }
+
+class SyncInfo(
+    val coinsTimestamp: String?,
+    val blockchainsTimestamp: String?,
+    val tokensTimestamp: String?
+)
