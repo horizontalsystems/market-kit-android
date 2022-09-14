@@ -239,37 +239,18 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runNftCollections() {
         Log.w("AAA", "doCollections")
         viewModelScope.launch {
-            val collections = marketKit.nftCollections()
+            val collections = marketKit.nftTopCollections()
 
             Log.w("AAA", "collections count: ${collections.size}")
-            Log.w("AAA", "first collection: ${collections.firstOrNull()}")
-        }
-    }
-
-    fun runNftCollection() {
-        Log.w("AAA", "doCollection")
-        viewModelScope.launch {
-            val collection = marketKit.nftCollection("goblintownwtf")
-
-            Log.w("AAA", "collection: ${collection}")
-        }
-    }
-
-    fun runNftCollectionEvents() {
-        Log.w("AAA", "doNftCollectionEvents")
-        viewModelScope.launch {
-            val nftEvents = marketKit.nftCollectionEvents("cryptopunks", NftEvent.EventType.Sale, null)
-
-            Log.w("AAA", "runNftCollectionEvents: $nftEvents")
-        }
-    }
-
-    fun runNftAssetEvents() {
-        Log.w("AAA", "doRunNftAssetEvents")
-        viewModelScope.launch {
-            val nftEvents = marketKit.nftAssetEvents("0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb", "9872", null)
-
-            Log.w("AAA", "runNftAssetEvents: $nftEvents")
+            collections.firstOrNull()?.let { collection ->
+                Log.w("AAA", "${collection.blockchainType}")
+                Log.w("AAA", "${collection.providerUid}")
+                Log.w("AAA", "${collection.name}")
+                Log.w("AAA", "${collection.thumbnailImageUrl}")
+                Log.w("AAA", "${collection.floorPrice}")
+                Log.w("AAA", "${collection.volumes}")
+                Log.w("AAA", "${collection.changes}")
+            }
         }
     }
 

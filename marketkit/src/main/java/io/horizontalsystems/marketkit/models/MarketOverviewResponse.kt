@@ -1,7 +1,7 @@
 package io.horizontalsystems.marketkit.models
 
 import com.google.gson.annotations.SerializedName
-import io.horizontalsystems.marketkit.providers.HsNftApiV1Response
+import io.horizontalsystems.marketkit.providers.TopCollectionRaw
 
 data class MarketOverviewResponse(
     @SerializedName("global")
@@ -14,9 +14,9 @@ data class MarketOverviewResponse(
 ) {
 
     data class NftCollections(
-        val one_day: List<HsNftApiV1Response.Collection>,
-        val seven_day: List<HsNftApiV1Response.Collection>,
-        val thirty_day: List<HsNftApiV1Response.Collection>
+        val one_day: List<TopCollectionRaw>,
+        val seven_day: List<TopCollectionRaw>,
+        val thirty_day: List<TopCollectionRaw>
     )
 
 }

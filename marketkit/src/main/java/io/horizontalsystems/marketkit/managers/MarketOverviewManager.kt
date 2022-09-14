@@ -17,9 +17,9 @@ class MarketOverviewManager(
             coinCategories = response.coinCategories,
             topPlatforms = response.topPlatforms.map { it.topPlatform },
             nftCollections = mapOf(
-                HsTimePeriod.Day1 to nftManager.collectionsFromResponses(response.nft.one_day),
-                HsTimePeriod.Week1 to nftManager.collectionsFromResponses(response.nft.seven_day),
-                HsTimePeriod.Month1 to nftManager.collectionsFromResponses(response.nft.thirty_day)
+                HsTimePeriod.Day1 to nftManager.topCollections(response.nft.one_day),
+                HsTimePeriod.Week1 to nftManager.topCollections(response.nft.seven_day),
+                HsTimePeriod.Month1 to nftManager.topCollections(response.nft.thirty_day)
             )
         )
 
