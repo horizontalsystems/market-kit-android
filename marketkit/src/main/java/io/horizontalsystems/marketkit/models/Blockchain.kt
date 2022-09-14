@@ -15,7 +15,7 @@ data class Blockchain(
         get() = type.uid
 
     override fun equals(other: Any?): Boolean =
-        other is Blockchain && other.type == type && other.name == name
+        other is Blockchain && other.type == type
 
     override fun hashCode(): Int =
         Objects.hash(type, name)

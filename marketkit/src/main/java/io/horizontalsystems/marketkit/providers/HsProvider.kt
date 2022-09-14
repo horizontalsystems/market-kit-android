@@ -396,7 +396,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
         @GET("markets/overview")
         fun getMarketOverview(
-            @Query("currency") currencyCode: String
+            @Query("currency") currencyCode: String,
+            @Query("simplified") simplified: Boolean = true
         ): Single<MarketOverviewResponse>
 
         @GET("coins/top-movers")
