@@ -15,6 +15,9 @@ sealed class TokenType : Parcelable {
     data class Bep2(val symbol: String) : TokenType()
 
     @Parcelize
+    data class Spl(val address: String) : TokenType()
+
+    @Parcelize
     data class Unsupported(val type: String, val reference: String?) : TokenType()
 
     val id: String
@@ -22,6 +25,7 @@ sealed class TokenType : Parcelable {
             Native -> "native"
             is Eip20 -> listOf("eip20", address).joinToString(":")
             is Bep2 -> listOf("bep2", symbol).joinToString(":")
+            is Spl -> listOf("spl", address).joinToString(":")
             is Unsupported -> if (reference != null) {
                 listOf("unsupported", type, reference).joinToString(":")
             } else {
@@ -34,6 +38,7 @@ sealed class TokenType : Parcelable {
             is Native -> Value("native", null)
             is Eip20 -> Value("eip20", address)
             is Bep2 -> Value("bep2", symbol)
+            is Spl -> Value("spl", address)
             is Unsupported -> Value(type, reference)
         }
 
@@ -60,6 +65,12 @@ sealed class TokenType : Parcelable {
                     }
                 }
 
+                "spl" -> {
+                    if (reference != null) {
+                        return Spl(reference)
+                    }
+                }
+
                 else -> {}
             }
 
@@ -76,6 +87,9 @@ sealed class TokenType : Parcelable {
                 }
                 "bep2" -> chunks.getOrNull(1)?.let {
                     Bep2(it)
+                }
+                "spl" -> chunks.getOrNull(1)?.let {
+                    Spl(it)
                 }
                 "unsupported" -> chunks.getOrNull(1)?.let {
                     Unsupported(it, chunks.getOrNull(2))
