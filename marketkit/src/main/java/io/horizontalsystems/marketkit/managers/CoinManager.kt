@@ -141,23 +141,7 @@ class CoinManager(
 
     fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatform>> {
         return hsProvider.topPlatformsSingle(currencyCode)
-            .map { responseList ->
-                responseList.map {
-                    TopPlatform(
-                        it.uid,
-                        it.name,
-                        it.rank,
-                        it.protocols,
-                        it.marketCap,
-                        it.stats["rank_1d"]?.toInt(),
-                        it.stats["rank_1w"]?.toInt(),
-                        it.stats["rank_1m"]?.toInt(),
-                        it.stats["change_1d"],
-                        it.stats["change_1w"],
-                        it.stats["change_1m"],
-                    )
-                }
-            }
+            .map { responseList -> responseList.map { it.topPlatform } }
     }
 
     fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {

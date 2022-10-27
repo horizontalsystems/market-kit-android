@@ -397,7 +397,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe({ platforms ->
                 platforms.forEach {
-                    Log.e("AAA", "topPlatformsSingle ${it.name} marketCap: ${it.marketCap} rank: ${it.rank}")
+                    Log.e("AAA", "topPlatformsSingle ${it.blockchain.name} marketCap: ${it.marketCap} rank: ${it.rank}")
                 }
             }, {
                 Log.e("AAA", "topPlatformsSingle error", it)

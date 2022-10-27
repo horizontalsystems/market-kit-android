@@ -3,8 +3,7 @@ package io.horizontalsystems.marketkit.models
 import java.math.BigDecimal
 
 data class TopPlatform(
-    val uid: String,
-    val name: String,
+    val blockchain: Blockchain,
     val rank: Int,
     val protocols: Int,
     val marketCap: BigDecimal,

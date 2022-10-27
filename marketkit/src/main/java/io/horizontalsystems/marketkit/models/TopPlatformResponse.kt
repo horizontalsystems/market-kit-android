@@ -16,8 +16,7 @@ data class TopPlatformResponse(
     val topPlatform: TopPlatform
         get() =
             TopPlatform(
-                uid,
-                name,
+                Blockchain(BlockchainType.fromUid(uid), name, null),
                 rank,
                 protocols,
                 marketCap,
