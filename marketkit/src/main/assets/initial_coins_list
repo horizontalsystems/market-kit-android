@@ -9113,6 +9113,8 @@ INSERT INTO Coin VALUES('apex-token-2','ApeX','APEX',809,'apex-token-2');
 INSERT INTO Coin VALUES('meta-apes-peel','Meta Apes PEEL','PEEL',875,'meta-apes-peel');
 INSERT INTO Coin VALUES('xana','XANA','XETA',865,'xana');
 INSERT INTO Coin VALUES('battle-infinity','Battle Infinity','IBAT',905,'battle-infinity');
+INSERT INTO Coin VALUES('safe-anwang','Safe','SAFE',NULL,'safe-anwang');
+INSERT INTO TokenEntity VALUES('safe-anwang','binance-smart-chain','eip20',18,'0x4d7fa587ec8e50bd0e9cd837cb4da796f47218a1');
 INSERT INTO TokenEntity VALUES('kunci-coin','binance-smart-chain','eip20',6,'0x6cf271270662be1c4fc1b7bb7d7d7fc60cc19125');
 INSERT INTO TokenEntity VALUES('usdd','tron','tron',NULL,'TPYmHEhy5n8TCEfYGqW2rPxsghSfzghPDn');
 INSERT INTO TokenEntity VALUES('meerkat-shares','cronos','cronos',NULL,'0xf8b9facb7b4410f5703eb29093302f2933d6e1aa');
