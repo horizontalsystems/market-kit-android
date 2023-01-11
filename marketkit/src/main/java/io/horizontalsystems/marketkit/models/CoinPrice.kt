@@ -20,6 +20,6 @@ data class CoinPrice(
     }
 
     companion object {
-        const val expirationInterval: Long = 180
+        const val expirationInterval: Long = 240
     }
 }
