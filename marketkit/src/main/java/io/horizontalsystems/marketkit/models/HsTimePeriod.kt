@@ -7,14 +7,15 @@ enum class HsTimePeriod(val value: String) {
     Month1("1m"),
     Month3("3m"),
     Month6("6m"),
-    Year1("1y");
+    Year1("1y"),
+    Year2("2y");
 
     val expiration: Long
         get() = when (this) {
             Day1 -> 30 * 60
             Week1 -> 4 * 60 * 60
             Week2 -> 8 * 60 * 60
-            Month1, Month3, Month6, Year1 -> day
+            Month1, Month3, Month6, Year1, Year2 -> day
         }
 
     val range: Long
@@ -26,6 +27,7 @@ enum class HsTimePeriod(val value: String) {
             Month3 -> 90 * day
             Month6 -> 180 * day
             Year1 -> 365 * day
+            Year2 -> 730 * day
         }
 
     private val day = (24 * 60 * 60).toLong()
