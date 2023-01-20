@@ -26,12 +26,16 @@ class ChartManager(
         val lastPoint = points.lastOrNull() ?: return null
 
         val lastPointTimestamp = lastPoint.timestamp
-        val startTimestamp = lastPointTimestamp - interval.range
+        val intervalRange = interval.range
+        val startTimestamp = intervalRange?.let {
+            lastPointTimestamp - it
+        } ?: points.first().timestamp
+
         val currentTimestamp = Date().time / 1000
         val lastPointGap = currentTimestamp - lastPointTimestamp
 
         // if points not in visible window (too early) just return null
-        if (lastPointGap > interval.range) {
+        if (intervalRange != null && lastPointGap > intervalRange) {
             return null
         }
 

@@ -284,7 +284,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getCoinPriceChart(
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
-            @Query("from_timestamp") timestamp: Long,
+            @Query("from_timestamp") timestamp: Long?,
             @Query("interval") interval: String,
         ): Single<List<ChartCoinPriceResponse>>
 
