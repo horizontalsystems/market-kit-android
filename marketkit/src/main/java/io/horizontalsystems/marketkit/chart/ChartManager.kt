@@ -117,4 +117,8 @@ class ChartManager(
                 } ?: Single.error(NoChartData())
             }
     }
+
+    fun chartStartTimeSingle(coinUid: String): Single<Long> {
+        return provider.coinPriceChartStartTime(coinUid)
+    }
 }

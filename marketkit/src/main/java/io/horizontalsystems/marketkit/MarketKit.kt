@@ -237,6 +237,10 @@ class MarketKit(
         return chartManager.chartInfoSingle(coinUid, currencyCode, interval)
     }
 
+    fun chartStartTimeSingle(coinUid: String): Single<Long> {
+        return chartManager.chartStartTimeSingle(coinUid)
+    }
+
     fun getChartInfoAsync(
         coinUid: String,
         currencyCode: String,
