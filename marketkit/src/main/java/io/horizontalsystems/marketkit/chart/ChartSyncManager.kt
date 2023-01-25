@@ -5,7 +5,7 @@ import io.horizontalsystems.marketkit.managers.CoinManager
 import io.horizontalsystems.marketkit.models.ChartInfo
 import io.horizontalsystems.marketkit.models.ChartInfoKey
 import io.horizontalsystems.marketkit.chart.scheduler.ChartScheduler
-import io.horizontalsystems.marketkit.models.HsTimePeriod
+import io.horizontalsystems.marketkit.models.HsPeriodType
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
@@ -25,7 +25,7 @@ class ChartSyncManager(
     private val failedKeys = ConcurrentLinkedQueue<ChartInfoKey>()
     private val disposables = ConcurrentHashMap<ChartInfoKey, Disposable>()
 
-    fun chartInfoObservable(coinUid: String, currencyCode: String, interval: HsTimePeriod): Observable<ChartInfo> {
+    fun chartInfoObservable(coinUid: String, currencyCode: String, interval: HsPeriodType): Observable<ChartInfo> {
 
         val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull() ?: return Observable.error(NoChartInfo())
 

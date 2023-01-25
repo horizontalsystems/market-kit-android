@@ -7,7 +7,7 @@ import java.math.BigDecimal
 data class ChartPointEntity(
     val coinUid: String,
     val currencyCode: String,
-    val interval: HsTimePeriod,
+    val interval: HsPeriodType,
     val value: BigDecimal,
     val volume: BigDecimal?,
     val timestamp: Long
