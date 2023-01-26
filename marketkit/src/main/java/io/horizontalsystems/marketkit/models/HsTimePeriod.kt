@@ -1,5 +1,7 @@
 package io.horizontalsystems.marketkit.models
 
+import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
+
 enum class HsTimePeriod(val value: String) {
     Day1("1d"),
     Week1("1w"),
@@ -9,14 +11,6 @@ enum class HsTimePeriod(val value: String) {
     Month6("6m"),
     Year1("1y"),
     Year2("2y");
-
-    val expiration: Long
-        get() = when (this) {
-            Day1 -> 30 * 60
-            Week1 -> 4 * 60 * 60
-            Week2 -> 8 * 60 * 60
-            Month1, Month3, Month6, Year1, Year2 -> day
-        }
 
     val range: Long
         get() = when (this) {
@@ -39,10 +33,7 @@ sealed class HsPeriodType {
     data class ByStartTime(val startTime: Long) : HsPeriodType()
 
     val expiration: Long
-        get() = when (this) {
-            is ByPeriod -> timePeriod.expiration
-            is ByStartTime -> 24 * 60 * 60
-        }
+        get() = HsChartRequestHelper.pointInterval(this).interval
 
     val range: Long?
         get() = when (this) {
