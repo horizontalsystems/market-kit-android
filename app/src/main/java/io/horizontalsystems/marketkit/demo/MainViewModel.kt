@@ -10,6 +10,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
@@ -86,7 +87,10 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runGetChartInfo() {
         val coinUid = "ethereum"
         val currencyCode = "USD"
-        val interval = HsTimePeriod.Month1
+
+        val time = Date().time / 1000 - TimeUnit.DAYS.toSeconds(7)
+
+        val interval = HsPeriodType.ByStartTime(time)
         //get stored chart info
         val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, interval)
         Log.w("AAA", "storedChartInfo: ${storedChartInfo?.points}")
@@ -98,6 +102,17 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.w("AAA", "fetchChartInfo: ${it.points}")
             }, {
                 Log.e("AAA", "fetchChartInfo Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+
+        marketKit.chartStartTimeSingle(coinUid)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "chartStartTimeSingle: $it")
+            }, {
+                Log.e("AAA", "chartStartTimeSingle Error", it)
 
             })
             .let {

@@ -22,16 +22,20 @@ class ChartManager(
         fun noChartInfo(key: ChartInfoKey)
     }
 
-    private fun chartInfo(points: List<ChartPoint>, interval: HsTimePeriod): ChartInfo? {
+    private fun chartInfo(points: List<ChartPoint>, periodType: HsPeriodType): ChartInfo? {
         val lastPoint = points.lastOrNull() ?: return null
 
         val lastPointTimestamp = lastPoint.timestamp
-        val startTimestamp = lastPointTimestamp - interval.range
+        val intervalRange = periodType.range
+        val startTimestamp = intervalRange?.let {
+            lastPointTimestamp - it
+        } ?: points.first().timestamp
+
         val currentTimestamp = Date().time / 1000
         val lastPointGap = currentTimestamp - lastPointTimestamp
 
         // if points not in visible window (too early) just return null
-        if (lastPointGap > interval.range) {
+        if (intervalRange != null && lastPointGap > intervalRange) {
             return null
         }
 
@@ -39,12 +43,12 @@ class ChartManager(
             points,
             startTimestamp,
             currentTimestamp,
-            isExpired = lastPointGap > interval.expiration
+            isExpired = lastPointGap > periodType.expiration
         )
     }
 
     private fun storedChartPoints(key: ChartInfoKey): List<ChartPoint> {
-        return storage.getList(key.coin.uid, key.currencyCode, key.interval).map { point ->
+        return storage.getList(key.coin.uid, key.currencyCode, key.periodType).map { point ->
             ChartPoint(
                 point.value,
                 point.timestamp,
@@ -58,7 +62,7 @@ class ChartManager(
             ChartPointEntity(
                 key.coin.uid,
                 key.currencyCode,
-                key.interval,
+                key.periodType,
                 point.value,
                 point.extra[ChartPointType.Volume],
                 point.timestamp,
@@ -68,7 +72,7 @@ class ChartManager(
         storage.delete(key)
         storage.save(records)
 
-        val chartInfo = chartInfo(points, key.interval)
+        val chartInfo = chartInfo(points, key.periodType)
 
         if (chartInfo == null) {
             listener?.noChartInfo(key)
@@ -85,16 +89,16 @@ class ChartManager(
         return storedChartPoints(key).lastOrNull()?.timestamp
     }
 
-    fun getChartInfo(coinUid: String, currencyCode: String, interval: HsTimePeriod): ChartInfo? {
+    fun getChartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): ChartInfo? {
         val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull() ?: return null
-        val key = ChartInfoKey(fullCoin.coin, currencyCode, interval)
-        return chartInfo(storedChartPoints(key), interval)
+        val key = ChartInfoKey(fullCoin.coin, currencyCode, periodType)
+        return chartInfo(storedChartPoints(key), periodType)
     }
 
     fun chartInfoSingle(
         coinUid: String,
         currencyCode: String,
-        interval: HsTimePeriod
+        periodType: HsPeriodType
     ): Single<ChartInfo> {
         val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull()
             ?: return Single.error(NoChartData())
@@ -102,15 +106,19 @@ class ChartManager(
         return provider.coinPriceChartSingle(
             fullCoin.coin.uid,
             currencyCode,
-            interval,
+            periodType,
             indicatorPoints
         )
             .flatMap { response ->
                 val points = response.map { it.chartPoint }
 
-                chartInfo(points, interval)?.let {
+                chartInfo(points, periodType)?.let {
                     Single.just(it)
                 } ?: Single.error(NoChartData())
             }
+    }
+
+    fun chartStartTimeSingle(coinUid: String): Single<Long> {
+        return provider.coinPriceChartStartTime(coinUid)
     }
 }

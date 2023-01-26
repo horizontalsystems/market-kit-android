@@ -229,20 +229,24 @@ class MarketKit(
 
     // Chart Info
 
-    fun chartInfo(coinUid: String, currencyCode: String, interval: HsTimePeriod): ChartInfo? {
-        return chartManager.getChartInfo(coinUid, currencyCode, interval)
+    fun chartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): ChartInfo? {
+        return chartManager.getChartInfo(coinUid, currencyCode, periodType)
     }
 
-    fun chartInfoSingle(coinUid: String, currencyCode: String, interval: HsTimePeriod): Single<ChartInfo> {
-        return chartManager.chartInfoSingle(coinUid, currencyCode, interval)
+    fun chartInfoSingle(coinUid: String, currencyCode: String, periodType: HsPeriodType): Single<ChartInfo> {
+        return chartManager.chartInfoSingle(coinUid, currencyCode, periodType)
+    }
+
+    fun chartStartTimeSingle(coinUid: String): Single<Long> {
+        return chartManager.chartStartTimeSingle(coinUid)
     }
 
     fun getChartInfoAsync(
         coinUid: String,
         currencyCode: String,
-        interval: HsTimePeriod
+        periodType: HsPeriodType
     ): Observable<ChartInfo> {
-        return chartSyncManager.chartInfoObservable(coinUid, currencyCode, interval)
+        return chartSyncManager.chartInfoObservable(coinUid, currencyCode, periodType)
     }
 
     // Global Market Info

@@ -20,10 +20,10 @@ class ChartSchedulerProvider(
         get() = manager.getLastSyncTimestamp(key)
 
     override val expirationInterval: Long
-        get() = key.interval.expiration
+        get() = key.periodType.expiration
 
     override val syncSingle: Single<Unit>
-        get() = provider.coinPriceChartSingle(key.coin.uid, key.currencyCode, key.interval, indicatorPoints)
+        get() = provider.coinPriceChartSingle(key.coin.uid, key.currencyCode, key.periodType, indicatorPoints)
             .doOnSuccess { response ->
                 val points = response.map { it.chartPoint }
                 manager.update(points, key)

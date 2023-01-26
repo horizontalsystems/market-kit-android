@@ -73,15 +73,18 @@ class HsProvider(baseUrl: String, apiKey: String) {
     fun coinPriceChartSingle(
         coinUid: String,
         currencyCode: String,
-        interval: HsTimePeriod,
+        periodType: HsPeriodType,
         indicatorPoints: Int
     ): Single<List<ChartCoinPriceResponse>> {
         val currentTime = Date().time / 1000
-        val fromTimestamp =
-            HsChartRequestHelper.fromTimestamp(currentTime, interval, indicatorPoints)
-        val pointInterval = HsChartRequestHelper.pointInterval(interval).value
+        val fromTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType, indicatorPoints)
+        val pointInterval = HsChartRequestHelper.pointInterval(periodType).value
 
         return service.getCoinPriceChart(coinUid, currencyCode, fromTimestamp, pointInterval)
+    }
+
+    fun coinPriceChartStartTime(coinUid: String): Single<Long> {
+        return service.getCoinPriceChartStart(coinUid).map { it.timestamp }
     }
 
     fun getMarketInfoOverview(
@@ -284,9 +287,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getCoinPriceChart(
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
-            @Query("from_timestamp") timestamp: Long,
+            @Query("from_timestamp") timestamp: Long?,
             @Query("interval") interval: String,
         ): Single<List<ChartCoinPriceResponse>>
+
+        @GET("coins/{coinUid}/price_chart_start")
+        fun getCoinPriceChartStart(
+            @Path("coinUid") coinUid: String
+        ): Single<PriceChartStart>
 
         @GET("coins/{coinUid}")
         fun getMarketInfoOverview(
@@ -431,6 +439,8 @@ data class HistoricalCoinPriceResponse(
     val timestamp: Long,
     val price: BigDecimal,
 )
+
+data class PriceChartStart(val timestamp: Long)
 
 data class ChartCoinPriceResponse(
     val timestamp: Long,

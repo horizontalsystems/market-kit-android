@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.horizontalsystems.marketkit.models.GlobalMarketPoint
-import io.horizontalsystems.marketkit.models.HsTimePeriod
+import io.horizontalsystems.marketkit.models.HsPeriodType
 import java.math.BigDecimal
 
 class DatabaseTypeConverters {
@@ -31,13 +31,13 @@ class DatabaseTypeConverters {
     }
 
     @TypeConverter
-    fun fromHsTimePeriod(timePeriod: HsTimePeriod): String {
-        return timePeriod.value
+    fun fromHsPeriodType(periodType: HsPeriodType): String {
+        return periodType.serialize()
     }
 
     @TypeConverter
-    fun toHsTimePeriod(value: String): HsTimePeriod {
-        return HsTimePeriod.values().first { it.value == value }
+    fun toHsPeriodType(value: String): HsPeriodType? {
+        return HsPeriodType.deserialize(value)
     }
 
     @TypeConverter
