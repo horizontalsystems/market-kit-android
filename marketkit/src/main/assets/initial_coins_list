@@ -13478,7 +13478,7 @@ INSERT INTO TokenEntity VALUES('populous-xbrl-token','ethereum','eip20',8,'0xc14
 INSERT INTO TokenEntity VALUES('pulse-token','ethereum','eip20',18,'0x52a047ee205701895ee06a375492490ec9c597ce');
 INSERT INTO TokenEntity VALUES('pitbull','binance-smart-chain','eip20',9,'0xa57ac35ce91ee92caefaa8dc04140c8e232c2e50');
 INSERT INTO TokenEntity VALUES('planet-sandbox','binance-smart-chain','eip20',18,'0x36bfbb1d5b3c9b336f3d64976599b6020ca805f1');
-INSERT INTO TokenEntity VALUES('piratecash','binance-smart-chain','eip20',8,'0x35f3fffFcb622bC9f64fA561D74e983Fd488D90c');
+INSERT INTO TokenEntity VALUES('piratecash','binance-smart-chain','eip20',8,'0x35f3ffffcb622bc9f64fa561d74e983fd488d90c');
 INSERT INTO TokenEntity VALUES('piratecoin','binance-smart-chain','eip20',9,'0x041640ea980e3fe61e9c4ca26d9007bc70094c15');
 INSERT INTO TokenEntity VALUES('psycho-doge','binance-smart-chain','eip20',9,'0xd4cdbd31f55c6f06b267809b5eca0f0c257c8a6a');
 INSERT INTO TokenEntity VALUES('play2live','ethereum','eip20',18,'0x5dbe296f97b23c4a6aa6183d73e574d02ba5c719');
