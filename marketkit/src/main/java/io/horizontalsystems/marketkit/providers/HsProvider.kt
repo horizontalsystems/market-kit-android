@@ -142,8 +142,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         }
     }
 
-    fun topHoldersSingle(coinUid: String): Single<List<TokenHolder>> {
-        return service.getTopHolders(coinUid)
+    fun tokenHoldersSingle(blockchainUid: String): Single<TokenHolders> {
+        return service.getTokenHolders(blockchainUid)
     }
 
     fun coinTreasuriesSingle(coinUid: String, currencyCode: String): Single<List<CoinTreasury>> {
@@ -223,6 +223,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
     fun allTokensSingle(): Single<List<TokenResponse>> {
         return service.getAllTokens()
+    }
+
+    fun analyticsPreviewSingle(coinUid: String): Single<AnalyticsPreview> {
+        return service.getAnalyticsPreview(coinUid)
+    }
+
+    fun analyticsSingle(coinUid: String, currencyCode: String): Single<Analytics> {
+        return service.getAnalyticsData(coinUid, currencyCode)
     }
 
     private interface MarketService {
@@ -357,10 +365,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("blockchain") blockchain: String?
         ): Single<List<MarketInfoTvlResponse>>
 
-        @GET("addresses/holders")
-        fun getTopHolders(
-            @Query("coin_uid") coinUid: String
-        ): Single<List<TokenHolder>>
+        @GET("analytics/{blockchainUid}/holders")
+        fun getTokenHolders(
+            @Path("blockchainUid") coinUid: String
+        ): Single<TokenHolders>
 
         @GET("funds/treasuries")
         fun getCoinTreasuries(
@@ -424,6 +432,17 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
         @GET("tokens/list")
         fun getAllTokens(): Single<List<TokenResponse>>
+
+        @GET("analytics/{coinUid}/preview")
+        fun getAnalyticsPreview(
+            @Path("coinUid") coinUid: String,
+        ): Single<AnalyticsPreview>
+
+        @GET("analytics/{coinUid}")
+        fun getAnalyticsData(
+            @Path("coinUid") coinUid: String,
+            @Query("currency") currencyCode: String,
+        ): Single<Analytics>
 
         companion object {
             private const val marketInfoFields =
