@@ -453,6 +453,51 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runAnalyticsPreview() {
+        val chain = "ethereum"
+        marketKit.analyticsPreviewSingle(chain)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points: ${data.cexVolume?.points} dexVolume rank30d: ${data.dexVolume?.rank30d} points: ${data.dexVolume?.points} ")
+                Log.e("AAA", "fundsInvested: ${data.fundsInvested} holders: ${data.holders} ")
+            }, {
+                Log.e("AAA", "runAnalyticsPreview error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
+    fun runAnalytics() {
+        val chain = "ethereum"
+        val currencyCode = "usd"
+        marketKit.analyticsSingle(chain, currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points.size: ${data.cexVolume?.points?.size} transactions volume30d: ${data.transactions?.volume30d} points.size: ${data.transactions?.points?.size} ")
+                Log.e("AAA", "fundsInvested: ${data.fundsInvested} holders.size: ${data.holders?.size} ")
+            }, {
+                Log.e("AAA", "runAnalyticsPreview error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
+    fun runTokenHolders() {
+        val blockchainUid = "uniswap"
+        marketKit.tokenHoldersSingle(blockchainUid)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                Log.e("AAA", "runTokenHolders count: ${data.count} holders.size: ${data.topHolders.size} ")
+                data.topHolders.forEach { holder ->
+                    Log.e("AAA", "Holder: address: ${holder.address} percentage: ${holder.percentage} ")
+                }
+            }, {
+                Log.e("AAA", "runAnalyticsPreview error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
