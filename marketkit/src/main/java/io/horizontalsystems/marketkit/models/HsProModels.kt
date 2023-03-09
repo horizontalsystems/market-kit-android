@@ -86,7 +86,7 @@ data class Analytics(
     @SerializedName("dex_volume")
     val dexVolume: ExVolume?,
     @SerializedName("dex_liquidity")
-    val dex_liquidity: DexLiquidity?,
+    val dexLiquidity: DexLiquidity?,
     val addresses: Addresses?,
     val transactions: Transactions?,
     val revenue: Revenue?,
