@@ -102,12 +102,32 @@ data class Analytics(
         @SerializedName("rank_30d")
         val rank30d: Int,
         val points: List<VolumePoint>,
-    )
+    ) {
+        fun chartPoints(): List<ChartPoint> {
+            return points.map {
+                ChartPoint(
+                    it.volume,
+                    it.timestamp,
+                    mapOf()
+                )
+            }
+        }
+    }
 
     data class DexLiquidity(
         val rank: Int,
         val points: List<VolumePoint>,
-    )
+    ) {
+        fun chartPoints(): List<ChartPoint> {
+            return points.map {
+                ChartPoint(
+                    it.volume,
+                    it.timestamp,
+                    mapOf()
+                )
+            }
+        }
+    }
 
     data class Addresses(
         @SerializedName("rank_30d")
@@ -115,7 +135,17 @@ data class Analytics(
         @SerializedName("count_30d")
         val count30d: Int,
         val points: List<CountPoint>,
-    )
+    ) {
+        fun chartPoints(): List<ChartPoint> {
+            return points.map {
+                ChartPoint(
+                    it.count,
+                    it.timestamp,
+                    mapOf()
+                )
+            }
+        }
+    }
 
     data class Transactions(
         @SerializedName("rank_30d")
@@ -123,13 +153,33 @@ data class Analytics(
         @SerializedName("volume_30d")
         val volume30d: BigDecimal,
         val points: List<CountPoint>,
-    )
+    ) {
+        fun chartPoints(): List<ChartPoint> {
+            return points.map {
+                ChartPoint(
+                    it.count,
+                    it.timestamp,
+                    mapOf()
+                )
+            }
+        }
+    }
 
     data class Tvl(
         val rank: Int,
         val ratio: BigDecimal,
         val points: List<TvlPoint>,
-    )
+    ) {
+        fun chartPoints(): List<ChartPoint> {
+            return points.map {
+                ChartPoint(
+                    it.tvl,
+                    it.timestamp,
+                    mapOf()
+                )
+            }
+        }
+    }
 
     data class CountPoint(
         val count: BigDecimal,
