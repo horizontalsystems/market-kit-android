@@ -128,11 +128,16 @@ data class Analytics(
     data class Tvl(
         val rank: Int,
         val ratio: BigDecimal,
-        val points: List<CountPoint>,
+        val points: List<TvlPoint>,
     )
 
     data class CountPoint(
         val count: BigDecimal,
+        val timestamp: Long,
+    )
+
+    data class TvlPoint(
+        val tvl: BigDecimal,
         val timestamp: Long,
     )
 
@@ -144,7 +149,8 @@ data class Analytics(
     data class HolderBlockchain(
         @SerializedName("blockchain_uid")
         val blockchainUid: String,
-        val count: BigDecimal,
+        @SerializedName("holders_count")
+        val holdersCount: BigDecimal,
     )
 
     data class Revenue(
