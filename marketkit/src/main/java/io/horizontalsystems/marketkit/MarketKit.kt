@@ -181,8 +181,8 @@ class MarketKit(
 
     // Details
 
-    fun tokenHoldersSingle(blockchainUid: String): Single<TokenHolders> {
-        return hsProvider.tokenHoldersSingle(blockchainUid)
+    fun tokenHoldersSingle(coinUid: String, blockchainUid: String): Single<TokenHolders> {
+        return hsProvider.tokenHoldersSingle(coinUid, blockchainUid)
     }
 
     fun treasuriesSingle(coinUid: String, currencyCode: String): Single<List<CoinTreasury>> {

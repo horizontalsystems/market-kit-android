@@ -142,8 +142,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         }
     }
 
-    fun tokenHoldersSingle(blockchainUid: String): Single<TokenHolders> {
-        return service.getTokenHolders(blockchainUid)
+    fun tokenHoldersSingle(coinUid: String, blockchainUid: String): Single<TokenHolders> {
+        return service.getTokenHolders(coinUid, blockchainUid)
     }
 
     fun coinTreasuriesSingle(coinUid: String, currencyCode: String): Single<List<CoinTreasury>> {
@@ -365,9 +365,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("blockchain") blockchain: String?
         ): Single<List<MarketInfoTvlResponse>>
 
-        @GET("analytics/{blockchainUid}/holders")
+        @GET("analytics/{coinUid}/holders")
         fun getTokenHolders(
-            @Path("blockchainUid") coinUid: String
+            @Path("coinUid") coinUid: String,
+            @Query("blockchain_uid") blockchainUid: String
         ): Single<TokenHolders>
 
         @GET("funds/treasuries")
