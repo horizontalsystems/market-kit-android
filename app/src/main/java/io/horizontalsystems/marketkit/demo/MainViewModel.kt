@@ -483,8 +483,9 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runTokenHolders() {
-        val blockchainUid = "uniswap"
-        marketKit.tokenHoldersSingle(blockchainUid)
+        val coinUid = "uniswap"
+        val blockchainUid = "ethereum"
+        marketKit.tokenHoldersSingle(coinUid, blockchainUid)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 Log.e("AAA", "runTokenHolders count: ${data.count} holders.size: ${data.topHolders.size} ")
