@@ -488,7 +488,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         marketKit.tokenHoldersSingle(coinUid, blockchainUid)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
-                Log.e("AAA", "runTokenHolders count: ${data.count} holders.size: ${data.topHolders.size} ")
+                Log.e("AAA", "runTokenHolders count: ${data.count} url: ${data.holdersUrl} holders.size: ${data.topHolders.size} ")
                 data.topHolders.forEach { holder ->
                     Log.e("AAA", "Holder: address: ${holder.address} percentage: ${holder.percentage} ")
                 }
