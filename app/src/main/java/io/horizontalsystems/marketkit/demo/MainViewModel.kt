@@ -499,6 +499,39 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runDexLiquidityRanks() {
+        val currencyCode = "usd"
+        marketKit.dexLiquidityRanksSingle(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                data.forEach { item ->
+                    Log.e("AAA", "runDexLiquidityRanks value: ${item.value} uid: ${item.uid} ")
+                }
+            }, {
+                Log.e("AAA", "runDexLiquidityRanks error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
+    fun runRevenueRanks() {
+        val currencyCode = "usd"
+        marketKit.revenueRanksSingle(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                data.forEach { item ->
+                    Log.e(
+                        "AAA",
+                        "runRevenueRanks value1d: ${item.value1d} value7d: ${item.value7d} uid: ${item.uid} "
+                    )
+                }
+            }, {
+                Log.e("AAA", "runRevenueRanks error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
