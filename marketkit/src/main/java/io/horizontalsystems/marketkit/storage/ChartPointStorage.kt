@@ -20,6 +20,6 @@ class ChartPointStorage(marketDatabase: MarketDatabase) {
     }
 
     fun delete(key: ChartInfoKey) {
-        chartPointDao.delete(key.coin.uid, key.currencyCode, key.periodType)
+        chartPointDao.delete(key.coinUid, key.currencyCode, key.periodType)
     }
 }
