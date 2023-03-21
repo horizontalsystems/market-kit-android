@@ -3,8 +3,6 @@ package io.horizontalsystems.marketkit
 import android.content.Context
 import android.os.storage.StorageManager
 import io.horizontalsystems.marketkit.chart.ChartManager
-import io.horizontalsystems.marketkit.chart.ChartSchedulerFactory
-import io.horizontalsystems.marketkit.chart.ChartSyncManager
 import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.*
@@ -27,7 +25,6 @@ class MarketKit(
     private val postManager: PostManager,
     private val chartManager: ChartManager,
     private val exchangeSyncer: ExchangeSyncer,
-    private val chartSyncManager: ChartSyncManager,
     private val globalMarketInfoManager: GlobalMarketInfoManager,
     private val hsProvider: HsProvider,
     private val hsDataSyncer: HsDataSyncer
@@ -275,14 +272,6 @@ class MarketKit(
         return chartManager.chartStartTimeSingle(coinUid)
     }
 
-    fun getChartInfoAsync(
-        coinUid: String,
-        currencyCode: String,
-        periodType: HsPeriodType
-    ): Observable<ChartInfo> {
-        return chartSyncManager.chartInfoObservable(coinUid, currencyCode, periodType)
-    }
-
     // Global Market Info
 
     fun globalMarketPointsSingle(currencyCode: String, timePeriod: HsTimePeriod): Single<List<GlobalMarketPoint>> {
@@ -316,7 +305,6 @@ class MarketKit(
             context: Context,
             hsApiBaseUrl: String,
             hsApiKey: String,
-            indicatorPoints: Int = 50,
             cryptoCompareApiKey: String? = null,
             defiYieldApiKey: String? = null
         ): MarketKit {
@@ -351,11 +339,10 @@ class MarketKit(
             coinPriceManager.listener = coinPriceSyncManager
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
-            val chartManager = ChartManager(coinManager, ChartPointStorage(marketDatabase), hsProvider, indicatorPoints)
-            val chartSchedulerFactory = ChartSchedulerFactory(chartManager, hsProvider, indicatorPoints)
-            val chartSyncManager = ChartSyncManager(coinManager, chartSchedulerFactory).also {
-                chartManager.listener = it
-            }
+            val chartManager = ChartManager(
+                ChartPointStorage(marketDatabase),
+                hsProvider
+            )
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
             val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
             val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)
@@ -371,7 +358,6 @@ class MarketKit(
                 postManager,
                 chartManager,
                 exchangeSyncer,
-                chartSyncManager,
                 globalMarketInfoManager,
                 hsProvider,
                 hsDataSyncer

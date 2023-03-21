@@ -10,7 +10,7 @@ object HsChartRequestHelper {
     fun pointInterval(periodType: HsPeriodType) = when (periodType) {
         is HsPeriodType.ByPeriod -> {
             when (periodType.timePeriod) {
-                HsTimePeriod.Day1 -> HsPointTimePeriod.Minute30
+                HsTimePeriod.Day1 -> HsPointTimePeriod.Hour1
                 HsTimePeriod.Week1 -> HsPointTimePeriod.Hour4
                 HsTimePeriod.Week2 -> HsPointTimePeriod.Hour8
                 else -> HsPointTimePeriod.Day1
@@ -30,21 +30,12 @@ object HsChartRequestHelper {
         }
     }
 
-    fun fromTimestamp(timestamp: Long, periodType: HsPeriodType, indicatorPoints: Int) : Long {
-        return when (periodType) {
-            is HsPeriodType.ByPeriod -> {
-                val timePeriod = periodType.timePeriod
-                val range = timePeriod.range
-
-                // time needed for build indicators
-                val pointInterval = pointInterval(periodType)
-                val additionalTime = indicatorPoints * pointInterval.interval
-
-                return timestamp - range - additionalTime
-            }
-            is HsPeriodType.ByStartTime -> {
-                periodType.startTime
-            }
+    fun fromTimestamp(timestamp: Long, periodType: HsPeriodType) = when (periodType) {
+        is HsPeriodType.ByPeriod -> {
+            timestamp - periodType.timePeriod.range
+        }
+        is HsPeriodType.ByStartTime -> {
+            periodType.startTime
         }
     }
 }

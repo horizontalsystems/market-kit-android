@@ -96,7 +96,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         Log.w("AAA", "storedChartInfo: ${storedChartInfo?.points}")
 
         //fetch chartInfo from API
-        marketKit.getChartInfoAsync(coinUid, currencyCode, interval)
+        marketKit.chartInfoSingle(coinUid, currencyCode, interval)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.w("AAA", "fetchChartInfo: ${it.points}")

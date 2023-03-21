@@ -73,14 +73,13 @@ class HsProvider(baseUrl: String, apiKey: String) {
     fun coinPriceChartSingle(
         coinUid: String,
         currencyCode: String,
-        periodType: HsPeriodType,
-        indicatorPoints: Int
+        periodType: HsPeriodType
     ): Single<List<ChartCoinPriceResponse>> {
         val currentTime = Date().time / 1000
-        val fromTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType, indicatorPoints)
-        val pointInterval = HsChartRequestHelper.pointInterval(periodType).value
+        val fromTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType)
+        val pointInterval = HsChartRequestHelper.pointInterval(periodType)
 
-        return service.getCoinPriceChart(coinUid, currencyCode, fromTimestamp, pointInterval)
+        return service.getCoinPriceChart(coinUid, currencyCode, fromTimestamp, pointInterval.value)
     }
 
     fun coinPriceChartStartTime(coinUid: String): Single<Long> {

@@ -1,7 +1,6 @@
 package io.horizontalsystems.marketkit.chart
 
 import io.horizontalsystems.marketkit.NoChartData
-import io.horizontalsystems.marketkit.managers.CoinManager
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.ChartPointStorage
@@ -9,19 +8,9 @@ import io.reactivex.Single
 import java.util.*
 
 class ChartManager(
-    private val coinManager: CoinManager,
     private val storage: ChartPointStorage,
     private val provider: HsProvider,
-    private val indicatorPoints: Int
 ) {
-
-    var listener: Listener? = null
-
-    interface Listener {
-        fun onUpdate(chartInfo: ChartInfo, key: ChartInfoKey)
-        fun noChartInfo(key: ChartInfoKey)
-    }
-
     private fun chartInfo(points: List<ChartPoint>, periodType: HsPeriodType): ChartInfo? {
         val lastPoint = points.lastOrNull() ?: return null
 
@@ -48,7 +37,7 @@ class ChartManager(
     }
 
     private fun storedChartPoints(key: ChartInfoKey): List<ChartPoint> {
-        return storage.getList(key.coin.uid, key.currencyCode, key.periodType).map { point ->
+        return storage.getList(key.coinUid, key.currencyCode, key.periodType).map { point ->
             ChartPoint(
                 point.value,
                 point.timestamp,
@@ -60,7 +49,7 @@ class ChartManager(
     fun update(points: List<ChartPoint>, key: ChartInfoKey) {
         val records = points.map { point ->
             ChartPointEntity(
-                key.coin.uid,
+                key.coinUid,
                 key.currencyCode,
                 key.periodType,
                 point.value,
@@ -71,27 +60,10 @@ class ChartManager(
 
         storage.delete(key)
         storage.save(records)
-
-        val chartInfo = chartInfo(points, key.periodType)
-
-        if (chartInfo == null) {
-            listener?.noChartInfo(key)
-        } else {
-            listener?.onUpdate(chartInfo, key)
-        }
-    }
-
-    fun handleNoChartPoints(key: ChartInfoKey) {
-        listener?.noChartInfo(key)
-    }
-
-    fun getLastSyncTimestamp(key: ChartInfoKey): Long? {
-        return storedChartPoints(key).lastOrNull()?.timestamp
     }
 
     fun getChartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): ChartInfo? {
-        val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull() ?: return null
-        val key = ChartInfoKey(fullCoin.coin, currencyCode, periodType)
+        val key = ChartInfoKey(coinUid, currencyCode, periodType)
         return chartInfo(storedChartPoints(key), periodType)
     }
 
@@ -100,14 +72,10 @@ class ChartManager(
         currencyCode: String,
         periodType: HsPeriodType
     ): Single<ChartInfo> {
-        val fullCoin = coinManager.fullCoins(listOf(coinUid)).firstOrNull()
-            ?: return Single.error(NoChartData())
-
         return provider.coinPriceChartSingle(
-            fullCoin.coin.uid,
+            coinUid,
             currencyCode,
-            periodType,
-            indicatorPoints
+            periodType
         )
             .flatMap { response ->
                 val points = response.map { it.chartPoint }
