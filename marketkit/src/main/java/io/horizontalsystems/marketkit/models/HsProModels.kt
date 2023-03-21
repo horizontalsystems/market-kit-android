@@ -28,7 +28,9 @@ data class ProChartPointDataRaw(
                     ChartPoint(
                         it.toBigDecimal(),
                         raw.timestamp,
-                        mapOf()
+                        raw.volume?.let {
+                            mapOf(ChartPointType.Volume to it)
+                        } ?: mapOf()
                     )
                 }
             }
