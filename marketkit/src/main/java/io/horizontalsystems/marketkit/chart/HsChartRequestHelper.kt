@@ -10,7 +10,7 @@ object HsChartRequestHelper {
     fun pointInterval(periodType: HsPeriodType) = when (periodType) {
         is HsPeriodType.ByPeriod -> {
             when (periodType.timePeriod) {
-                HsTimePeriod.Day1 -> HsPointTimePeriod.Hour1
+                HsTimePeriod.Day1 -> HsPointTimePeriod.Minute30
                 HsTimePeriod.Week1 -> HsPointTimePeriod.Hour4
                 HsTimePeriod.Week2 -> HsPointTimePeriod.Hour8
                 else -> HsPointTimePeriod.Day1
