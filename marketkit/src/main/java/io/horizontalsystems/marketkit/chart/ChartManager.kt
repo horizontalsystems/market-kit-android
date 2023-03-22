@@ -41,7 +41,7 @@ class ChartManager(
             ChartPoint(
                 point.value,
                 point.timestamp,
-                point.volume?.let { mapOf(ChartPointType.Volume to it) } ?: emptyMap()
+                point.volume
             )
         }
     }
@@ -53,7 +53,7 @@ class ChartManager(
                 key.currencyCode,
                 key.periodType,
                 point.value,
-                point.extra[ChartPointType.Volume],
+                point.volume,
                 point.timestamp,
             )
         }
