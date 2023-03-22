@@ -32,7 +32,6 @@ class ChartManager(
             points,
             startTimestamp,
             currentTimestamp,
-            isExpired = lastPointGap > periodType.expiration
         )
     }
 
