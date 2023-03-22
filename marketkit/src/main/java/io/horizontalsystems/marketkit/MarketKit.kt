@@ -260,11 +260,11 @@ class MarketKit(
 
     // Chart Info
 
-    fun chartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): ChartInfo? {
+    fun chartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): List<ChartPoint> {
         return chartManager.getChartInfo(coinUid, currencyCode, periodType)
     }
 
-    fun chartInfoSingle(coinUid: String, currencyCode: String, periodType: HsPeriodType): Single<ChartInfo> {
+    fun chartInfoSingle(coinUid: String, currencyCode: String, periodType: HsPeriodType): Single<List<ChartPoint>> {
         return chartManager.chartInfoSingle(coinUid, currencyCode, periodType)
     }
 

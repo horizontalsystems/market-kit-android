@@ -1,39 +1,14 @@
 package io.horizontalsystems.marketkit.chart
 
-import io.horizontalsystems.marketkit.NoChartData
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.ChartPointStorage
 import io.reactivex.Single
-import java.util.*
 
 class ChartManager(
     private val storage: ChartPointStorage,
     private val provider: HsProvider,
 ) {
-    private fun chartInfo(points: List<ChartPoint>, periodType: HsPeriodType): ChartInfo? {
-        val lastPoint = points.lastOrNull() ?: return null
-
-        val lastPointTimestamp = lastPoint.timestamp
-        val intervalRange = periodType.range
-        val startTimestamp = intervalRange?.let {
-            lastPointTimestamp - it
-        } ?: points.first().timestamp
-
-        val currentTimestamp = Date().time / 1000
-        val lastPointGap = currentTimestamp - lastPointTimestamp
-
-        // if points not in visible window (too early) just return null
-        if (intervalRange != null && lastPointGap > intervalRange) {
-            return null
-        }
-
-        return ChartInfo(
-            points,
-            startTimestamp,
-            currentTimestamp,
-        )
-    }
 
     private fun storedChartPoints(key: ChartInfoKey): List<ChartPoint> {
         return storage.getList(key.coinUid, key.currencyCode, key.periodType).map { point ->
@@ -61,28 +36,27 @@ class ChartManager(
         storage.save(records)
     }
 
-    fun getChartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): ChartInfo? {
+    fun getChartInfo(
+        coinUid: String,
+        currencyCode: String,
+        periodType: HsPeriodType
+    ): List<ChartPoint> {
         val key = ChartInfoKey(coinUid, currencyCode, periodType)
-        return chartInfo(storedChartPoints(key), periodType)
+        return storedChartPoints(key)
     }
 
     fun chartInfoSingle(
         coinUid: String,
         currencyCode: String,
         periodType: HsPeriodType
-    ): Single<ChartInfo> {
+    ): Single<List<ChartPoint>> {
         return provider.coinPriceChartSingle(
             coinUid,
             currencyCode,
             periodType
-        )
-            .flatMap { response ->
-                val points = response.map { it.chartPoint }
-
-                chartInfo(points, periodType)?.let {
-                    Single.just(it)
-                } ?: Single.error(NoChartData())
-            }
+        ).map { response ->
+            response.map { it.chartPoint }
+        }
     }
 
     fun chartStartTimeSingle(coinUid: String): Single<Long> {
