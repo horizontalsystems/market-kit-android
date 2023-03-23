@@ -91,15 +91,12 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         val time = Date().time / 1000 - TimeUnit.DAYS.toSeconds(7)
 
         val interval = HsPeriodType.ByStartTime(time)
-        //get stored chart info
-        val storedChartInfo = marketKit.chartInfo(coinUid, currencyCode, interval)
-        Log.w("AAA", "storedChartInfo: ${storedChartInfo?.points}")
 
         //fetch chartInfo from API
         marketKit.chartInfoSingle(coinUid, currencyCode, interval)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                Log.w("AAA", "fetchChartInfo: ${it.points}")
+                Log.w("AAA", "fetchChartInfo: ${it}")
             }, {
                 Log.e("AAA", "fetchChartInfo Error", it)
             })

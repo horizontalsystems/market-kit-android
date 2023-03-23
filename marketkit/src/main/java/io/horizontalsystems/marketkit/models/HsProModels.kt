@@ -17,7 +17,7 @@ data class ProChartPointDataRaw(
                     ChartPoint(
                         it,
                         raw.timestamp,
-                        mapOf()
+                        null
                     )
                 }
             }
@@ -28,9 +28,7 @@ data class ProChartPointDataRaw(
                     ChartPoint(
                         it.toBigDecimal(),
                         raw.timestamp,
-                        raw.volume?.let {
-                            mapOf(ChartPointType.Volume to it)
-                        } ?: mapOf()
+                        raw.volume
                     )
                 }
             }
@@ -110,7 +108,7 @@ data class Analytics(
                 ChartPoint(
                     it.volume,
                     it.timestamp,
-                    mapOf()
+                    null
                 )
             }
         }
@@ -125,7 +123,7 @@ data class Analytics(
                 ChartPoint(
                     it.volume,
                     it.timestamp,
-                    mapOf()
+                    null
                 )
             }
         }
@@ -143,7 +141,7 @@ data class Analytics(
                 ChartPoint(
                     it.count,
                     it.timestamp,
-                    mapOf()
+                    null
                 )
             }
         }
@@ -161,7 +159,7 @@ data class Analytics(
                 ChartPoint(
                     it.count,
                     it.timestamp,
-                    mapOf()
+                    null
                 )
             }
         }
@@ -177,7 +175,7 @@ data class Analytics(
                 ChartPoint(
                     it.tvl,
                     it.timestamp,
-                    mapOf()
+                    null
                 )
             }
         }

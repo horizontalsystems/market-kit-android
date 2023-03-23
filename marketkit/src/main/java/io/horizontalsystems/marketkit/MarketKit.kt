@@ -260,11 +260,7 @@ class MarketKit(
 
     // Chart Info
 
-    fun chartInfo(coinUid: String, currencyCode: String, periodType: HsPeriodType): ChartInfo? {
-        return chartManager.getChartInfo(coinUid, currencyCode, periodType)
-    }
-
-    fun chartInfoSingle(coinUid: String, currencyCode: String, periodType: HsPeriodType): Single<ChartInfo> {
+    fun chartInfoSingle(coinUid: String, currencyCode: String, periodType: HsPeriodType): Single<List<ChartPoint>> {
         return chartManager.chartInfoSingle(coinUid, currencyCode, periodType)
     }
 
@@ -339,10 +335,7 @@ class MarketKit(
             coinPriceManager.listener = coinPriceSyncManager
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
-            val chartManager = ChartManager(
-                ChartPointStorage(marketDatabase),
-                hsProvider
-            )
+            val chartManager = ChartManager(hsProvider)
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
             val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
             val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)

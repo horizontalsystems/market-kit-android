@@ -117,7 +117,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getMarketInfoTvl(coinUid, currencyCode, timePeriod.value)
             .map { responseList ->
                 responseList.mapNotNull {
-                    it.tvl?.let { tvl -> ChartPoint(tvl, it.timestamp, emptyMap()) }
+                    it.tvl?.let { tvl -> ChartPoint(tvl, it.timestamp, null) }
                 }
             }
     }
@@ -135,7 +135,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         ).map { responseList ->
             responseList.mapNotNull {
                 it.tvl?.let { tvl ->
-                    ChartPoint(tvl, it.timestamp, emptyMap())
+                    ChartPoint(tvl, it.timestamp, null)
                 }
             }
         }
@@ -492,7 +492,7 @@ data class ChartCoinPriceResponse(
             return ChartPoint(
                 price,
                 timestamp,
-                totalVolume?.let { mapOf(ChartPointType.Volume to it) } ?: emptyMap()
+                totalVolume
             )
         }
 }
