@@ -202,6 +202,21 @@ class MarketKit(
 
     // Pro Data
 
+    fun cexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod): Single<List<ChartPoint>> {
+        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, HsPeriodType.ByPeriod(timePeriod))
+            .map { response ->
+                response.mapNotNull { chartCoinPrice ->
+                    chartCoinPrice.totalVolume?.let { volume ->
+                        ChartPoint(
+                            volume,
+                            chartCoinPrice.timestamp,
+                            null
+                        )
+                    }
+                }
+            }
+    }
+
     fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexLiquiditiesResponse> {
         return coinManager.dexLiquiditySingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
