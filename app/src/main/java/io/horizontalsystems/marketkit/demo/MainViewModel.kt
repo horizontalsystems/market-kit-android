@@ -93,7 +93,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         val interval = HsPeriodType.ByStartTime(time)
 
         //fetch chartInfo from API
-        marketKit.chartInfoSingle(coinUid, currencyCode, interval)
+        marketKit.chartPointsSingle(coinUid, currencyCode, interval)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.w("AAA", "fetchChartInfo: ${it}")

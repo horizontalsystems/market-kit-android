@@ -2,7 +2,6 @@ package io.horizontalsystems.marketkit
 
 import android.content.Context
 import android.os.storage.StorageManager
-import io.horizontalsystems.marketkit.chart.ChartManager
 import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.*
@@ -23,7 +22,6 @@ class MarketKit(
     private val coinHistoricalPriceManager: CoinHistoricalPriceManager,
     private val coinPriceSyncManager: CoinPriceSyncManager,
     private val postManager: PostManager,
-    private val chartManager: ChartManager,
     private val exchangeSyncer: ExchangeSyncer,
     private val globalMarketInfoManager: GlobalMarketInfoManager,
     private val hsProvider: HsProvider,
@@ -87,7 +85,9 @@ class MarketKit(
     }
 
     fun marketInfoDetailsSingle(coinUid: String, currencyCode: String): Single<MarketInfoDetails> {
-        return coinManager.marketInfoDetailsSingle(coinUid, currencyCode)
+        return hsProvider.getMarketInfoDetails(coinUid, currencyCode).map {
+            MarketInfoDetails(it)
+        }
     }
 
     fun marketInfoTvlSingle(
@@ -95,7 +95,7 @@ class MarketKit(
         currencyCode: String,
         timePeriod: HsTimePeriod
     ): Single<List<ChartPoint>> {
-        return coinManager.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
+        return hsProvider.marketInfoTvlSingle(coinUid, currencyCode, timePeriod)
     }
 
     fun marketInfoGlobalTvlSingle(
@@ -103,7 +103,7 @@ class MarketKit(
         currencyCode: String,
         timePeriod: HsTimePeriod
     ): Single<List<ChartPoint>> {
-        return coinManager.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
+        return hsProvider.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
     }
 
     fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
@@ -185,15 +185,15 @@ class MarketKit(
     }
 
     fun treasuriesSingle(coinUid: String, currencyCode: String): Single<List<CoinTreasury>> {
-        return coinManager.treasuriesSingle(coinUid, currencyCode)
+        return hsProvider.coinTreasuriesSingle(coinUid, currencyCode)
     }
 
     fun investmentsSingle(coinUid: String): Single<List<CoinInvestment>> {
-        return coinManager.investmentsSingle(coinUid)
+        return hsProvider.investmentsSingle(coinUid)
     }
 
     fun coinReportsSingle(coinUid: String): Single<List<CoinReport>> {
-        return coinManager.coinReportsSingle(coinUid)
+        return hsProvider.coinReportsSingle(coinUid)
     }
 
     fun auditReportsSingle(addresses: List<String>): Single<List<Auditor>> {
@@ -207,30 +207,26 @@ class MarketKit(
             .map { response ->
                 response.mapNotNull { chartCoinPrice ->
                     chartCoinPrice.totalVolume?.let { volume ->
-                        ChartPoint(
-                            volume,
-                            chartCoinPrice.timestamp,
-                            null
-                        )
+                        ChartPoint(volume, chartCoinPrice.timestamp, null)
                     }
                 }
             }
     }
 
-    fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexLiquiditiesResponse> {
-        return coinManager.dexLiquiditySingle(coinUid, currencyCode, timePeriod, sessionKey)
+    fun dexLiquiditySingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<List<Analytics.VolumePoint>> {
+        return hsProvider.dexLiquiditySingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
 
-    fun dexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<DexVolumesResponse> {
-        return coinManager.dexVolumesSingle(coinUid, currencyCode, timePeriod, sessionKey)
+    fun dexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<List<Analytics.VolumePoint>> {
+        return hsProvider.dexVolumesSingle(coinUid, currencyCode, timePeriod, sessionKey)
     }
 
-    fun transactionDataSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, platform: String?, sessionKey: String?): Single<TransactionsDataResponse> {
-        return coinManager.transactionDataSingle(coinUid, currencyCode, timePeriod, platform, sessionKey)
+    fun transactionDataSingle(coinUid: String, timePeriod: HsTimePeriod, platform: String?, sessionKey: String?): Single<List<Analytics.CountVolumePoint>> {
+        return hsProvider.transactionDataSingle(coinUid, timePeriod, platform, sessionKey)
     }
 
-    fun activeAddressesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<ActiveAddressesDataResponse> {
-        return coinManager.activeAddressesSingle(coinUid, currencyCode, timePeriod, sessionKey)
+    fun activeAddressesSingle(coinUid: String, timePeriod: HsTimePeriod, sessionKey: String?): Single<List<Analytics.CountPoint>> {
+        return hsProvider.activeAddressesSingle(coinUid, timePeriod, sessionKey)
     }
 
     fun analyticsPreviewSingle(coinUid: String): Single<AnalyticsPreview> {
@@ -275,12 +271,17 @@ class MarketKit(
 
     // Chart Info
 
-    fun chartInfoSingle(coinUid: String, currencyCode: String, periodType: HsPeriodType): Single<List<ChartPoint>> {
-        return chartManager.chartInfoSingle(coinUid, currencyCode, periodType)
+    fun chartPointsSingle(
+        coinUid: String,
+        currencyCode: String,
+        hsPeriodType: HsPeriodType
+    ): Single<List<ChartPoint>> {
+        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, hsPeriodType)
+            .map { response -> response.map { it.chartPoint } }
     }
 
     fun chartStartTimeSingle(coinUid: String): Single<Long> {
-        return chartManager.chartStartTimeSingle(coinUid)
+        return hsProvider.coinPriceChartStartTime(coinUid)
     }
 
     // Global Market Info
@@ -290,11 +291,12 @@ class MarketKit(
     }
 
     fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatform>> {
-        return coinManager.topPlatformsSingle(currencyCode)
+        return hsProvider.topPlatformsSingle(currencyCode)
+            .map { responseList -> responseList.map { it.topPlatform } }
     }
 
     fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {
-        return coinManager.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
+        return hsProvider.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
     }
 
     fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>> {
@@ -350,7 +352,6 @@ class MarketKit(
             coinPriceManager.listener = coinPriceSyncManager
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
-            val chartManager = ChartManager(hsProvider)
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
             val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
             val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)
@@ -364,7 +365,6 @@ class MarketKit(
                 coinHistoricalPriceManager,
                 coinPriceSyncManager,
                 postManager,
-                chartManager,
                 exchangeSyncer,
                 globalMarketInfoManager,
                 hsProvider,
