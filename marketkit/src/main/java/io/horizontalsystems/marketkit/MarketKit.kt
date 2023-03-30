@@ -2,6 +2,7 @@ package io.horizontalsystems.marketkit
 
 import android.content.Context
 import android.os.storage.StorageManager
+import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
 import io.horizontalsystems.marketkit.managers.*
 import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.*
@@ -12,6 +13,7 @@ import io.horizontalsystems.marketkit.syncers.HsDataSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.math.BigDecimal
+import java.util.*
 
 class MarketKit(
     private val nftManager: NftManager,
@@ -203,7 +205,11 @@ class MarketKit(
     // Pro Data
 
     fun cexVolumesSingle(coinUid: String, currencyCode: String, timePeriod: HsTimePeriod): Single<List<ChartPoint>> {
-        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, HsPeriodType.ByPeriod(timePeriod))
+        val periodType = HsPeriodType.ByPeriod(timePeriod)
+        val currentTime = Date().time / 1000
+        val fromTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType)
+        val interval = HsPointTimePeriod.Day1
+        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, interval, fromTimestamp)
             .map { response ->
                 response.mapNotNull { chartCoinPrice ->
                     chartCoinPrice.totalVolume?.let { volume ->
@@ -274,9 +280,21 @@ class MarketKit(
     fun chartPointsSingle(
         coinUid: String,
         currencyCode: String,
-        hsPeriodType: HsPeriodType
+        periodType: HsPeriodType
     ): Single<List<ChartPoint>> {
-        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, hsPeriodType)
+        val interval: HsPointTimePeriod
+        var fromTimestamp: Long? = null
+        when (periodType) {
+            is HsPeriodType.ByPeriod -> {
+                val currentTime = Date().time / 1000
+                fromTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType)
+                interval = HsChartRequestHelper.pointInterval(periodType)
+            }
+            is HsPeriodType.ByStartTime -> {
+                interval = HsChartRequestHelper.pointInterval(periodType)
+            }
+        }
+        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, interval, fromTimestamp)
             .map { response -> response.map { it.chartPoint } }
     }
 
