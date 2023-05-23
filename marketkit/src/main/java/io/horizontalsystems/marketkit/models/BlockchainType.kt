@@ -26,9 +26,6 @@ sealed class BlockchainType : Parcelable {
     object Ethereum : BlockchainType()
 
     @Parcelize
-    object EthereumGoerli : BlockchainType()
-
-    @Parcelize
     object BinanceSmartChain : BlockchainType()
 
     @Parcelize
@@ -67,7 +64,6 @@ sealed class BlockchainType : Parcelable {
             is Dash -> "dash"
             is Zcash -> "zcash"
             is Ethereum -> "ethereum"
-            is EthereumGoerli -> "ethereum-goerli"
             is BinanceSmartChain -> "binance-smart-chain"
             is BinanceChain -> "binancecoin"
             is Polygon -> "polygon-pos"
@@ -96,7 +92,6 @@ sealed class BlockchainType : Parcelable {
         Dash -> "dash"
         Zcash -> "zcash"
         Ethereum -> "ethereum"
-        EthereumGoerli -> "ethereum-goerli"
         BinanceSmartChain -> "binanceSmartChain"
         Polygon -> "polygon"
         Avalanche -> "avalanche"
@@ -120,7 +115,6 @@ sealed class BlockchainType : Parcelable {
                 "dash" -> Dash
                 "zcash" -> Zcash
                 "ethereum" -> Ethereum
-                "ethereum-goerli" -> EthereumGoerli
                 "binance-smart-chain" -> BinanceSmartChain
                 "binancecoin" -> BinanceChain
                 "polygon-pos" -> Polygon
