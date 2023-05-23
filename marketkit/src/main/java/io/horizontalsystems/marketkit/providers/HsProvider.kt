@@ -1,11 +1,13 @@
 package io.horizontalsystems.marketkit.providers
 
 import com.google.gson.annotations.SerializedName
-import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.math.BigDecimal
@@ -221,12 +223,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getAllTokens()
     }
 
-    fun analyticsPreviewSingle(coinUid: String): Single<AnalyticsPreview> {
-        return service.getAnalyticsPreview(coinUid)
+    fun analyticsPreviewSingle(coinUid: String, addresses: List<String>): Single<AnalyticsPreview> {
+        return service.getAnalyticsPreview(coinUid, addresses.joinToString(","))
     }
 
-    fun analyticsSingle(coinUid: String, currencyCode: String): Single<Analytics> {
-        return service.getAnalyticsData(coinUid, currencyCode)
+    fun analyticsSingle(coinUid: String, currencyCode: String, authToken: String): Single<Analytics> {
+        return service.getAnalyticsData(coinUid, currencyCode, "Bearer $authToken")
     }
 
     fun rankValueSingle(type: String, currencyCode: String): Single<List<RankValue>> {
@@ -235,6 +237,16 @@ class HsProvider(baseUrl: String, apiKey: String) {
 
     fun rankMultiValueSingle(type: String, currencyCode: String): Single<List<RankMultiValue>> {
         return service.getRankMultiValue(type, currencyCode)
+    }
+
+    fun authKey(address: String): Single<String> {
+        return service.authGetKey(address)
+            .map { it["key"] }
+    }
+
+    fun authenticate(signature: String, address: String): Single<String> {
+        return service.authenticate(signature, address)
+            .map { it["token"] }
     }
 
     private interface MarketService {
@@ -443,12 +455,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
         @GET("analytics/{coinUid}/preview")
         fun getAnalyticsPreview(
             @Path("coinUid") coinUid: String,
+            @Query("address") address: String,
         ): Single<AnalyticsPreview>
 
         @GET("analytics/{coinUid}")
         fun getAnalyticsData(
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
+            @Header("authorization") authToken: String,
         ): Single<Analytics>
 
         @GET("analytics/ranks")
@@ -462,6 +476,19 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("type") type: String,
             @Query("currency") currencyCode: String,
         ): Single<List<RankMultiValue>>
+
+        @GET("auth/get-key")
+        fun authGetKey(
+            @Query("address") address: String
+        ): Single<Map<String, String>>
+
+        @FormUrlEncoded
+        @POST("auth/authenticate")
+        fun authenticate(
+            @Field("signature") signature: String,
+            @Field("address") address: String
+        ): Single<Map<String, String>>
+
 
         companion object {
             private const val marketInfoFields =

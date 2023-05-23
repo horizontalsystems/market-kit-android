@@ -218,6 +218,7 @@ data class Analytics(
 }
 
 data class AnalyticsPreview(
+    val subscriptions: List<SubscriptionResponse>?,
     @SerializedName("cex_volume")
     val cexVolume: VolumePreview?,
     @SerializedName("dex_volume")
@@ -234,6 +235,11 @@ data class AnalyticsPreview(
     val treasuries: Boolean = false,
     val holders: Boolean = false,
 ) {
+
+    data class SubscriptionResponse(
+        val address: String,
+        val deadline: Long
+    )
 
     data class VolumePreview(
         @SerializedName("rank_30d")
