@@ -228,7 +228,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
     }
 
     fun analyticsSingle(coinUid: String, currencyCode: String, authToken: String): Single<Analytics> {
-        return service.getAnalyticsData(coinUid, currencyCode, "Bearer $authToken")
+        return service.getAnalyticsData(coinUid, currencyCode, authToken)
     }
 
     fun rankValueSingle(type: String, currencyCode: String): Single<List<RankValue>> {
