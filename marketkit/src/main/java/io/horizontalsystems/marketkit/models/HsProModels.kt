@@ -96,6 +96,8 @@ data class Analytics(
     val fundsInvested: BigDecimal?,
     val treasuries: BigDecimal?,
     val holders: List<HolderBlockchain>?,
+    @SerializedName("holders_rank")
+    val holdersRank: Int?,
 ) {
 
     data class ExVolume(
@@ -234,6 +236,8 @@ data class AnalyticsPreview(
     val fundsInvested: Boolean = false,
     val treasuries: Boolean = false,
     val holders: Boolean = false,
+    @SerializedName("holders_rank")
+    val holdersRank: Boolean = false,
 ) {
 
     data class SubscriptionResponse(

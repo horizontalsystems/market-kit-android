@@ -263,6 +263,10 @@ class MarketKit(
         return hsProvider.rankMultiValueSingle("tx_count", currencyCode)
     }
 
+    fun holderRanksSingle(currencyCode: String): Single<List<RankValue>> {
+        return hsProvider.rankValueSingle("holders", currencyCode)
+    }
+
     fun revenueRanksSingle(currencyCode: String): Single<List<RankMultiValue>> {
         return hsProvider.rankMultiValueSingle("revenue", currencyCode)
     }

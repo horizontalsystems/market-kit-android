@@ -530,6 +530,24 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runHoldersRanks() {
+        val currencyCode = "usd"
+        marketKit.holderRanksSingle(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                data.forEach { item ->
+                    Log.e(
+                        "AAA",
+                        "runHoldersRanks value1d: value: ${item.value} uid: ${item.uid} "
+                    )
+                }
+            }, {
+                Log.e("AAA", "runHoldersRanks error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
