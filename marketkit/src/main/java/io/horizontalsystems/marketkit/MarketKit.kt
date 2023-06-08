@@ -331,8 +331,8 @@ class MarketKit(
 
     // Auth
 
-    fun authKey(address: String): Single<String> {
-        return hsProvider.authKey(address)
+    fun authGetSignMessage(address: String): Single<String> {
+        return hsProvider.authGetSignMessage(address)
     }
 
     fun authenticate(signature: String, address: String): Single<String> {

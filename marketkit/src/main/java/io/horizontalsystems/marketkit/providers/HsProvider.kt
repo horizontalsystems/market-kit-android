@@ -239,9 +239,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getRankMultiValue(type, currencyCode)
     }
 
-    fun authKey(address: String): Single<String> {
-        return service.authGetKey(address)
-            .map { it["key"] }
+    fun authGetSignMessage(address: String): Single<String> {
+        return service.authGetSignMessage(address)
+            .map { it["message"] }
     }
 
     fun authenticate(signature: String, address: String): Single<String> {
@@ -477,8 +477,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("currency") currencyCode: String,
         ): Single<List<RankMultiValue>>
 
-        @GET("auth/get-key")
-        fun authGetKey(
+        @GET("auth/get-sign-message")
+        fun authGetSignMessage(
             @Query("address") address: String
         ): Single<Map<String, String>>
 
