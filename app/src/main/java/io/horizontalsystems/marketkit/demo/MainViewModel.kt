@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit
 
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
+    private val authToken = ""
 
     fun runAudits() {
         val uniswapAddresses = listOf(
@@ -465,10 +466,9 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runAnalytics() {
-        val chain = "ethereum"
+        val coinUid = "ethereum"
         val currencyCode = "usd"
-        val authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZGRyZXNzIjoiMHgwYmRhYjg2YWZmODhjZWM1ZTc0NTQyNWMzNDRjNjRjMDczYWYwZGM0IiwibG9naW5EYXRlIjoxNjg1NDM4NTcyNTQ0LCJpYXQiOjE2ODU0Mzg1NzIsImV4cCI6MTY4NjIyNTY1Mn0.eE-qoxOBw9ac0fRw0ZeUc6vldRUetL6UK9UK36RJpM4"
-        marketKit.analyticsSingle(chain, currencyCode, authToken)
+        marketKit.analyticsSingle(authToken, coinUid, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points.size: ${data.cexVolume?.points?.size} transactions volume30d: ${data.transactions?.volume30d} points.size: ${data.transactions?.points?.size} ")
@@ -483,7 +483,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runTokenHolders() {
         val coinUid = "uniswap"
         val blockchainUid = "ethereum"
-        marketKit.tokenHoldersSingle(coinUid, blockchainUid)
+        marketKit.tokenHoldersSingle(authToken, coinUid, blockchainUid)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 Log.e("AAA", "runTokenHolders count: ${data.count} url: ${data.holdersUrl} holders.size: ${data.topHolders.size} ")
@@ -499,7 +499,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runDexLiquidityRanks() {
         val currencyCode = "usd"
-        marketKit.dexLiquidityRanksSingle(currencyCode)
+        marketKit.dexLiquidityRanksSingle(authToken, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 data.forEach { item ->
@@ -514,7 +514,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runRevenueRanks() {
         val currencyCode = "usd"
-        marketKit.revenueRanksSingle(currencyCode)
+        marketKit.revenueRanksSingle(authToken, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 data.forEach { item ->
@@ -532,7 +532,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runHoldersRanks() {
         val currencyCode = "usd"
-        marketKit.holderRanksSingle(currencyCode)
+        marketKit.holderRanksSingle(authToken, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 data.forEach { item ->
