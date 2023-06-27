@@ -47,6 +47,9 @@ interface CoinDao {
     @Query("SELECT * FROM BlockchainEntity WHERE uid IN (:uids)")
     fun getBlockchains(uids: List<String>): List<BlockchainEntity>
 
+    @Query("SELECT * FROM BlockchainEntity")
+    fun getAllBlockchains(): List<BlockchainEntity>
+
     @Query("DELETE FROM Coin")
     fun deleteAllCoins()
 

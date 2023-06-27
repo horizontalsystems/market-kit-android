@@ -354,6 +354,14 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         }
     }
 
+    fun runAllBlockchains() {
+        val blockchains = marketKit.allBlockchains()
+        Log.w("AAA", "runAllBlockchains ${blockchains.size} blockchains found")
+        blockchains.forEach {
+            Log.w("AAA", "runAllBlockchains name: ${it.name}")
+        }
+    }
+
     fun runFullCoins() {
         val fullCoins = marketKit.fullCoins(listOf("bitcoin", "ethereum"))
         Log.w("AAA", "runFullCoins ${fullCoins.size} coins found")
