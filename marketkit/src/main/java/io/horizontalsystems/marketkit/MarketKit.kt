@@ -59,6 +59,9 @@ class MarketKit(
     fun blockchains(uids: List<String>): List<Blockchain> =
         coinManager.blockchains(uids)
 
+    fun allBlockchains(): List<Blockchain> =
+        coinManager.allBlockchains()
+
     fun blockchain(uid: String): Blockchain? =
         coinManager.blockchain(uid)
 
