@@ -332,21 +332,31 @@ class MarketKit(
         coinUid: String,
         currencyCode: String,
         periodType: HsPeriodType
-    ): Single<List<ChartPoint>> {
-        val interval: HsPointTimePeriod
-        var fromTimestamp: Long? = null
+    ): Single<Pair<Long, List<ChartPoint>>> {
+        val interval = HsChartRequestHelper.pointInterval(periodType)
+        val visibleTimestamp: Long
+        val fromTimestamp: Long?
         when (periodType) {
             is HsPeriodType.ByPeriod -> {
                 val currentTime = Date().time / 1000
-                fromTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType)
-                interval = HsChartRequestHelper.pointInterval(periodType)
+                visibleTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType)
+                fromTimestamp = visibleTimestamp
+            }
+            is HsPeriodType.ByCustomPoints -> {
+                val currentTime = Date().time / 1000
+                visibleTimestamp = HsChartRequestHelper.fromTimestamp(currentTime, periodType)
+                val customPointsInterval = interval.interval * periodType.pointsCount
+                fromTimestamp = visibleTimestamp - customPointsInterval
             }
             is HsPeriodType.ByStartTime -> {
-                interval = HsChartRequestHelper.pointInterval(periodType)
+                visibleTimestamp = periodType.startTime
+                fromTimestamp = null
             }
         }
         return hsProvider.coinPriceChartSingle(coinUid, currencyCode, interval, fromTimestamp)
-            .map { response -> response.map { it.chartPoint } }
+            .map {
+                Pair(visibleTimestamp, it.map { it.chartPoint })
+            }
     }
 
     fun chartStartTimeSingle(coinUid: String): Single<Long> {
