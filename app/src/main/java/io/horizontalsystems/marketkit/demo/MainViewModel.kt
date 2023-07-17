@@ -465,7 +465,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points: ${data.cexVolume?.points} dexVolume rank30d: ${data.dexVolume?.rank30d} points: ${data.dexVolume?.points} ")
-                Log.e("AAA", "fundsInvested: ${data.fundsInvested} holders: ${data.holders} ")
+                Log.e("AAA", "fundsInvested: ${data.fundsInvested} holders: ${data.holders} holders rating: ${data.holdersRating} ")
             }, {
                 Log.e("AAA", "runAnalyticsPreview error", it)
             }).let {
