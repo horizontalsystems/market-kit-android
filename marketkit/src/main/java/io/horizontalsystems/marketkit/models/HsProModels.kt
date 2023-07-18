@@ -223,6 +223,7 @@ data class Analytics(
         val rank30d: Int?,
         @SerializedName("value_30d")
         val value30d: BigDecimal?,
+        val description: String?,
         val rating: String?,
     )
 
@@ -231,6 +232,7 @@ data class Analytics(
         val rank30d: Int?,
         @SerializedName("value_30d")
         val value30d: BigDecimal?,
+        val description: String?,
         val rating: String?,
     )
 }
