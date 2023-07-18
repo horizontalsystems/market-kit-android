@@ -313,6 +313,10 @@ class MarketKit(
         return hsProvider.rankMultiValueSingle(authToken, "revenue", currencyCode)
     }
 
+    fun feeRanksSingle(authToken: String, currencyCode: String): Single<List<RankMultiValue>> {
+        return hsProvider.rankMultiValueSingle(authToken, "fee", currencyCode)
+    }
+
     // Overview
     fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
         marketOverviewManager.marketOverviewSingle(currencyCode)
