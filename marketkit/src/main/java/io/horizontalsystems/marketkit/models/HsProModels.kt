@@ -90,6 +90,7 @@ data class Analytics(
     val addresses: Addresses?,
     val transactions: Transactions?,
     val revenue: Revenue?,
+    val fee: Fee?,
     val tvl: Tvl?,
     val reports: Int?,
     @SerializedName("funds_invested")
@@ -212,13 +213,20 @@ data class Analytics(
 
     data class HolderBlockchain(
         @SerializedName("blockchain_uid")
-        val blockchainUid: String?,
+        val blockchainUid: String,
         @SerializedName("holders_count")
-        val holdersCount: BigDecimal?,
-        val rating: String?,
+        val holdersCount: BigDecimal,
     )
 
     data class Revenue(
+        @SerializedName("rank_30d")
+        val rank30d: Int?,
+        @SerializedName("value_30d")
+        val value30d: BigDecimal?,
+        val rating: String?,
+    )
+
+    data class Fee(
         @SerializedName("rank_30d")
         val rank30d: Int?,
         @SerializedName("value_30d")
@@ -238,6 +246,7 @@ data class AnalyticsPreview(
     val addresses: AddressesPreview?,
     val transactions: TransactionPreview?,
     val revenue: RevenuePreview?,
+    val fee: FeePreview?,
     val tvl: TvlPreview?,
     val reports: Boolean = false,
     @SerializedName("funds_invested")
@@ -287,6 +296,14 @@ data class AnalyticsPreview(
     )
 
     data class RevenuePreview(
+        @SerializedName("rank_30d")
+        val rank30d: Boolean = false,
+        @SerializedName("value_30d")
+        val value30d: Boolean = false,
+        val rating: Boolean = false,
+    )
+
+    data class FeePreview(
         @SerializedName("rank_30d")
         val rank30d: Boolean = false,
         @SerializedName("value_30d")
