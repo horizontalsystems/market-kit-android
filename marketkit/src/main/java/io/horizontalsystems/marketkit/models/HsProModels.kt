@@ -104,7 +104,7 @@ data class Analytics(
 
     data class ExVolume(
         @SerializedName("rank_30d")
-        val rank30d: Int,
+        val rank30d: Int?,
         val rating: String?,
         val points: List<VolumePoint>,
     ) {
@@ -120,7 +120,7 @@ data class Analytics(
     }
 
     data class DexLiquidity(
-        val rank: Int,
+        val rank: Int?,
         val rating: String?,
         val points: List<VolumePoint>,
     ) {
@@ -137,9 +137,9 @@ data class Analytics(
 
     data class Addresses(
         @SerializedName("rank_30d")
-        val rank30d: Int,
+        val rank30d: Int?,
         @SerializedName("count_30d")
-        val count30d: Int,
+        val count30d: Int?,
         val rating: String?,
         val points: List<CountPoint>,
     ) {
@@ -156,9 +156,9 @@ data class Analytics(
 
     data class Transactions(
         @SerializedName("rank_30d")
-        val rank30d: Int,
+        val rank30d: Int?,
         @SerializedName("volume_30d")
-        val volume30d: BigDecimal,
+        val volume30d: BigDecimal?,
         val rating: String?,
         val points: List<CountPoint>,
     ) {
@@ -174,8 +174,8 @@ data class Analytics(
     }
 
     data class Tvl(
-        val rank: Int,
-        val ratio: BigDecimal,
+        val rank: Int?,
+        val ratio: BigDecimal?,
         val points: List<TvlPoint>,
     ) {
         fun chartPoints(): List<ChartPoint> {
@@ -212,17 +212,17 @@ data class Analytics(
 
     data class HolderBlockchain(
         @SerializedName("blockchain_uid")
-        val blockchainUid: String,
+        val blockchainUid: String?,
         @SerializedName("holders_count")
-        val holdersCount: BigDecimal,
+        val holdersCount: BigDecimal?,
         val rating: String?,
     )
 
     data class Revenue(
         @SerializedName("rank_30d")
-        val rank30d: Int,
+        val rank30d: Int?,
         @SerializedName("value_30d")
-        val value30d: BigDecimal,
+        val value30d: BigDecimal?,
         val rating: String?,
     )
 }
