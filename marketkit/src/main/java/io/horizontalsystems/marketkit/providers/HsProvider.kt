@@ -3,6 +3,7 @@ package io.horizontalsystems.marketkit.providers
 import com.google.gson.annotations.SerializedName
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
+import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -284,6 +285,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
             .map { it["token"] }
     }
 
+    fun requestPersonalSupport(authToken: String, username: String): Single<Response<Void>> {
+        return service.requestPersonalSupport(authToken, username)
+    }
+
     private interface MarketService {
 
         @GET("coins")
@@ -526,6 +531,13 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Field("signature") signature: String,
             @Field("address") address: String
         ): Single<Map<String, String>>
+
+        @FormUrlEncoded
+        @POST("support/start-chat")
+        fun requestPersonalSupport(
+            @Header("authorization") auth: String,
+            @Field("username") username: String,
+        ): Single<Response<Void>>
 
 
         companion object {

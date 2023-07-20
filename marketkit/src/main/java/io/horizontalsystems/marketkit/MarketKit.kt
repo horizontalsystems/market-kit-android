@@ -12,6 +12,7 @@ import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.horizontalsystems.marketkit.syncers.HsDataSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
+import retrofit2.Response
 import java.math.BigDecimal
 import java.util.*
 
@@ -383,6 +384,10 @@ class MarketKit(
 
     fun authenticate(signature: String, address: String): Single<String> {
         return hsProvider.authenticate(signature, address)
+    }
+
+    fun requestPersonalSupport(authToken: String, username: String): Single<Response<Void>> {
+        return hsProvider.requestPersonalSupport(authToken, username)
     }
 
     //Misc
