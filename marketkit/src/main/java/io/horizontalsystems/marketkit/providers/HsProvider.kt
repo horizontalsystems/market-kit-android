@@ -275,6 +275,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getRankMultiValue(authToken, type, currencyCode)
     }
 
+    fun subscriptionsSingle(
+        addresses: List<String>
+    ): Single<List<SubscriptionResponse>> {
+        return service.getSubscriptions(addresses.joinToString(separator = ","))
+    }
+
     fun authGetSignMessage(address: String): Single<String> {
         return service.authGetSignMessage(address)
             .map { it["message"] }
@@ -442,6 +448,11 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("type") type: String,
             @Query("currency") currencyCode: String,
         ): Single<List<RankMultiValue>>
+
+        @GET("analytics/subscriptions")
+        fun getSubscriptions(
+            @Query("address") addresses: String
+        ): Single<List<SubscriptionResponse>>
 
         @GET("defi-protocols/{coinUid}/tvls")
         fun getMarketInfoTvl(
