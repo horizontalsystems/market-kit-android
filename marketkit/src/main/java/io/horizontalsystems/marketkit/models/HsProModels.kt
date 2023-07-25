@@ -238,7 +238,6 @@ data class Analytics(
 }
 
 data class AnalyticsPreview(
-    val subscriptions: List<SubscriptionResponse>?,
     @SerializedName("cex_volume")
     val cexVolume: VolumePreview?,
     @SerializedName("dex_volume")
@@ -260,11 +259,6 @@ data class AnalyticsPreview(
     @SerializedName("holders_rating")
     val holdersRating: Boolean = false,
 ) {
-
-    data class SubscriptionResponse(
-        val address: String,
-        val deadline: Long
-    )
 
     data class VolumePreview(
         @SerializedName("rank_30d")
@@ -333,4 +327,9 @@ data class RankMultiValue(
 data class RankValue(
     val uid: String,
     val value: BigDecimal?,
+)
+
+data class SubscriptionResponse(
+    val address: String,
+    val deadline: Long
 )

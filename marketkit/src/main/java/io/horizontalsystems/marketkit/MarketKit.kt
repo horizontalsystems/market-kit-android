@@ -318,6 +318,10 @@ class MarketKit(
         return hsProvider.rankMultiValueSingle(authToken, "fee", currencyCode)
     }
 
+    fun subscriptionsSingle(addresses: List<String>): Single<List<SubscriptionResponse>> {
+        return hsProvider.subscriptionsSingle(addresses)
+    }
+
     // Overview
     fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
         marketOverviewManager.marketOverviewSingle(currencyCode)
