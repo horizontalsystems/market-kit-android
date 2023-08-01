@@ -335,6 +335,22 @@ class MarketKit(
     fun chartPointsSingle(
         coinUid: String,
         currencyCode: String,
+        interval: HsPointTimePeriod,
+        pointCount: Int
+    ): Single<List<ChartPoint>> {
+        val fromTimestamp = Date().time / 1000 - interval.interval * pointCount
+
+        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, interval, fromTimestamp)
+            .map { response ->
+                response.map { chartCoinPrice ->
+                    chartCoinPrice.chartPoint
+                }
+            }
+    }
+
+    fun chartPointsSingle(
+        coinUid: String,
+        currencyCode: String,
         periodType: HsPeriodType
     ): Single<Pair<Long, List<ChartPoint>>> {
         val interval = HsChartRequestHelper.pointInterval(periodType)
