@@ -118,6 +118,25 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runGetChartPointByHsTimePeriod() {
+        val coinUid = "ethereum"
+        val currencyCode = "USD"
+
+        val interval = HsPointTimePeriod.Hour1
+
+        //fetch chartInfo from API
+        marketKit.chartPointsSingle(coinUid, currencyCode, interval, 12)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "runGetChartPointByHsTimePeriod: ${it}")
+            }, {
+                Log.e("AAA", "runGetChartPointByHsTimePeriod Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runFilterFullCoins() {
         val filter = "if"
         val fullCoins = marketKit.fullCoins(filter, 100)
