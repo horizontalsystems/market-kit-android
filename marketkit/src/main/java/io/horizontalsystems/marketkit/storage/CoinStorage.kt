@@ -85,7 +85,7 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
             "`TokenEntity`.`type` = '$type'"
         )
 
-        if (reference != null) {
+        if (reference.isNotBlank()) {
             conditions.add("`TokenEntity`.`reference` LIKE '%$reference'")
         }
 
