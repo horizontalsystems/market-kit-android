@@ -1,14 +1,17 @@
 package io.horizontalsystems.marketkit.demo
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import io.horizontalsystems.marketkit.MarketKit
+import io.horizontalsystems.marketkit.R
 import io.horizontalsystems.marketkit.databinding.ActivityMainBinding
 import io.horizontalsystems.marketkit.databinding.ViewHolderItemBinding
 import kotlin.reflect.KFunction
@@ -26,6 +29,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         viewModel = ViewModelProvider(this, ViewModelFactory(this)).get(MainViewModel::class.java)
+
+        viewModel.exportDumpUri.observe(this, Observer { fileUri ->
+            this.startActivity(Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, fileUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                type = "text/*"
+            })
+        })
+
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.exportAsDump -> {
+                    viewModel.exportAsDump(applicationContext)
+                    true
+                }
+                else -> false
+            }
+        }
 
         val methods = MainViewModel::class.memberFunctions.filter {
             it.name.startsWith("run")

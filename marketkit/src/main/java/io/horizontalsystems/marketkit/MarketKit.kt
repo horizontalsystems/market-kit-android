@@ -28,7 +28,8 @@ class MarketKit(
     private val exchangeSyncer: ExchangeSyncer,
     private val globalMarketInfoManager: GlobalMarketInfoManager,
     private val hsProvider: HsProvider,
-    private val hsDataSyncer: HsDataSyncer
+    private val hsDataSyncer: HsDataSyncer,
+    private val dumpManager: DumpManager,
 ) {
     // Coins
 
@@ -426,6 +427,10 @@ class MarketKit(
         return coinSyncer.syncInfo()
     }
 
+    fun getInitialDump(): String {
+        return dumpManager.getInitialDump()
+    }
+
     companion object {
         fun getInstance(
             context: Context,
@@ -444,6 +449,7 @@ class MarketKit(
             }
 
             val marketDatabase = MarketDatabase.getInstance(context)
+            val dumpManager = DumpManager(marketDatabase)
             val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey)
             val hsNftProvider = HsNftProvider(hsApiBaseUrl, hsApiKey)
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
@@ -481,7 +487,8 @@ class MarketKit(
                 exchangeSyncer,
                 globalMarketInfoManager,
                 hsProvider,
-                hsDataSyncer
+                hsDataSyncer,
+                dumpManager
             )
         }
     }
