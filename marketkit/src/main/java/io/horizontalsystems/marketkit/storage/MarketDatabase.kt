@@ -35,6 +35,8 @@ abstract class MarketDatabase : RoomDatabase() {
     abstract fun globalMarketInfoDao(): GlobalMarketInfoDao
     abstract fun exchangeDao(): ExchangeDao
     abstract fun syncerStateDao(): SyncerStateDao
+    abstract fun blockchainEntityDao(): BlockchainEntityDao
+    abstract fun tokenEntityDao(): TokenEntityDao
 
     companion object {
 

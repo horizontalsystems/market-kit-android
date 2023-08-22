@@ -1,13 +1,23 @@
 package io.horizontalsystems.marketkit.demo
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.horizontalsystems.marketkit.BuildConfig
 import io.horizontalsystems.marketkit.MarketKit
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -15,6 +25,11 @@ import java.util.concurrent.TimeUnit
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     private val disposables = CompositeDisposable()
     private val authToken = ""
+
+    private val _exportDumpUri = MutableLiveData<Uri>()
+
+    val exportDumpUri: LiveData<Uri>
+        get() = _exportDumpUri
 
     fun runAudits() {
         val uniswapAddresses = listOf(
@@ -578,5 +593,29 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     override fun onCleared() {
         disposables.clear()
+    }
+
+    fun exportAsDump(applicationContext: Context) {
+        val exportFileName = "dump_initial_"
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val dump = marketKit.getInitialDump()
+            val cacheDir = applicationContext.cacheDir
+            val tempFile = File.createTempFile(exportFileName, ".txt", cacheDir)
+            // Write the data to the file
+            FileOutputStream(tempFile).use { outputStream ->
+                outputStream.write(dump.toByteArray())
+            }
+            // Generate a content URI for the file using FileProvider
+            val exportFileUri = FileProvider.getUriForFile(
+                applicationContext,
+                BuildConfig.APPLICATION_ID + ".provider",
+                tempFile
+            )
+
+            withContext(Dispatchers.Main) {
+                _exportDumpUri.value = exportFileUri
+            }
+        }
     }
 }
