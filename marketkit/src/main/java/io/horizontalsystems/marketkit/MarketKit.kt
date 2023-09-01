@@ -144,15 +144,16 @@ class MarketKit(
         return coinPriceManager.coinPriceMap(coinUids, currencyCode)
     }
 
-    fun coinPriceObservable(coinUid: String, currencyCode: String): Observable<CoinPrice> {
-        return coinPriceSyncManager.coinPriceObservable(coinUid, currencyCode)
+    fun coinPriceObservable(tag: String, coinUid: String, currencyCode: String): Observable<CoinPrice> {
+        return coinPriceSyncManager.coinPriceObservable(tag, coinUid, currencyCode)
     }
 
     fun coinPriceMapObservable(
+        tag: String,
         coinUids: List<String>,
         currencyCode: String
     ): Observable<Map<String, CoinPrice>> {
-        return coinPriceSyncManager.coinPriceMapObservable(coinUids, currencyCode)
+        return coinPriceSyncManager.coinPriceMapObservable(tag, coinUids, currencyCode)
     }
 
     // Coin Historical Price
@@ -437,7 +438,9 @@ class MarketKit(
             hsApiBaseUrl: String,
             hsApiKey: String,
             cryptoCompareApiKey: String? = null,
-            defiYieldApiKey: String? = null
+            defiYieldApiKey: String? = null,
+            appVersion: String,
+            appId: String? = null,
         ): MarketKit {
             // init cache
             (context.getSystemService(Context.STORAGE_SERVICE) as StorageManager?)?.let { storageManager ->
@@ -450,7 +453,7 @@ class MarketKit(
 
             val marketDatabase = MarketDatabase.getInstance(context)
             val dumpManager = DumpManager(marketDatabase)
-            val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey)
+            val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey, appVersion, appId)
             val hsNftProvider = HsNftProvider(hsApiBaseUrl, hsApiKey)
             val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)

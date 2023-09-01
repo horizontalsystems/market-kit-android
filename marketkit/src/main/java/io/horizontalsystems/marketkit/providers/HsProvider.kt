@@ -11,13 +11,22 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 import java.math.BigDecimal
 import java.util.*
 
-class HsProvider(baseUrl: String, apiKey: String) {
+class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: String?) {
 
     private val service by lazy {
-        RetrofitUtils.build("${baseUrl}/v1/", mapOf("apikey" to apiKey))
+        val headerMap = mutableMapOf<String, String>()
+        headerMap["app_platform"] = "android"
+        headerMap["app_version"] = appVersion
+        appId?.let {
+            headerMap["app_id"] = it
+        }
+        headerMap["apikey"] = apiKey
+
+        RetrofitUtils.build("${baseUrl}/v1/", headerMap)
             .create(MarketService::class.java)
     }
 
@@ -56,8 +65,20 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.coinCategoryMarketPoints(categoryUid, timePeriod.value, currencyCode)
     }
 
-    fun getCoinPrices(coinUids: List<String>, currencyCode: String): Single<List<CoinPrice>> {
-        return service.getCoinPrices(coinUids.joinToString(separator = ","), currencyCode)
+    fun getCoinPrices(
+        coinUids: List<String>,
+        walletCoinUids: List<String>,
+        currencyCode: String
+    ): Single<List<CoinPrice>> {
+        val additionalParams = mutableMapOf<String, String>()
+        if (walletCoinUids.isNotEmpty()) {
+            additionalParams["enabled_uids"] = walletCoinUids.joinToString(separator = ",")
+        }
+        return service.getCoinPrices(
+            uids = coinUids.joinToString(separator = ","),
+            currencyCode = currencyCode,
+            additionalParams = additionalParams
+        )
             .map { coinPrices ->
                 coinPrices.mapNotNull { coinPriceResponse ->
                     coinPriceResponse.coinPrice(currencyCode)
@@ -344,6 +365,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("uids") uids: String,
             @Query("currency") currencyCode: String,
             @Query("fields") fields: String = coinPriceFields,
+            @QueryMap additionalParams: Map<String, String>,
         ): Single<List<CoinPriceResponse>>
 
         @GET("coins/{coinUid}/price_history")
