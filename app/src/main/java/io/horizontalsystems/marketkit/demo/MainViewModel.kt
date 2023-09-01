@@ -85,7 +85,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         marketKit.sync()
         marketKit.refreshCoinPrices("USD")
 
-        marketKit.coinPriceMapObservable(listOf("bitcoin", "ethereum", "solana"), "USD")
+        marketKit.coinPriceMapObservable("wallet", listOf("bitcoin", "ethereum", "solana"), "USD")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.w("AAA", "coinPrices: ${it.size}")
