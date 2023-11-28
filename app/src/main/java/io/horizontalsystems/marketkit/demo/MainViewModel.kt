@@ -163,7 +163,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runFetchMarketInfosByTop() {
         val top = 250
-        marketKit.advancedMarketInfosSingle(top, "USD")
+        marketKit.advancedMarketInfosSingle(top, "USD", "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -180,7 +180,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runFetchMarketInfosByCoinUids() {
         val coinUids = listOf("bitcoin", "ethereum", "solana", "ripple")
         val currencyCode = "USD"
-        marketKit.marketInfosSingle(coinUids, currencyCode)
+        marketKit.marketInfosSingle(coinUids, currencyCode, "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -197,7 +197,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runFetchMarketInfosByCategory() {
         val categoryUid = "dexes"
         val currencyCode = "USD"
-        marketKit.marketInfosSingle(categoryUid, currencyCode)
+        marketKit.marketInfosSingle(categoryUid, currencyCode, "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -303,7 +303,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     private fun doMarketInfoOverview(coinUid: String) {
         Log.w("AAA", "doMarketInfoOverview coinUid: $coinUid")
-        marketKit.marketInfoOverviewSingle(coinUid, "USD", "en")
+        marketKit.marketInfoOverviewSingle(coinUid, "USD", "en", "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.w("AAA", "marketInfoOverview: $it")
@@ -353,7 +353,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runGetMarketDefi() {
         val currencyUsd = "usd"
-        marketKit.defiMarketInfosSingle(currencyUsd)
+        marketKit.defiMarketInfosSingle(currencyUsd, "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it
@@ -448,7 +448,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runTopPlatforms() {
         val currencyCode = "eur"
-        marketKit.topPlatformsSingle(currencyCode)
+        marketKit.topPlatformsSingle(currencyCode, "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({ platforms ->
                 platforms.forEach {
@@ -480,7 +480,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runTopPlatformCoinList() {
         val chain = "ethereum"
         val currencyCode = "eur"
-        marketKit.topPlatformCoinListSingle(chain, currencyCode)
+        marketKit.topPlatformMarketInfosSingle(chain, currencyCode, "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({ points ->
                 points.forEach {
@@ -495,7 +495,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runAnalyticsPreview() {
         val chain = "ethereum"
-        marketKit.analyticsPreviewSingle(chain, listOf())
+        marketKit.analyticsPreviewSingle(chain, listOf(), "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points: ${data.cexVolume?.points} dexVolume rank30d: ${data.dexVolume?.rank30d} points: ${data.dexVolume?.points} ")
@@ -511,7 +511,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runAnalytics() {
         val coinUid = "ethereum"
         val currencyCode = "usd"
-        marketKit.analyticsSingle(authToken, coinUid, currencyCode)
+        marketKit.analyticsSingle(authToken, coinUid, currencyCode, "demo-app-tag")
             .subscribeOn(Schedulers.io())
             .subscribe({ data ->
                 Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points.size: ${data.cexVolume?.points?.size} transactions volume30d: ${data.transactions?.volume30d} points.size: ${data.transactions?.points?.size} ")

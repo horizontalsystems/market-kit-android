@@ -24,8 +24,8 @@ class CoinManager(
     fun fullCoins(coinUids: List<String>): List<FullCoin> =
         storage.fullCoins(coinUids)
 
-    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(top, currencyCode, defi).map {
+    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean, appTag: String): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(top, currencyCode, defi, appTag).map {
             getMarketInfos(it)
         }
     }
@@ -53,20 +53,20 @@ class CoinManager(
     fun allBlockchains(): List<Blockchain> =
         storage.getAllBlockchains()
 
-    fun advancedMarketInfosSingle(top: Int, currencyCode: String): Single<List<MarketInfo>> {
-        return hsProvider.advancedMarketInfosSingle(top, currencyCode).map {
+    fun advancedMarketInfosSingle(top: Int, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return hsProvider.advancedMarketInfosSingle(top, currencyCode, appTag).map {
             getMarketInfos(it)
         }
     }
 
-    fun marketInfosSingle(coinUids: List<String>, currencyCode: String): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(coinUids, currencyCode).map {
+    fun marketInfosSingle(coinUids: List<String>, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(coinUids, currencyCode, appTag).map {
             getMarketInfos(it)
         }
     }
 
-    fun marketInfosSingle(categoryUid: String, currencyCode: String): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(categoryUid, currencyCode).map {
+    fun marketInfosSingle(categoryUid: String, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return hsProvider.marketInfosSingle(categoryUid, currencyCode, appTag).map {
             getMarketInfos(it)
         }
     }
@@ -74,9 +74,15 @@ class CoinManager(
     fun marketInfoOverviewSingle(
         coinUid: String,
         currencyCode: String,
-        language: String
+        language: String,
+        appTag: String,
     ): Single<MarketInfoOverview> {
-        return hsProvider.getMarketInfoOverview(coinUid, currencyCode, language).map { rawOverview ->
+        return hsProvider.getMarketInfoOverview(
+            coinUid = coinUid,
+            currencyCode = currencyCode,
+            language = language,
+            appTag = appTag,
+        ).map { rawOverview ->
             val fullCoin = fullCoin(coinUid) ?: throw Exception("No Full Coin")
 
             rawOverview.marketInfoOverview(fullCoin)
@@ -96,8 +102,8 @@ class CoinManager(
             }
     }
 
-    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
-        return hsProvider.defiMarketInfosSingle(currencyCode).map {
+    fun defiMarketInfosSingle(currencyCode: String, appTag: String): Single<List<DefiMarketInfo>> {
+        return hsProvider.defiMarketInfosSingle(currencyCode, appTag).map {
             getDefiMarketInfos(it)
         }
     }
@@ -106,8 +112,8 @@ class CoinManager(
         return defiYieldProvider.auditReportsSingle(addresses)
     }
 
-    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>> {
-        return hsProvider.topPlatformCoinListSingle(chain, currencyCode)
+    fun topPlatformCoinListSingle(chain: String, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return hsProvider.topPlatformCoinListSingle(chain, currencyCode, appTag)
             .map { getMarketInfos(it) }
     }
 

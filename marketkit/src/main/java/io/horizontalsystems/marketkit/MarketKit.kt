@@ -67,34 +67,29 @@ class MarketKit(
     fun blockchain(uid: String): Blockchain? =
         coinManager.blockchain(uid)
 
-    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean = false): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(top, currencyCode, defi)
+    fun marketInfosSingle(top: Int, currencyCode: String, defi: Boolean, appTag: String): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(top, currencyCode, defi, appTag)
     }
 
-    fun advancedMarketInfosSingle(top: Int = 250, currencyCode: String): Single<List<MarketInfo>> {
-        return coinManager.advancedMarketInfosSingle(top, currencyCode)
+    fun advancedMarketInfosSingle(top: Int = 250, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return coinManager.advancedMarketInfosSingle(top, currencyCode, appTag)
     }
 
-    fun marketInfosSingle(coinUids: List<String>, currencyCode: String): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(coinUids, currencyCode)
+    fun marketInfosSingle(coinUids: List<String>, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(coinUids, currencyCode, appTag)
     }
 
-    fun marketInfosSingle(categoryUid: String, currencyCode: String): Single<List<MarketInfo>> {
-        return coinManager.marketInfosSingle(categoryUid, currencyCode)
+    fun marketInfosSingle(categoryUid: String, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return coinManager.marketInfosSingle(categoryUid, currencyCode, appTag)
     }
 
     fun marketInfoOverviewSingle(
         coinUid: String,
         currencyCode: String,
-        language: String
+        language: String,
+        appTag: String,
     ): Single<MarketInfoOverview> {
-        return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language)
-    }
-
-    fun marketInfoDetailsSingle(coinUid: String, currencyCode: String): Single<MarketInfoDetails> {
-        return hsProvider.getMarketInfoDetails(coinUid, currencyCode).map {
-            MarketInfoDetails(it)
-        }
+        return coinManager.marketInfoOverviewSingle(coinUid, currencyCode, language, appTag)
     }
 
     fun marketInfoTvlSingle(
@@ -113,8 +108,8 @@ class MarketKit(
         return hsProvider.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
     }
 
-    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
-        return coinManager.defiMarketInfosSingle(currencyCode)
+    fun defiMarketInfosSingle(currencyCode: String, appTag: String): Single<List<DefiMarketInfo>> {
+        return coinManager.defiMarketInfosSingle(currencyCode, appTag)
     }
 
     // Categories
@@ -264,16 +259,17 @@ class MarketKit(
         return hsProvider.activeAddressesSingle(authToken, coinUid, timePeriod)
     }
 
-    fun analyticsPreviewSingle(coinUid: String, addresses: List<String>): Single<AnalyticsPreview> {
-        return hsProvider.analyticsPreviewSingle(coinUid, addresses)
+    fun analyticsPreviewSingle(coinUid: String, addresses: List<String>, appTag: String): Single<AnalyticsPreview> {
+        return hsProvider.analyticsPreviewSingle(coinUid, addresses, appTag)
     }
 
     fun analyticsSingle(
         authToken: String,
         coinUid: String,
-        currencyCode: String
+        currencyCode: String,
+        appTag: String
     ): Single<Analytics> {
-        return hsProvider.analyticsSingle(authToken, coinUid, currencyCode)
+        return hsProvider.analyticsSingle(authToken, coinUid, currencyCode, appTag)
     }
 
     fun cexVolumeRanksSingle(
@@ -391,8 +387,8 @@ class MarketKit(
         return globalMarketInfoManager.globalMarketInfoSingle(currencyCode, timePeriod)
     }
 
-    fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatform>> {
-        return hsProvider.topPlatformsSingle(currencyCode)
+    fun topPlatformsSingle(currencyCode: String, appTag: String): Single<List<TopPlatform>> {
+        return hsProvider.topPlatformsSingle(currencyCode, appTag)
             .map { responseList -> responseList.map { it.topPlatform } }
     }
 
@@ -400,8 +396,8 @@ class MarketKit(
         return hsProvider.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
     }
 
-    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfo>> {
-        return coinManager.topPlatformCoinListSingle(chain, currencyCode)
+    fun topPlatformMarketInfosSingle(chain: String, currencyCode: String, appTag: String): Single<List<MarketInfo>> {
+        return coinManager.topPlatformCoinListSingle(chain, currencyCode, appTag)
     }
 
     // NFT
