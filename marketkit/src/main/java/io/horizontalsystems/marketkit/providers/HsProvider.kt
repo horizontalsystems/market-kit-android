@@ -33,24 +33,51 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
     fun marketInfosSingle(
         top: Int,
         currencyCode: String,
-        defi: Boolean
+        defi: Boolean,
+        appTag: String,
     ): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(top, currencyCode, defi)
+        return service.getMarketInfos(
+            appTag = appTag,
+            top = top,
+            currencyCode = currencyCode,
+            defi = defi
+        )
     }
 
-    fun advancedMarketInfosSingle(top: Int, currencyCode: String): Single<List<MarketInfoRaw>> {
-        return service.getAdvancedMarketInfos(top, currencyCode)
+    fun advancedMarketInfosSingle(
+        top: Int,
+        currencyCode: String,
+        appTag: String
+    ): Single<List<MarketInfoRaw>> {
+        return service.getAdvancedMarketInfos(
+            appTag = appTag,
+            top = top,
+            currencyCode = currencyCode
+        )
     }
 
     fun marketInfosSingle(
         coinUids: List<String>,
-        currencyCode: String
+        currencyCode: String,
+        appTag: String,
     ): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfos(coinUids.joinToString(","), currencyCode)
+        return service.getMarketInfos(
+            appTag = appTag,
+            uids = coinUids.joinToString(","),
+            currencyCode = currencyCode
+        )
     }
 
-    fun marketInfosSingle(categoryUid: String, currencyCode: String): Single<List<MarketInfoRaw>> {
-        return service.getMarketInfosByCategory(categoryUid, currencyCode)
+    fun marketInfosSingle(
+        categoryUid: String,
+        currencyCode: String,
+        appTag: String
+    ): Single<List<MarketInfoRaw>> {
+        return service.getMarketInfosByCategory(
+            appTag = appTag,
+            categoryUid = categoryUid,
+            currencyCode = currencyCode
+        )
     }
 
     fun getCoinCategories(currencyCode: String): Single<List<CoinCategory>> {
@@ -111,8 +138,14 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         coinUid: String,
         currencyCode: String,
         language: String,
+        appTag: String,
     ): Single<MarketInfoOverviewRaw> {
-        return service.getMarketInfoOverview(coinUid, currencyCode, language)
+        return service.getMarketInfoOverview(
+            appTag = appTag,
+            coinUid = coinUid,
+            currencyCode = currencyCode,
+            language = language
+        )
     }
 
     fun getGlobalMarketPointsSingle(
@@ -122,12 +155,8 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.globalMarketPoints(timePeriod.value, currencyCode)
     }
 
-    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfoResponse>> {
-        return service.getDefiMarketInfos(currencyCode)
-    }
-
-    fun getMarketInfoDetails(coinUid: String, currency: String): Single<MarketInfoDetailsResponse> {
-        return service.getMarketInfoDetails(coinUid, currency)
+    fun defiMarketInfosSingle(currencyCode: String, appTag: String): Single<List<DefiMarketInfoResponse>> {
+        return service.getDefiMarketInfos(appTag = appTag, currencyCode = currencyCode)
     }
 
     fun marketInfoTvlSingle(
@@ -197,16 +226,24 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.getCoinReports(coinUid)
     }
 
-    fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatformResponse>> {
-        return service.getTopPlatforms(currencyCode)
+    fun topPlatformsSingle(currencyCode: String, appTag: String): Single<List<TopPlatformResponse>> {
+        return service.getTopPlatforms(appTag = appTag, currencyCode = currencyCode)
     }
 
     fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {
         return service.getTopPlatformMarketCapPoints(chain, timePeriod.value, currencyCode)
     }
 
-    fun topPlatformCoinListSingle(chain: String, currencyCode: String): Single<List<MarketInfoRaw>> {
-        return service.getTopPlatformCoinList(chain, currencyCode)
+    fun topPlatformCoinListSingle(
+        chain: String,
+        currencyCode: String,
+        appTag: String
+    ): Single<List<MarketInfoRaw>> {
+        return service.getTopPlatformCoinList(
+            appTag = appTag,
+            chain = chain,
+            currencyCode = currencyCode
+        )
     }
 
     fun dexLiquiditySingle(
@@ -268,16 +305,26 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.getAllTokens()
     }
 
-    fun analyticsPreviewSingle(coinUid: String, addresses: List<String>): Single<AnalyticsPreview> {
-        return service.getAnalyticsPreview(coinUid, if (addresses.isEmpty()) null else addresses.joinToString(","))
+    fun analyticsPreviewSingle(coinUid: String, addresses: List<String>, appTag: String): Single<AnalyticsPreview> {
+        return service.getAnalyticsPreview(
+            appTag = appTag,
+            coinUid = coinUid,
+            address = if (addresses.isEmpty()) null else addresses.joinToString(",")
+        )
     }
 
     fun analyticsSingle(
         authToken: String,
         coinUid: String,
-        currencyCode: String
+        currencyCode: String,
+        appTag: String
     ): Single<Analytics> {
-        return service.getAnalyticsData(authToken, coinUid, currencyCode)
+        return service.getAnalyticsData(
+            appTag = appTag,
+            authToken = authToken,
+            coinUid = coinUid,
+            currencyCode = currencyCode
+        )
     }
 
     fun rankValueSingle(
@@ -320,6 +367,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("coins")
         fun getMarketInfos(
+            @Header("app_tag") appTag: String,
             @Query("limit") top: Int,
             @Query("currency") currencyCode: String,
             @Query("defi") defi: Boolean,
@@ -329,6 +377,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("coins")
         fun getAdvancedMarketInfos(
+            @Header("app_tag") appTag: String,
             @Query("limit") top: Int,
             @Query("currency") currencyCode: String,
             @Query("order_by_rank") orderByRank: Boolean = true,
@@ -337,6 +386,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("coins")
         fun getMarketInfos(
+            @Header("app_tag") appTag: String,
             @Query("uids") uids: String,
             @Query("currency") currencyCode: String,
             @Query("fields") fields: String = marketInfoFields,
@@ -344,6 +394,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("categories/{categoryUid}/coins")
         fun getMarketInfosByCategory(
+            @Header("app_tag") appTag: String,
             @Path("categoryUid") categoryUid: String,
             @Query("currency") currencyCode: String,
         ): Single<List<MarketInfoRaw>>
@@ -390,6 +441,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("coins/{coinUid}")
         fun getMarketInfoOverview(
+            @Header("app_tag") appTag: String,
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
             @Query("language") language: String,
@@ -397,6 +449,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("defi-protocols")
         fun getDefiMarketInfos(
+            @Header("app_tag") appTag: String,
             @Query("currency") currencyCode: String
         ): Single<List<DefiMarketInfoResponse>>
 
@@ -408,12 +461,14 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("analytics/{coinUid}/preview")
         fun getAnalyticsPreview(
+            @Header("app_tag") appTag: String,
             @Path("coinUid") coinUid: String,
             @Query("address") address: String?,
         ): Single<AnalyticsPreview>
 
         @GET("analytics/{coinUid}")
         fun getAnalyticsData(
+            @Header("app_tag") appTag: String,
             @Header("authorization") authToken: String,
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
@@ -514,6 +569,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("top-platforms")
         fun getTopPlatforms(
+            @Header("app_tag") appTag: String,
             @Query("currency") currencyCode: String
         ): Single<List<TopPlatformResponse>>
 
@@ -526,6 +582,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("top-platforms/{chain}/list")
         fun getTopPlatformCoinList(
+            @Header("app_tag") appTag: String,
             @Path("chain") chain: String,
             @Query("currency") currencyCode: String,
         ): Single<List<MarketInfoRaw>>
