@@ -74,9 +74,9 @@ class MarketKit(
         top: Int,
         currencyCode: String,
         defi: Boolean,
-        appTag: String
+        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(top, currencyCode, defi, appTag).map {
+        return hsProvider.marketInfosSingle(top, currencyCode, defi, apiTag).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -84,9 +84,9 @@ class MarketKit(
     fun advancedMarketInfosSingle(
         top: Int = 250,
         currencyCode: String,
-        appTag: String
+        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.advancedMarketInfosSingle(top, currencyCode, appTag).map {
+        return hsProvider.advancedMarketInfosSingle(top, currencyCode, apiTag).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -94,9 +94,9 @@ class MarketKit(
     fun marketInfosSingle(
         coinUids: List<String>,
         currencyCode: String,
-        appTag: String
+        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(coinUids, currencyCode, appTag).map {
+        return hsProvider.marketInfosSingle(coinUids, currencyCode, apiTag).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -104,9 +104,9 @@ class MarketKit(
     fun marketInfosSingle(
         categoryUid: String,
         currencyCode: String,
-        appTag: String
+        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(categoryUid, currencyCode, appTag).map {
+        return hsProvider.marketInfosSingle(categoryUid, currencyCode, apiTag).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -115,13 +115,13 @@ class MarketKit(
         coinUid: String,
         currencyCode: String,
         language: String,
-        appTag: String,
+        apiTag: String,
     ): Single<MarketInfoOverview> {
         return hsProvider.getMarketInfoOverview(
             coinUid = coinUid,
             currencyCode = currencyCode,
             language = language,
-            appTag = appTag,
+            apiTag = apiTag,
         ).map { rawOverview ->
             val fullCoin = coinManager.fullCoin(coinUid) ?: throw Exception("No Full Coin")
 
@@ -145,8 +145,8 @@ class MarketKit(
         return hsProvider.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
     }
 
-    fun defiMarketInfosSingle(currencyCode: String, appTag: String): Single<List<DefiMarketInfo>> {
-        return hsProvider.defiMarketInfosSingle(currencyCode, appTag).map {
+    fun defiMarketInfosSingle(currencyCode: String, apiTag: String): Single<List<DefiMarketInfo>> {
+        return hsProvider.defiMarketInfosSingle(currencyCode, apiTag).map {
             coinManager.getDefiMarketInfos(it)
         }
     }
@@ -322,18 +322,18 @@ class MarketKit(
     fun analyticsPreviewSingle(
         coinUid: String,
         addresses: List<String>,
-        appTag: String
+        apiTag: String
     ): Single<AnalyticsPreview> {
-        return hsProvider.analyticsPreviewSingle(coinUid, addresses, appTag)
+        return hsProvider.analyticsPreviewSingle(coinUid, addresses, apiTag)
     }
 
     fun analyticsSingle(
         authToken: String,
         coinUid: String,
         currencyCode: String,
-        appTag: String
+        apiTag: String
     ): Single<Analytics> {
-        return hsProvider.analyticsSingle(authToken, coinUid, currencyCode, appTag)
+        return hsProvider.analyticsSingle(authToken, coinUid, currencyCode, apiTag)
     }
 
     fun cexVolumeRanksSingle(
@@ -466,8 +466,8 @@ class MarketKit(
         return globalMarketInfoManager.globalMarketInfoSingle(currencyCode, timePeriod)
     }
 
-    fun topPlatformsSingle(currencyCode: String, appTag: String): Single<List<TopPlatform>> {
-        return hsProvider.topPlatformsSingle(currencyCode, appTag)
+    fun topPlatformsSingle(currencyCode: String, apiTag: String): Single<List<TopPlatform>> {
+        return hsProvider.topPlatformsSingle(currencyCode, apiTag)
             .map { responseList -> responseList.map { it.topPlatform } }
     }
 
@@ -482,9 +482,9 @@ class MarketKit(
     fun topPlatformMarketInfosSingle(
         chain: String,
         currencyCode: String,
-        appTag: String
+        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.topPlatformCoinListSingle(chain, currencyCode, appTag)
+        return hsProvider.topPlatformCoinListSingle(chain, currencyCode, apiTag)
             .map { coinManager.getMarketInfos(it) }
     }
 
