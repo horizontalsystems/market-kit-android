@@ -10,6 +10,7 @@ import io.horizontalsystems.marketkit.storage.*
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.horizontalsystems.marketkit.syncers.HsDataSyncer
+import io.horizontalsystems.marketkit.syncers.VerifiedExchangeSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Response
@@ -233,7 +234,8 @@ class MarketKit(
                     (response.tickers.map { it.coinId } + response.tickers.mapNotNull { it.targetCoinId }).distinct()
                 val coins = coinManager.coins(coinUids)
                 val imageUrls = exchangeManager.imageUrlsMap(response.exchangeIds)
-                response.marketTickers(imageUrls, coins)
+                val verifiedExchangeUids = exchangeManager.verifiedExchangeUids()
+                response.marketTickers(verifiedExchangeUids, imageUrls, coins)
             }
     }
 
@@ -561,9 +563,9 @@ class MarketKit(
             val cryptoCompareProvider = CryptoCompareProvider(cryptoCompareApiKey)
             val postManager = PostManager(cryptoCompareProvider)
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
-            val globalMarketInfoManager =
-                GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
-            val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)
+            val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
+            val verifiedExchangeSyncer = VerifiedExchangeSyncer(exchangeManager, hsProvider, marketDatabase.syncerStateDao())
+            val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider, verifiedExchangeSyncer)
 
             return MarketKit(
                 nftManager,
