@@ -363,6 +363,10 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.requestPersonalSupport(authToken, username)
     }
 
+    fun verifiedExchangeUids(): Single<List<String>> {
+        return service.verifiedExchangeUids()
+    }
+
     private interface MarketService {
 
         @GET("coins")
@@ -629,6 +633,8 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
             @Field("username") username: String,
         ): Single<Response<Void>>
 
+        @GET("exchanges/whitelist")
+        fun verifiedExchangeUids(): Single<List<String>>
 
         companion object {
             private const val marketInfoFields =
