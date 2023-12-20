@@ -427,6 +427,14 @@ class MarketKit(
         currencyCode: String,
         periodType: HsPeriodType
     ): Single<Pair<Long, List<ChartPoint>>> {
+        val data = intervalData(periodType)
+        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, data.interval, data.fromTimestamp)
+            .map {
+                Pair(data.visibleTimestamp, it.map { it.chartPoint })
+            }
+    }
+
+    private fun intervalData(periodType: HsPeriodType): IntervalData {
         val interval = HsChartRequestHelper.pointInterval(periodType)
         val visibleTimestamp: Long
         val fromTimestamp: Long?
@@ -449,10 +457,8 @@ class MarketKit(
                 fromTimestamp = null
             }
         }
-        return hsProvider.coinPriceChartSingle(coinUid, currencyCode, interval, fromTimestamp)
-            .map {
-                Pair(visibleTimestamp, it.map { it.chartPoint })
-            }
+
+        return IntervalData(interval, fromTimestamp, visibleTimestamp)
     }
 
     fun chartStartTimeSingle(coinUid: String): Single<Long> {
@@ -475,10 +481,11 @@ class MarketKit(
 
     fun topPlatformMarketCapPointsSingle(
         chain: String,
-        timePeriod: HsTimePeriod,
-        currencyCode: String
+        currencyCode: String,
+        periodType: HsPeriodType
     ): Single<List<TopPlatformMarketCapPoint>> {
-        return hsProvider.topPlatformMarketCapPointsSingle(chain, timePeriod, currencyCode)
+        val data = intervalData(periodType)
+        return hsProvider.topPlatformMarketCapPointsSingle(chain, currencyCode, data.interval, data.fromTimestamp)
     }
 
     fun topPlatformMarketInfosSingle(
