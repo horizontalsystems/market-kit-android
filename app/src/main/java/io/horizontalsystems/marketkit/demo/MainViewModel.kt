@@ -10,7 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.marketkit.BuildConfig
 import io.horizontalsystems.marketkit.MarketKit
-import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.HsPeriodType
+import io.horizontalsystems.marketkit.models.HsPointTimePeriod
+import io.horizontalsystems.marketkit.models.HsTimePeriod
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TokenType
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +24,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
@@ -473,6 +479,18 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }, {
                 Log.e("AAA", "topPlatformsMarketCapPointsSingle error", it)
             }).let {
+                disposables.add(it)
+            }
+
+        marketKit.topPlatformMarketCapStartTimeSingle(chain)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.e("AAA", "topPlatformMarketCapStartTimeSingle: $it")
+            }, {
+                Log.e("AAA", "topPlatformMarketCapStartTimeSingle Error", it)
+
+            })
+            .let {
                 disposables.add(it)
             }
     }

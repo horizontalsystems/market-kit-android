@@ -3,10 +3,61 @@ package io.horizontalsystems.marketkit
 import android.content.Context
 import android.os.storage.StorageManager
 import io.horizontalsystems.marketkit.chart.HsChartRequestHelper
-import io.horizontalsystems.marketkit.managers.*
-import io.horizontalsystems.marketkit.models.*
-import io.horizontalsystems.marketkit.providers.*
-import io.horizontalsystems.marketkit.storage.*
+import io.horizontalsystems.marketkit.managers.CoinHistoricalPriceManager
+import io.horizontalsystems.marketkit.managers.CoinManager
+import io.horizontalsystems.marketkit.managers.CoinPriceManager
+import io.horizontalsystems.marketkit.managers.CoinPriceSyncManager
+import io.horizontalsystems.marketkit.managers.DumpManager
+import io.horizontalsystems.marketkit.managers.ExchangeManager
+import io.horizontalsystems.marketkit.managers.GlobalMarketInfoManager
+import io.horizontalsystems.marketkit.managers.MarketOverviewManager
+import io.horizontalsystems.marketkit.managers.NftManager
+import io.horizontalsystems.marketkit.managers.PostManager
+import io.horizontalsystems.marketkit.models.Analytics
+import io.horizontalsystems.marketkit.models.AnalyticsPreview
+import io.horizontalsystems.marketkit.models.Auditor
+import io.horizontalsystems.marketkit.models.Blockchain
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.ChartPoint
+import io.horizontalsystems.marketkit.models.Coin
+import io.horizontalsystems.marketkit.models.CoinCategory
+import io.horizontalsystems.marketkit.models.CoinInvestment
+import io.horizontalsystems.marketkit.models.CoinPrice
+import io.horizontalsystems.marketkit.models.CoinReport
+import io.horizontalsystems.marketkit.models.CoinTreasury
+import io.horizontalsystems.marketkit.models.DefiMarketInfo
+import io.horizontalsystems.marketkit.models.FullCoin
+import io.horizontalsystems.marketkit.models.GlobalMarketPoint
+import io.horizontalsystems.marketkit.models.HsPeriodType
+import io.horizontalsystems.marketkit.models.HsPointTimePeriod
+import io.horizontalsystems.marketkit.models.HsTimePeriod
+import io.horizontalsystems.marketkit.models.MarketInfo
+import io.horizontalsystems.marketkit.models.MarketInfoOverview
+import io.horizontalsystems.marketkit.models.MarketOverview
+import io.horizontalsystems.marketkit.models.MarketTicker
+import io.horizontalsystems.marketkit.models.NftTopCollection
+import io.horizontalsystems.marketkit.models.Post
+import io.horizontalsystems.marketkit.models.RankMultiValue
+import io.horizontalsystems.marketkit.models.RankValue
+import io.horizontalsystems.marketkit.models.SubscriptionResponse
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenHolders
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TopMovers
+import io.horizontalsystems.marketkit.models.TopPlatform
+import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
+import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
+import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
+import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
+import io.horizontalsystems.marketkit.providers.DefiYieldProvider
+import io.horizontalsystems.marketkit.providers.HsNftProvider
+import io.horizontalsystems.marketkit.providers.HsProvider
+import io.horizontalsystems.marketkit.storage.CoinHistoricalPriceStorage
+import io.horizontalsystems.marketkit.storage.CoinPriceStorage
+import io.horizontalsystems.marketkit.storage.CoinStorage
+import io.horizontalsystems.marketkit.storage.ExchangeStorage
+import io.horizontalsystems.marketkit.storage.GlobalMarketInfoStorage
+import io.horizontalsystems.marketkit.storage.MarketDatabase
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
 import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.horizontalsystems.marketkit.syncers.HsDataSyncer
@@ -15,7 +66,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Response
 import java.math.BigDecimal
-import java.util.*
+import java.util.Date
 
 class MarketKit(
     private val nftManager: NftManager,
@@ -463,6 +514,10 @@ class MarketKit(
 
     fun chartStartTimeSingle(coinUid: String): Single<Long> {
         return hsProvider.coinPriceChartStartTime(coinUid)
+    }
+
+    fun topPlatformMarketCapStartTimeSingle(platform: String): Single<Long> {
+        return hsProvider.topPlatformMarketCapStartTime(platform)
     }
 
     // Global Market Info

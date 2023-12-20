@@ -134,6 +134,10 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.getCoinPriceChartStart(coinUid).map { it.timestamp }
     }
 
+    fun topPlatformMarketCapStartTime(platform: String): Single<Long> {
+        return service.getTopPlatformMarketCapStart(platform).map { it.timestamp }
+    }
+
     fun getMarketInfoOverview(
         coinUid: String,
         currencyCode: String,
