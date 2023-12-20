@@ -591,7 +591,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
             @Path("platform") platform: String
         ): Single<ChartStart>
 
-        @GET("top-platforms/{platform}/chart")
+        @GET("top-platforms/{platform}/market_chart")
         fun getTopPlatformMarketCapPoints(
             @Path("platform") platform: String,
             @Query("currency") currencyCode: String,
