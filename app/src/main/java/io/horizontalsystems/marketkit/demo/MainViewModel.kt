@@ -464,7 +464,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runTopPlatformMarketCapPoints() {
         val chain = "ethereum"
         val currencyCode = "rub"
-        marketKit.topPlatformMarketCapPointsSingle(chain, HsTimePeriod.Day1, currencyCode)
+        marketKit.topPlatformMarketCapPointsSingle(chain, currencyCode, HsPeriodType.ByPeriod(HsTimePeriod.Day1))
             .subscribeOn(Schedulers.io())
             .subscribe({ points ->
                 points.forEach {

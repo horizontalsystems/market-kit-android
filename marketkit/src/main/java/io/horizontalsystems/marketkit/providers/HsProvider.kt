@@ -230,8 +230,13 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.getTopPlatforms(apiTag = apiTag, currencyCode = currencyCode)
     }
 
-    fun topPlatformMarketCapPointsSingle(chain: String, timePeriod: HsTimePeriod, currencyCode: String): Single<List<TopPlatformMarketCapPoint>> {
-        return service.getTopPlatformMarketCapPoints(chain, timePeriod.value, currencyCode)
+    fun topPlatformMarketCapPointsSingle(
+        chain: String,
+        currencyCode: String,
+        periodType: HsPointTimePeriod,
+        fromTimestamp: Long?
+    ): Single<List<TopPlatformMarketCapPoint>> {
+        return service.getTopPlatformMarketCapPoints(chain, currencyCode, fromTimestamp, periodType.value)
     }
 
     fun topPlatformCoinListSingle(
@@ -441,7 +446,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         @GET("coins/{coinUid}/price_chart_start")
         fun getCoinPriceChartStart(
             @Path("coinUid") coinUid: String
-        ): Single<PriceChartStart>
+        ): Single<ChartStart>
 
         @GET("coins/{coinUid}")
         fun getMarketInfoOverview(
@@ -577,11 +582,17 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
             @Query("currency") currencyCode: String
         ): Single<List<TopPlatformResponse>>
 
-        @GET("top-platforms/{chain}/chart")
+        @GET("top-platforms/{platform}/market_chart_start")
+        fun getTopPlatformMarketCapStart(
+            @Path("platform") platform: String
+        ): Single<ChartStart>
+
+        @GET("top-platforms/{platform}/chart")
         fun getTopPlatformMarketCapPoints(
-            @Path("chain") chain: String,
-            @Query("interval") timePeriod: String,
+            @Path("platform") platform: String,
             @Query("currency") currencyCode: String,
+            @Query("from_timestamp") timestamp: Long?,
+            @Query("interval") interval: String
         ): Single<List<TopPlatformMarketCapPoint>>
 
         @GET("top-platforms/{chain}/list")
@@ -651,7 +662,7 @@ data class HistoricalCoinPriceResponse(
     val price: BigDecimal,
 )
 
-data class PriceChartStart(val timestamp: Long)
+data class ChartStart(val timestamp: Long)
 
 data class ChartCoinPriceResponse(
     val timestamp: Long,
