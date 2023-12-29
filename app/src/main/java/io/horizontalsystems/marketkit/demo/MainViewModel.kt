@@ -344,10 +344,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 it
                     .sortedByDescending { it.volume }
                     .forEach {
-                        Log.w(
-                            "AAA",
-                            "getMarketTickers: ${it.marketName} rate: ${it.rate} vol: ${it.volume} base: ${it.base} target: ${it.target} tradeUrl: ${it.tradeUrl}"
-                        )
+                        Log.w("AAA", "getMarketTickers: $it")
                     }
             }, {
                 Log.e("AAA", "getMarketTickers Error", it)
@@ -470,7 +467,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runTopPlatformMarketCapPoints() {
         val chain = "ethereum"
         val currencyCode = "rub"
-        marketKit.topPlatformMarketCapPointsSingle(chain, currencyCode, HsPeriodType.ByPeriod(HsTimePeriod.Day1))
+        marketKit.topPlatformMarketCapPointsSingle(chain, currencyCode, HsPeriodType.ByPeriod(HsTimePeriod.Month1))
             .subscribeOn(Schedulers.io())
             .subscribe({ points ->
                 points.forEach {
