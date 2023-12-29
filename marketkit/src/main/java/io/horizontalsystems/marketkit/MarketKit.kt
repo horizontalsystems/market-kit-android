@@ -8,7 +8,6 @@ import io.horizontalsystems.marketkit.managers.CoinManager
 import io.horizontalsystems.marketkit.managers.CoinPriceManager
 import io.horizontalsystems.marketkit.managers.CoinPriceSyncManager
 import io.horizontalsystems.marketkit.managers.DumpManager
-import io.horizontalsystems.marketkit.managers.ExchangeManager
 import io.horizontalsystems.marketkit.managers.GlobalMarketInfoManager
 import io.horizontalsystems.marketkit.managers.MarketOverviewManager
 import io.horizontalsystems.marketkit.managers.NftManager
@@ -46,7 +45,6 @@ import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TopMovers
 import io.horizontalsystems.marketkit.models.TopPlatform
 import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
-import io.horizontalsystems.marketkit.providers.CoinGeckoProvider
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
 import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
 import io.horizontalsystems.marketkit.providers.DefiYieldProvider
@@ -55,13 +53,10 @@ import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinHistoricalPriceStorage
 import io.horizontalsystems.marketkit.storage.CoinPriceStorage
 import io.horizontalsystems.marketkit.storage.CoinStorage
-import io.horizontalsystems.marketkit.storage.ExchangeStorage
 import io.horizontalsystems.marketkit.storage.GlobalMarketInfoStorage
 import io.horizontalsystems.marketkit.storage.MarketDatabase
 import io.horizontalsystems.marketkit.syncers.CoinSyncer
-import io.horizontalsystems.marketkit.syncers.ExchangeSyncer
 import io.horizontalsystems.marketkit.syncers.HsDataSyncer
-import io.horizontalsystems.marketkit.syncers.VerifiedExchangeSyncer
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Response
@@ -77,13 +72,10 @@ class MarketKit(
     private val coinHistoricalPriceManager: CoinHistoricalPriceManager,
     private val coinPriceSyncManager: CoinPriceSyncManager,
     private val postManager: PostManager,
-    private val exchangeSyncer: ExchangeSyncer,
     private val globalMarketInfoManager: GlobalMarketInfoManager,
     private val hsProvider: HsProvider,
     private val hsDataSyncer: HsDataSyncer,
     private val dumpManager: DumpManager,
-    private val coinGeckoProvider: CoinGeckoProvider,
-    private val exchangeManager: ExchangeManager,
     private val defiYieldProvider: DefiYieldProvider,
 ) {
     // Coins
@@ -217,7 +209,6 @@ class MarketKit(
 
     fun sync() {
         hsDataSyncer.sync()
-        exchangeSyncer.sync()
     }
 
     // Coin Prices
@@ -277,17 +268,7 @@ class MarketKit(
     // Market Tickers
 
     fun marketTickersSingle(coinUid: String): Single<List<MarketTicker>> {
-        val coinGeckoId = coinManager.coin(coinUid)?.coinGeckoId ?: return Single.just(emptyList())
-
-        return coinGeckoProvider.marketTickersSingle(coinGeckoId)
-            .map { response ->
-                val coinUids =
-                    (response.tickers.map { it.coinId } + response.tickers.mapNotNull { it.targetCoinId }).distinct()
-                val coins = coinManager.coins(coinUids)
-                val imageUrls = exchangeManager.imageUrlsMap(response.exchangeIds)
-                val verifiedExchangeUids = exchangeManager.verifiedExchangeUids()
-                response.marketTickers(verifiedExchangeUids, imageUrls, coins)
-            }
+        return hsProvider.marketTickers(coinUid)
     }
 
     // Details
@@ -604,11 +585,7 @@ class MarketKit(
             val dumpManager = DumpManager(marketDatabase)
             val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey, appVersion, appId)
             val hsNftProvider = HsNftProvider(hsApiBaseUrl, hsApiKey)
-            val coinGeckoProvider = CoinGeckoProvider("https://api.coingecko.com/api/v3/")
             val defiYieldProvider = DefiYieldProvider(defiYieldApiKey)
-            val exchangeManager = ExchangeManager(ExchangeStorage(marketDatabase))
-            val exchangeSyncer =
-                ExchangeSyncer(exchangeManager, coinGeckoProvider, marketDatabase.syncerStateDao())
             val coinStorage = CoinStorage(marketDatabase)
             val coinManager = CoinManager(coinStorage)
             val nftManager = NftManager(coinManager, hsNftProvider)
@@ -626,8 +603,7 @@ class MarketKit(
             val postManager = PostManager(cryptoCompareProvider)
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
             val globalMarketInfoManager = GlobalMarketInfoManager(hsProvider, globalMarketInfoStorage)
-            val verifiedExchangeSyncer = VerifiedExchangeSyncer(exchangeManager, hsProvider, marketDatabase.syncerStateDao())
-            val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider, verifiedExchangeSyncer)
+            val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)
 
             return MarketKit(
                 nftManager,
@@ -638,13 +614,10 @@ class MarketKit(
                 coinHistoricalPriceManager,
                 coinPriceSyncManager,
                 postManager,
-                exchangeSyncer,
                 globalMarketInfoManager,
                 hsProvider,
                 hsDataSyncer,
                 dumpManager,
-                coinGeckoProvider,
-                exchangeManager,
                 defiYieldProvider,
             )
         }

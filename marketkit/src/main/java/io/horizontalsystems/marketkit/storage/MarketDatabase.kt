@@ -21,11 +21,9 @@ import java.util.logging.Logger
         CoinPrice::class,
         CoinHistoricalPrice::class,
         GlobalMarketInfo::class,
-        Exchange::class,
         SyncerState::class,
-        VerifiedExchange::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
@@ -34,7 +32,6 @@ abstract class MarketDatabase : RoomDatabase() {
     abstract fun coinPriceDao(): CoinPriceDao
     abstract fun coinHistoricalPriceDao(): CoinHistoricalPriceDao
     abstract fun globalMarketInfoDao(): GlobalMarketInfoDao
-    abstract fun exchangeDao(): ExchangeDao
     abstract fun syncerStateDao(): SyncerStateDao
     abstract fun blockchainEntityDao(): BlockchainEntityDao
     abstract fun tokenEntityDao(): TokenEntityDao
