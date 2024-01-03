@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
 data class TopPair(
-    val rank: Long?,
+    val rank: Long,
     val base: String,
     val target: String,
     val price: BigDecimal?,
