@@ -380,6 +380,10 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.verifiedExchangeUids()
     }
 
+    fun topPairsSingle(page: Int, limit: Int): Single<List<TopPair>> {
+        return service.getTopPairs(page, limit)
+    }
+
     private interface MarketService {
 
         @GET("coins")
@@ -659,6 +663,12 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("exchanges/whitelist")
         fun verifiedExchangeUids(): Single<List<String>>
+
+        @GET("exchanges/top-pairs")
+        fun getTopPairs(
+            @Query("page") page: Int,
+            @Query("limit") limit: Int
+        ): Single<List<TopPair>>
 
         companion object {
             private const val marketInfoFields =

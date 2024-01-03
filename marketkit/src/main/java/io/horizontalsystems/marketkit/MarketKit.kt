@@ -43,6 +43,7 @@ import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenHolders
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TopMovers
+import io.horizontalsystems.marketkit.models.TopPair
 import io.horizontalsystems.marketkit.models.TopPlatform
 import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
@@ -421,6 +422,9 @@ class MarketKit(
     // Overview
     fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
         marketOverviewManager.marketOverviewSingle(currencyCode)
+
+    fun topPairsSingle(page: Int, limit: Int): Single<List<TopPair>> =
+        hsProvider.topPairsSingle(page, limit)
 
 
     fun topMoversSingle(currencyCode: String): Single<TopMovers> =
