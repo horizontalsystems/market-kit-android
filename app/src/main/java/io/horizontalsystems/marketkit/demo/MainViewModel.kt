@@ -290,6 +290,20 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runTopPairs() {
+        Log.w("AAA", "doTopPairs")
+        marketKit.topPairsSingle(1, 10)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "TopPairs: $it")
+            }, {
+                Log.e("AAA", "TopPairs Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runNftCollections() {
         Log.w("AAA", "doCollections")
         viewModelScope.launch {
