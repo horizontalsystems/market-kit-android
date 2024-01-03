@@ -281,6 +281,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.w("AAA", "marketOverview coinCategories: ${it.coinCategories}")
                 Log.w("AAA", "marketOverview topPlatforms: ${it.topPlatforms}")
                 Log.w("AAA", "marketOverview nft collections: ${it.nftCollections}")
+                Log.w("AAA", "marketOverview top pairs: ${it.topPairs}")
             }, {
                 Log.e("AAA", "marketOverview Error", it)
             })
