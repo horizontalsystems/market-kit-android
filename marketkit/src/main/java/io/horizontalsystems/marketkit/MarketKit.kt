@@ -423,8 +423,8 @@ class MarketKit(
     fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
         marketOverviewManager.marketOverviewSingle(currencyCode)
 
-    fun topPairsSingle(page: Int, limit: Int): Single<List<TopPair>> =
-        hsProvider.topPairsSingle(page, limit)
+    fun topPairsSingle(currencyCode: String, page: Int, limit: Int): Single<List<TopPair>> =
+        hsProvider.topPairsSingle(currencyCode, page, limit)
 
 
     fun topMoversSingle(currencyCode: String): Single<TopMovers> =

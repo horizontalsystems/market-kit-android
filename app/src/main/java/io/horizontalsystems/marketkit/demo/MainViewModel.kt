@@ -292,10 +292,12 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runTopPairs() {
         Log.w("AAA", "doTopPairs")
-        marketKit.topPairsSingle(1, 10)
+        marketKit.topPairsSingle("USD", 1, 100)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                Log.w("AAA", "TopPairs: $it")
+                it.forEach {
+                    Log.w("AAA", "TopPairs: $it")
+                }
             }, {
                 Log.e("AAA", "TopPairs Error", it)
             })
