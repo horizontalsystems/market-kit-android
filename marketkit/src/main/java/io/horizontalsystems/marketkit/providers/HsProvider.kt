@@ -380,8 +380,8 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.verifiedExchangeUids()
     }
 
-    fun topPairsSingle(page: Int, limit: Int): Single<List<TopPair>> {
-        return service.getTopPairs(page, limit)
+    fun topPairsSingle(currencyCode: String, page: Int, limit: Int): Single<List<TopPair>> {
+        return service.getTopPairs(currencyCode, page, limit)
     }
 
     private interface MarketService {
@@ -666,6 +666,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("exchanges/top-pairs")
         fun getTopPairs(
+            @Query("currency") currencyCode: String,
             @Query("page") page: Int,
             @Query("limit") limit: Int
         ): Single<List<TopPair>>
