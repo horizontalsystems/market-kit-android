@@ -102,6 +102,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
             additionalParams["enabled_uids"] = walletCoinUids.joinToString(separator = ",")
         }
         return service.getCoinPrices(
+            apiTag = "coin_prices",
             uids = coinUids.joinToString(separator = ","),
             currencyCode = currencyCode,
             additionalParams = additionalParams
@@ -434,6 +435,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         @GET("coins")
         fun getCoinPrices(
+            @Header("app_tag") apiTag: String,
             @Query("uids") uids: String,
             @Query("currency") currencyCode: String,
             @Query("fields") fields: String = coinPriceFields,
