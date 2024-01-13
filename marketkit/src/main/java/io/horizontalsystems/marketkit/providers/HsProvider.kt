@@ -675,7 +675,7 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
 
         companion object {
             private const val marketInfoFields =
-                "name,code,price,price_change_24h,market_cap_rank,coingecko_id,market_cap,market_cap_rank,total_volume"
+                "name,code,price,price_change_24h,price_change_7d,price_change_30d,market_cap_rank,coingecko_id,market_cap,market_cap_rank,total_volume"
             private const val coinPriceFields = "price,price_change_24h,last_updated"
             private const val advancedMarketFields =
                 "all_platforms,price,market_cap,total_volume,price_change_24h,price_change_7d,price_change_14d,price_change_30d,price_change_200d,price_change_1y,ath_percentage,atl_percentage"
