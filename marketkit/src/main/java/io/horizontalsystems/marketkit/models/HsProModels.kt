@@ -101,6 +101,7 @@ data class Analytics(
     val holdersRank: Int?,
     @SerializedName("holders_rating")
     val holdersRating: String?,
+    val issues: List<BlockchainIssues>? = null,
 ) {
 
     data class ExVolume(
@@ -333,3 +334,23 @@ data class SubscriptionResponse(
     val address: String,
     val deadline: Long
 )
+
+data class BlockchainIssues(
+    val blockchain: String,
+    val issues: List<Issue>
+) {
+
+    data class Issue(
+        val issue: String,
+        val title: String?= null,
+        val description: String,
+        val issues: List<IssueItem>? = null,
+    )
+
+    data class IssueItem(
+        val impact: String,
+        val confidence: String?= null,
+        val description: String,
+    )
+
+}
