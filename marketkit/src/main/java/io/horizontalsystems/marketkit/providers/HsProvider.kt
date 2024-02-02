@@ -397,13 +397,13 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
             @Query("fields") fields: String = marketInfoFields,
         ): Single<List<MarketInfoRaw>>
 
-        @GET("coins")
+        @GET("coins/filter")
         fun getAdvancedMarketInfos(
             @Header("app_tag") apiTag: String,
             @Query("limit") top: Int,
             @Query("currency") currencyCode: String,
             @Query("order_by_rank") orderByRank: Boolean = true,
-            @Query("fields") fields: String = advancedMarketFields,
+            @Query("page") page: Int = 1,
         ): Single<List<MarketInfoRaw>>
 
         @GET("coins")
