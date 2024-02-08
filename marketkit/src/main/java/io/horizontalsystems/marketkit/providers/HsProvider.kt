@@ -47,10 +47,9 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
     fun advancedMarketInfosSingle(
         top: Int,
         currencyCode: String,
-        apiTag: String
     ): Single<List<MarketInfoRaw>> {
         return service.getAdvancedMarketInfos(
-            apiTag = apiTag,
+            apiTag = "advanced_search",
             top = top,
             currencyCode = currencyCode
         )
