@@ -101,6 +101,7 @@ data class Analytics(
     val holdersRank: Int?,
     @SerializedName("holders_rating")
     val holdersRating: String?,
+    val audits: List<Audit>? = null,
     val issues: List<BlockchainIssues>? = null,
 ) {
 
@@ -354,3 +355,14 @@ data class BlockchainIssues(
     )
 
 }
+
+data class Audit(
+    val date: String,
+    val name: String,
+    @SerializedName("audit_url")
+    val auditUrl: String,
+    @SerializedName("tech_issues")
+    val techIssues: Int,
+    @SerializedName("partner_name")
+    val partnerName: String
+)
