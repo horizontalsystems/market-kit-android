@@ -94,7 +94,6 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
             context,
             "https://api-dev.blocksdecoded.com",
             "IQf1uAjkthZp1i2pYzkXFDom",
-            defiYieldApiKey = "87e8671e-8267-427c-92c3-4627833445ae",
             appVersion = "1.0.0",
         )
     }
