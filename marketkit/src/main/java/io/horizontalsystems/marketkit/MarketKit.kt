@@ -10,6 +10,7 @@ import io.horizontalsystems.marketkit.managers.CoinPriceSyncManager
 import io.horizontalsystems.marketkit.managers.DumpManager
 import io.horizontalsystems.marketkit.managers.GlobalMarketInfoManager
 import io.horizontalsystems.marketkit.managers.MarketOverviewManager
+import io.horizontalsystems.marketkit.managers.NftManager
 import io.horizontalsystems.marketkit.managers.PostManager
 import io.horizontalsystems.marketkit.models.Analytics
 import io.horizontalsystems.marketkit.models.AnalyticsPreview
@@ -32,6 +33,7 @@ import io.horizontalsystems.marketkit.models.MarketInfo
 import io.horizontalsystems.marketkit.models.MarketInfoOverview
 import io.horizontalsystems.marketkit.models.MarketOverview
 import io.horizontalsystems.marketkit.models.MarketTicker
+import io.horizontalsystems.marketkit.models.NftTopCollection
 import io.horizontalsystems.marketkit.models.Post
 import io.horizontalsystems.marketkit.models.RankMultiValue
 import io.horizontalsystems.marketkit.models.RankValue
@@ -45,6 +47,7 @@ import io.horizontalsystems.marketkit.models.TopPlatform
 import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
 import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
+import io.horizontalsystems.marketkit.providers.HsNftProvider
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinHistoricalPriceStorage
 import io.horizontalsystems.marketkit.storage.CoinPriceStorage
@@ -60,6 +63,7 @@ import java.math.BigDecimal
 import java.util.Date
 
 class MarketKit(
+    private val nftManager: NftManager,
     private val marketOverviewManager: MarketOverviewManager,
     private val coinManager: CoinManager,
     private val coinSyncer: CoinSyncer,
@@ -525,6 +529,10 @@ class MarketKit(
             .map { coinManager.getMarketInfos(it) }
     }
 
+    // NFT
+
+    suspend fun nftTopCollections(): List<NftTopCollection> = nftManager.topCollections()
+
     // Auth
 
     fun authGetSignMessage(address: String): Single<String> {
@@ -571,9 +579,11 @@ class MarketKit(
             val marketDatabase = MarketDatabase.getInstance(context)
             val dumpManager = DumpManager(marketDatabase)
             val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey, appVersion, appId)
+            val hsNftProvider = HsNftProvider(hsApiBaseUrl, hsApiKey)
             val coinStorage = CoinStorage(marketDatabase)
             val coinManager = CoinManager(coinStorage)
-            val marketOverviewManager = MarketOverviewManager(hsProvider)
+            val nftManager = NftManager(coinManager, hsNftProvider)
+            val marketOverviewManager = MarketOverviewManager(nftManager, hsProvider)
             val coinSyncer = CoinSyncer(hsProvider, coinStorage, marketDatabase.syncerStateDao())
             val coinPriceManager = CoinPriceManager(CoinPriceStorage(marketDatabase))
             val coinHistoricalPriceManager = CoinHistoricalPriceManager(
@@ -590,6 +600,7 @@ class MarketKit(
             val hsDataSyncer = HsDataSyncer(coinSyncer, hsProvider)
 
             return MarketKit(
+                nftManager,
                 marketOverviewManager,
                 coinManager,
                 coinSyncer,
