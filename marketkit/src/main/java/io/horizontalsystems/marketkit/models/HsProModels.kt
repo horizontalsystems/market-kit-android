@@ -103,6 +103,8 @@ data class Analytics(
     val holdersRating: String?,
     val audits: List<Audit>? = null,
     val issues: List<BlockchainIssues>? = null,
+    @SerializedName("indicators")
+    val technicalAdvice: TechnicalAdvice? = null,
 ) {
 
     data class ExVolume(
@@ -237,6 +239,45 @@ data class Analytics(
         val description: String?,
         val rating: String?,
     )
+
+    data class TechnicalAdvice(
+        val ema: BigDecimal?,
+        val rsi: BigDecimal?,
+        val macd: BigDecimal?,
+        val lower: BigDecimal?,
+        val price: BigDecimal?,
+        val upper: BigDecimal?,
+        val middle: BigDecimal?,
+        val timestamp: Long?,
+        @SerializedName("state")
+        val advice: Advice?,
+        @SerializedName("signal_timestamp")
+        val signalTimestamp: Long?
+    ) {
+
+        enum class Advice {
+            @SerializedName("oversold")
+            Oversold,
+
+            @SerializedName("buy_signal")
+            StrongBuy,
+
+            @SerializedName("buy")
+            Buy,
+
+            @SerializedName("neutral")
+            Neutral,
+
+            @SerializedName("sell")
+            Sell,
+
+            @SerializedName("sell_signal")
+            StrongSell,
+
+            @SerializedName("overbought")
+            Overbought;
+        }
+    }
 }
 
 data class AnalyticsPreview(
@@ -343,14 +384,14 @@ data class BlockchainIssues(
 
     data class Issue(
         val issue: String,
-        val title: String?= null,
+        val title: String? = null,
         val description: String,
         val issues: List<IssueItem>? = null,
     )
 
     data class IssueItem(
         val impact: String,
-        val confidence: String?= null,
+        val confidence: String? = null,
         val description: String,
     )
 
