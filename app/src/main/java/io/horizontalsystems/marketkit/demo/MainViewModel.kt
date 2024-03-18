@@ -531,6 +531,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.e("AAA", "cexVolume rank30d: ${data.cexVolume?.rank30d} points.size: ${data.cexVolume?.points?.size} transactions volume30d: ${data.transactions?.volume30d} points.size: ${data.transactions?.points?.size} ")
                 Log.e("AAA", "fundsInvested: ${data.fundsInvested} holders.size: ${data.holders?.size} ")
                 Log.e("AAA", "issues: ${data.issues} ")
+                Log.e("AAA", "advice: ${data.technicalAdvice?.advice} ${data.technicalAdvice?.middle} ")
             }, {
                 Log.e("AAA", "runAnalyticsPreview error", it)
             }).let {
