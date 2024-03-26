@@ -36,4 +36,6 @@ data class MarketInfoRaw(
     val solidDex: Boolean?,
     @SerializedName("good_distribution")
     val goodDistribution: Boolean?,
+    @SerializedName("indicators_result")
+    val advice: Analytics.TechnicalAdvice.Advice?,
 )
