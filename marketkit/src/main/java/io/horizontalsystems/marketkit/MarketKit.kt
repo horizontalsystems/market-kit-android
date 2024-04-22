@@ -116,9 +116,8 @@ class MarketKit(
         top: Int,
         currencyCode: String,
         defi: Boolean,
-        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(top, currencyCode, defi, apiTag).map {
+        return hsProvider.marketInfosSingle(top, currencyCode, defi).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -135,9 +134,8 @@ class MarketKit(
     fun marketInfosSingle(
         coinUids: List<String>,
         currencyCode: String,
-        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(coinUids, currencyCode, apiTag).map {
+        return hsProvider.marketInfosSingle(coinUids, currencyCode).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -145,9 +143,8 @@ class MarketKit(
     fun marketInfosSingle(
         categoryUid: String,
         currencyCode: String,
-        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.marketInfosSingle(categoryUid, currencyCode, apiTag).map {
+        return hsProvider.marketInfosSingle(categoryUid, currencyCode).map {
             coinManager.getMarketInfos(it)
         }
     }
@@ -156,13 +153,11 @@ class MarketKit(
         coinUid: String,
         currencyCode: String,
         language: String,
-        apiTag: String,
     ): Single<MarketInfoOverview> {
         return hsProvider.getMarketInfoOverview(
             coinUid = coinUid,
             currencyCode = currencyCode,
             language = language,
-            apiTag = apiTag,
         ).map { rawOverview ->
             val fullCoin = coinManager.fullCoin(coinUid) ?: throw Exception("No Full Coin")
 
@@ -186,8 +181,8 @@ class MarketKit(
         return hsProvider.marketInfoGlobalTvlSingle(chain, currencyCode, timePeriod)
     }
 
-    fun defiMarketInfosSingle(currencyCode: String, apiTag: String): Single<List<DefiMarketInfo>> {
-        return hsProvider.defiMarketInfosSingle(currencyCode, apiTag).map {
+    fun defiMarketInfosSingle(currencyCode: String): Single<List<DefiMarketInfo>> {
+        return hsProvider.defiMarketInfosSingle(currencyCode).map {
             coinManager.getDefiMarketInfos(it)
         }
     }
@@ -349,18 +344,16 @@ class MarketKit(
     fun analyticsPreviewSingle(
         coinUid: String,
         addresses: List<String>,
-        apiTag: String
     ): Single<AnalyticsPreview> {
-        return hsProvider.analyticsPreviewSingle(coinUid, addresses, apiTag)
+        return hsProvider.analyticsPreviewSingle(coinUid, addresses)
     }
 
     fun analyticsSingle(
         authToken: String,
         coinUid: String,
         currencyCode: String,
-        apiTag: String
     ): Single<Analytics> {
-        return hsProvider.analyticsSingle(authToken, coinUid, currencyCode, apiTag)
+        return hsProvider.analyticsSingle(authToken, coinUid, currencyCode)
     }
 
     fun cexVolumeRanksSingle(
@@ -506,8 +499,8 @@ class MarketKit(
         return globalMarketInfoManager.globalMarketInfoSingle(currencyCode, timePeriod)
     }
 
-    fun topPlatformsSingle(currencyCode: String, apiTag: String): Single<List<TopPlatform>> {
-        return hsProvider.topPlatformsSingle(currencyCode, apiTag)
+    fun topPlatformsSingle(currencyCode: String): Single<List<TopPlatform>> {
+        return hsProvider.topPlatformsSingle(currencyCode)
             .map { responseList -> responseList.map { it.topPlatform } }
     }
 
@@ -523,9 +516,8 @@ class MarketKit(
     fun topPlatformMarketInfosSingle(
         chain: String,
         currencyCode: String,
-        apiTag: String
     ): Single<List<MarketInfo>> {
-        return hsProvider.topPlatformCoinListSingle(chain, currencyCode, apiTag)
+        return hsProvider.topPlatformCoinListSingle(chain, currencyCode)
             .map { coinManager.getMarketInfos(it) }
     }
 
