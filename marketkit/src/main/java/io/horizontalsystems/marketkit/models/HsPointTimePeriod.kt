@@ -7,7 +7,7 @@ enum class HsPointTimePeriod(val value: String) {
     Hour8("8h"),
     Day1("1d"),
     Week1("1w"),
-    Month1("1m");
+    Month1("1M");
 
     val interval: Long
         get() = when (this) {
