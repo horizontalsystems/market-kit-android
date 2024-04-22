@@ -4,29 +4,22 @@ import com.google.gson.annotations.SerializedName
 import io.horizontalsystems.marketkit.models.*
 import io.reactivex.Single
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 import java.math.BigDecimal
-import java.util.*
 
-class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: String?) {
+class HsProvider(baseUrl: String, apiKey: String) {
 
     private val service by lazy {
-        val headerMap = mutableMapOf<String, String>()
-        headerMap["app_platform"] = "android"
-        headerMap["app_version"] = appVersion
-        appId?.let {
-            headerMap["app_id"] = it
-        }
-        headerMap["apikey"] = apiKey
-
-        RetrofitUtils.build("${baseUrl}/v1/", headerMap)
+        RetrofitUtils.build("${baseUrl}/v1/", mapOf("apikey" to apiKey))
             .create(MarketService::class.java)
     }
 
@@ -369,6 +362,15 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
         return service.getTopPairs(currencyCode, page, limit)
     }
 
+    fun sendStats(statsJson: String, appVersion: String, appId: String?): Single<Unit> {
+        return service.sendStats(
+            appPlatform = "android",
+            appVersion = appVersion,
+            appId = appId,
+            stats = statsJson
+        )
+    }
+
     private interface MarketService {
 
         @GET("coins")
@@ -645,6 +647,15 @@ class HsProvider(baseUrl: String, apiKey: String, appVersion: String, appId: Str
             @Query("page") page: Int,
             @Query("limit") limit: Int
         ): Single<List<TopPair>>
+
+        @POST("stats")
+        @Headers("Content-Type: application/json")
+        fun sendStats(
+            @Header("app_platform") appPlatform: String,
+            @Header("app_version") appVersion: String,
+            @Header("app_id") appId: String?,
+            @Body stats: String,
+        ): Single<Unit>
 
         companion object {
             private const val marketInfoFields =
