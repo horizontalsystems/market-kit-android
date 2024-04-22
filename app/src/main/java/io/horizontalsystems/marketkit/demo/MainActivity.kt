@@ -94,7 +94,6 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
             context,
             "https://api-dev.blocksdecoded.com",
             "IQf1uAjkthZp1i2pYzkXFDom",
-            appVersion = "1.0.0",
         )
     }
 

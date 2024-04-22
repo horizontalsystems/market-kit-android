@@ -549,13 +549,17 @@ class MarketKit(
         return dumpManager.getInitialDump()
     }
 
+    //Stats
+
+    fun sendStats(statsJson: String, appVersion: String, appId: String?): Single<Unit> {
+        return hsProvider.sendStats(statsJson, appVersion, appId)
+    }
+
     companion object {
         fun getInstance(
             context: Context,
             hsApiBaseUrl: String,
             hsApiKey: String,
-            appVersion: String,
-            appId: String? = null,
         ): MarketKit {
             // init cache
             (context.getSystemService(Context.STORAGE_SERVICE) as StorageManager?)?.let { storageManager ->
@@ -569,7 +573,7 @@ class MarketKit(
 
             val marketDatabase = MarketDatabase.getInstance(context)
             val dumpManager = DumpManager(marketDatabase)
-            val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey, appVersion, appId)
+            val hsProvider = HsProvider(hsApiBaseUrl, hsApiKey)
             val hsNftProvider = HsNftProvider(hsApiBaseUrl, hsApiKey)
             val coinStorage = CoinStorage(marketDatabase)
             val coinManager = CoinManager(coinStorage)
