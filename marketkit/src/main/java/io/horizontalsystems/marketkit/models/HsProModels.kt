@@ -398,12 +398,12 @@ data class BlockchainIssues(
 }
 
 data class Audit(
-    val date: String,
-    val name: String,
+    val date: String?,
+    val name: String?,
     @SerializedName("audit_url")
-    val auditUrl: String,
+    val auditUrl: String?,
     @SerializedName("tech_issues")
     val techIssues: Int,
     @SerializedName("partner_name")
-    val partnerName: String
+    val partnerName: String?
 )
