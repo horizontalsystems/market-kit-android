@@ -182,6 +182,22 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runFetchTopCoinsMarketInfo() {
+        val currencyCode = "USD"
+        marketKit.topCoinsMarketInfosSingle(100, currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "topCoinsMarketInfo: $it")
+                }
+            }, {
+                Log.e("AAA", "topCoinsMarketInfo Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runFetchMarketInfosByCategory() {
         val categoryUid = "dexes"
         val currencyCode = "USD"
