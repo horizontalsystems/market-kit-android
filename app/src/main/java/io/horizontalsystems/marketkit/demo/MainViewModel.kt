@@ -623,6 +623,21 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runCoinsSignals() {
+        val uids = listOf("bitcoin", "ethereum")
+        marketKit.coinsSignalsSingle(uids)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ data ->
+                data.forEach { item ->
+                    Log.e("AAA", "runCoinsSignals value: ${item.key} uid: ${item.value} ")
+                }
+            }, {
+                Log.e("AAA", "runHCoinsSignals error", it)
+            }).let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
