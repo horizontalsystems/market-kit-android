@@ -353,7 +353,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runGetMarketTickers() {
         val coinUid = "ethereum"
-        marketKit.marketTickersSingle(coinUid)
+        marketKit.marketTickersSingle(coinUid, "USD")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it
