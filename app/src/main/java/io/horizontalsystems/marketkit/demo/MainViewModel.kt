@@ -638,6 +638,38 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runEtfs() {
+        val currencyCode = "USD"
+        marketKit.etfSingle(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "etf: ${it.ticker} ${it.name} ${it.date} ${it.totalAssets} ${it.totalInflow} ${it.inflows}")
+                }
+            }, {
+                Log.e("AAA", "etfs Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    fun runEtfPoints() {
+        val currencyCode = "USD"
+        marketKit.etfPointSingle(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "etfPoint: ${it.date} ${it.totalAssets} ${it.totalInflow} ${it.dailyInflow}")
+                }
+            }, {
+                Log.e("AAA", "etfPoints Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
