@@ -288,6 +288,20 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runMarketGlobal() {
+        Log.w("AAA", "doMarketGlobal")
+        marketKit.marketGlobalSingle("USD")
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "marketGlobal: $it")
+            }, {
+                Log.e("AAA", "marketGlobal Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runTopPairs() {
         Log.w("AAA", "doTopPairs")
         marketKit.topPairsSingle("USD", 1, 100)

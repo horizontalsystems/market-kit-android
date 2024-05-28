@@ -285,6 +285,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getMarketOverview(currencyCode)
     }
 
+    fun marketGlobalSingle(currencyCode: String): Single<MarketGlobal> {
+        return service.getMarketGlobal(currencyCode)
+    }
+
     fun marketTickers(coinUid: String, currencyCode: String): Single<List<MarketTicker>> {
         return service.getMarketTickers(coinUid, currencyCode)
     }
@@ -626,6 +630,11 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("currency") currencyCode: String,
             @Query("simplified") simplified: Boolean = true
         ): Single<MarketOverviewResponse>
+
+        @GET("markets/overview-simple")
+        fun getMarketGlobal(
+            @Query("currency") currencyCode: String
+        ): Single<MarketGlobal>
 
         @GET("exchanges/tickers/{coinUid}")
         fun getMarketTickers(
