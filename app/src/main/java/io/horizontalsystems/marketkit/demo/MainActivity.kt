@@ -11,9 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import io.horizontalsystems.marketkit.MarketKit
-import io.horizontalsystems.marketkit.R
-import io.horizontalsystems.marketkit.databinding.ActivityMainBinding
-import io.horizontalsystems.marketkit.databinding.ViewHolderItemBinding
+import io.horizontalsystems.marketkit.demo.databinding.ActivityMainBinding
+import io.horizontalsystems.marketkit.demo.databinding.ViewHolderItemBinding
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.memberFunctions
 
