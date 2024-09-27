@@ -141,6 +141,7 @@ sealed class BlockchainType : Parcelable {
                 "fantom" -> Fantom
                 "tron" -> Tron
                 "the-open-network" -> Ton
+                "base" -> Base
                 else -> Unsupported(uid)
             }
 
