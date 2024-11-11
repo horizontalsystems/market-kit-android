@@ -4,12 +4,13 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    namespace 'io.horizontalsystems.marketkit.demo'
+    compileSdk 34
 
     defaultConfig {
         applicationId 'io.horizontalsystems.marketkit.demo'
         minSdk 26
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -23,8 +24,13 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 
     buildFeatures {
@@ -46,7 +52,7 @@ dependencies {
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.6.20'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.23'
 
     implementation project(':marketkit')
 }
