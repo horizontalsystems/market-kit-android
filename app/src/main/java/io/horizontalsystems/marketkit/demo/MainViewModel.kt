@@ -701,7 +701,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             // Generate a content URI for the file using FileProvider
             val exportFileUri = FileProvider.getUriForFile(
                 applicationContext,
-                BuildConfig.APPLICATION_ID + ".provider",
+                "io.horizontalsystems.marketkit.provider", //should be same as in Manifest: android:authorities=""
                 tempFile
             )
 

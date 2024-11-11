@@ -7,11 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    namespace 'io.horizontalsystems.marketkit'
+    compileSdk 34
 
     defaultConfig {
         minSdk 26
-        targetSdk 31
+        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -24,8 +25,13 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 }
 
