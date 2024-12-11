@@ -18,6 +18,8 @@ data class CoinCategory(
     val diff1W: BigDecimal?,
     @SerializedName("change_1m")
     val diff1M: BigDecimal?,
+    @SerializedName("top_coins")
+    val topCoins: List<String>,
 ) : Parcelable {
 
     override fun toString(): String {

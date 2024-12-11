@@ -437,7 +437,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("currency") currencyCode: String,
         ): Single<List<MarketInfoRaw>>
 
-        @GET("categories")
+        @GET("categories/with-top-coins")
         fun getCategories(
             @Query("currency") currencyCode: String
         ): Single<List<CoinCategory>>
