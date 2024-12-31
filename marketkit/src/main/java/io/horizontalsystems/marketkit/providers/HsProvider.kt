@@ -38,10 +38,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
     fun advancedMarketInfosSingle(
         top: Int,
         currencyCode: String,
+        categoryId: Int?
     ): Single<List<MarketInfoRaw>> {
         return service.getAdvancedMarketInfos(
             top = top,
-            currencyCode = currencyCode
+            currencyCode = currencyCode,
+            categoryId = categoryId
         )
     }
 
@@ -420,6 +422,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getAdvancedMarketInfos(
             @Query("limit") top: Int,
             @Query("currency") currencyCode: String,
+            @Query("category_id") categoryId: Int?,
             @Query("order_by_rank") orderByRank: Boolean = true,
             @Query("page") page: Int = 1,
         ): Single<List<MarketInfoRaw>>

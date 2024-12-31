@@ -138,8 +138,9 @@ class MarketKit(
     fun advancedMarketInfosSingle(
         top: Int = 250,
         currencyCode: String,
+        categoryId: Int?,
     ): Single<List<MarketInfo>> {
-        return hsProvider.advancedMarketInfosSingle(top, currencyCode).map {
+        return hsProvider.advancedMarketInfosSingle(top, currencyCode, categoryId).map {
             coinManager.getMarketInfos(it)
         }
     }
