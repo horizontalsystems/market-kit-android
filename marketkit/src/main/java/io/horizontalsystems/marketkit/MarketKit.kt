@@ -16,6 +16,7 @@ import io.horizontalsystems.marketkit.models.Analytics
 import io.horizontalsystems.marketkit.models.AnalyticsPreview
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Category
 import io.horizontalsystems.marketkit.models.ChartPoint
 import io.horizontalsystems.marketkit.models.Coin
 import io.horizontalsystems.marketkit.models.CoinCategory
@@ -152,6 +153,10 @@ class MarketKit(
         return hsProvider.marketInfosSingle(coinUids, currencyCode).map {
             coinManager.getMarketInfos(it)
         }
+    }
+
+    fun getCategories(): Single<List<Category>> {
+        return hsProvider.getCategories()
     }
 
     fun marketInfosSingle(
