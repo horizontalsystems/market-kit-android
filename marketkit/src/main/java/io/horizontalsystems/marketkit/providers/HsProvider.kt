@@ -67,6 +67,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
         )
     }
 
+    fun getCategories(): Single<List<Category>> {
+        return service.getCategories()
+    }
+
     fun marketInfosSingle(
         categoryUid: String,
         currencyCode: String,
@@ -433,6 +437,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("currency") currencyCode: String,
             @Query("fields") fields: String = marketInfoFields,
         ): Single<List<MarketInfoRaw>>
+
+        @GET("categories/")
+        fun getCategories(): Single<List<Category>>
 
         @GET("categories/{categoryUid}/coins")
         fun getMarketInfosByCategory(

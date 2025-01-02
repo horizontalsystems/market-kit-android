@@ -197,6 +197,21 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runCategories() {
+        marketKit.getCategories()
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "Category: $it")
+                }
+            }, {
+                Log.e("AAA", "getCategories Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runFetchMarketInfosByCategory() {
         val categoryUid = "dexes"
         val currencyCode = "USD"
