@@ -1,5 +1,6 @@
 package io.horizontalsystems.marketkit.managers
 
+import android.util.Log
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Coin
@@ -65,6 +66,7 @@ class CoinManager(
                         }
                     )
                 } catch (e: Exception) {
+                    Log.e("CoinManager", "getMarketInfos: ", e)
                 }
             }
         }

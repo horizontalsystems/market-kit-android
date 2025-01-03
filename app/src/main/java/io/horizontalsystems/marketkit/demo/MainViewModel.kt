@@ -150,11 +150,12 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runFetchMarketInfosByTop() {
         val top = 10
-        marketKit.advancedMarketInfosSingle(top, "USD", null)
+        marketKit.advancedMarketInfosSingle(top, "USD")
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
                     Log.w("AAA", "marketInfo: $it")
+                    Log.w("AAA", "marketInfo categories: ${it.categoryIds}")
                 }
             }, {
                 Log.e("AAA", "marketInfosSingle Error", it)
@@ -198,7 +199,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runCategories() {
-        marketKit.getCategories()
+        marketKit.categoriesSingle()
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {

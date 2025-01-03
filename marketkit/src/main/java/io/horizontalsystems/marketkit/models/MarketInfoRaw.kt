@@ -42,4 +42,6 @@ data class MarketInfoRaw(
     val goodDistribution: Boolean?,
     @SerializedName("indicators_result")
     val advice: Analytics.TechnicalAdvice.Advice?,
+    @SerializedName("category_ids")
+    val categoryIds: List<Int>?
 )

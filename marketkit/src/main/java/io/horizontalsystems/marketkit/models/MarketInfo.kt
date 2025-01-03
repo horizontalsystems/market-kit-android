@@ -23,6 +23,7 @@ data class MarketInfo(
     val solidDex: Boolean?,
     val goodDistribution: Boolean?,
     val advice: Analytics.TechnicalAdvice.Advice?,
+    val categoryIds: List<Int>?
 ) {
     constructor(marketInfoRaw: MarketInfoRaw, fullCoin: FullCoin) : this(
         fullCoin,
@@ -45,5 +46,6 @@ data class MarketInfo(
         marketInfoRaw.solidDex,
         marketInfoRaw.goodDistribution,
         marketInfoRaw.advice,
+        marketInfoRaw.categoryIds
     )
 }
