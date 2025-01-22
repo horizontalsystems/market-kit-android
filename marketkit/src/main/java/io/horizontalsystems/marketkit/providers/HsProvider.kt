@@ -372,6 +372,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.requestPersonalSupport(authToken, username)
     }
 
+    fun requestVipSupport(authToken: String, username: String): Single<Response<Void>> {
+        return service.requestVipSupport(authToken, username)
+    }
+
     fun verifiedExchangeUids(): Single<List<String>> {
         return service.verifiedExchangeUids()
     }
@@ -681,6 +685,13 @@ class HsProvider(baseUrl: String, apiKey: String) {
         @FormUrlEncoded
         @POST("support/start-chat")
         fun requestPersonalSupport(
+            @Header("authorization") auth: String,
+            @Field("username") username: String,
+        ): Single<Response<Void>>
+
+        @FormUrlEncoded
+        @POST("support/create-group")
+        fun requestVipSupport(
             @Header("authorization") auth: String,
             @Field("username") username: String,
         ): Single<Response<Void>>
