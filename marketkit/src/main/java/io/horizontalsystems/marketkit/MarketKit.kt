@@ -594,6 +594,10 @@ class MarketKit(
         return hsProvider.requestPersonalSupport(authToken, username)
     }
 
+    fun requestVipSupport(authToken: String, username: String): Single<Response<Void>> {
+        return hsProvider.requestVipSupport(authToken, username)
+    }
+
     //Misc
 
     fun syncInfo(): SyncInfo {
