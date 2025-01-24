@@ -594,7 +594,7 @@ class MarketKit(
         return hsProvider.requestPersonalSupport(authToken, username)
     }
 
-    fun requestVipSupport(authToken: String, username: String): Single<Response<Void>> {
+    fun requestVipSupport(authToken: String, username: String): Single<Map<String, String>> {
         return hsProvider.requestVipSupport(authToken, username)
     }
 

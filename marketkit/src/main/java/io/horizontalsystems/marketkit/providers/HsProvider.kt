@@ -372,7 +372,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.requestPersonalSupport(authToken, username)
     }
 
-    fun requestVipSupport(authToken: String, username: String): Single<Response<Void>> {
+    fun requestVipSupport(authToken: String, username: String): Single<Map<String, String>> {
         return service.requestVipSupport(authToken, username)
     }
 
@@ -694,7 +694,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun requestVipSupport(
             @Header("authorization") auth: String,
             @Field("username") username: String,
-        ): Single<Response<Void>>
+        ): Single<Map<String, String>>
 
         @GET("exchanges/whitelist")
         fun verifiedExchangeUids(): Single<List<String>>
