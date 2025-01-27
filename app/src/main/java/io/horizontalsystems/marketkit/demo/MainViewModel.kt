@@ -699,6 +699,21 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runRequestVipSupport() {
+        val subscriptionId = "googleUniqueId"
+        val subscriptionDeadline = 1743070518
+        marketKit.requestVipSupport("", subscriptionId, subscriptionDeadline)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                Log.w("AAA", "runRequestVipSupport: ${it}")
+            }, {
+                Log.e("AAA", "runRequestVipSupport Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }

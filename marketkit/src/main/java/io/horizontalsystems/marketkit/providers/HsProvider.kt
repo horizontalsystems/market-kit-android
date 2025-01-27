@@ -372,8 +372,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.requestPersonalSupport(authToken, username)
     }
 
-    fun requestVipSupport(authToken: String, username: String): Single<Map<String, String>> {
-        return service.requestVipSupport(authToken, username)
+    fun requestVipSupport(authToken: String, subscriptionId: String, subscriptionDeadline: Int): Single<Map<String, String>> {
+        return service.requestVipSupport(authToken, subscriptionId, subscriptionDeadline)
     }
 
     fun verifiedExchangeUids(): Single<List<String>> {
@@ -693,7 +693,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         @POST("support/create-group")
         fun requestVipSupport(
             @Header("authorization") auth: String,
-            @Field("username") username: String,
+            @Field("subscription_id") subscriptionId: String,
+            @Field("subscription_deadline") subscriptionDeadline: Int,
         ): Single<Map<String, String>>
 
         @GET("exchanges/whitelist")
