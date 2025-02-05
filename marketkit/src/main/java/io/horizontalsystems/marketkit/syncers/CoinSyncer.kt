@@ -73,7 +73,6 @@ class CoinSyncer(
 
             when (response.type) {
                 "eip20" -> response.address
-                "bep2" -> response.symbol
                 "spl" -> response.address
                 else -> response.address
             } ?: ""

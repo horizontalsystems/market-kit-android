@@ -6,5 +6,4 @@ data class TokenResponse(
     val type: String,
     val decimals: Int?,
     val address: String?,
-    val symbol: String?
 )
