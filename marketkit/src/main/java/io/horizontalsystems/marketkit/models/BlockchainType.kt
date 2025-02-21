@@ -141,6 +141,7 @@ sealed class BlockchainType : Parcelable {
                 "tron" -> Tron
                 "the-open-network" -> Ton
                 "base" -> Base
+                "zksync" -> ZkSync
                 else -> Unsupported(uid)
             }
 
