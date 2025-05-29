@@ -16,5 +16,6 @@ data class MarketTicker(
     @SerializedName("trade_url")
     val tradeUrl: String?,
     @SerializedName("whitelisted")
-    val verified: Boolean
+    val verified: Boolean,
+    val centralized: Boolean,
 )
