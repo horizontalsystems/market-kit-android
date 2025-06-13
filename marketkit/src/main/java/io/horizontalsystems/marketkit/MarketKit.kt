@@ -171,11 +171,15 @@ class MarketKit(
         coinUid: String,
         currencyCode: String,
         language: String,
+        roiUids: List<String>,
+        roiPeriods: List<String>,
     ): Single<MarketInfoOverview> {
         return hsProvider.getMarketInfoOverview(
             coinUid = coinUid,
             currencyCode = currencyCode,
             language = language,
+            roiUids = roiUids,
+            roiPeriods = roiPeriods,
         ).map { rawOverview ->
             val fullCoin = coinManager.fullCoin(coinUid) ?: throw Exception("No Full Coin")
 
