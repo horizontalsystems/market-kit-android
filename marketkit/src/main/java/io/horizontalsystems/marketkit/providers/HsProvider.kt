@@ -1,7 +1,43 @@
 package io.horizontalsystems.marketkit.providers
 
 import com.google.gson.annotations.SerializedName
-import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.models.Analytics
+import io.horizontalsystems.marketkit.models.AnalyticsPreview
+import io.horizontalsystems.marketkit.models.BlockchainResponse
+import io.horizontalsystems.marketkit.models.Category
+import io.horizontalsystems.marketkit.models.ChartPoint
+import io.horizontalsystems.marketkit.models.CoinCategory
+import io.horizontalsystems.marketkit.models.CoinCategoryMarketPoint
+import io.horizontalsystems.marketkit.models.CoinInvestment
+import io.horizontalsystems.marketkit.models.CoinPrice
+import io.horizontalsystems.marketkit.models.CoinPriceResponse
+import io.horizontalsystems.marketkit.models.CoinReport
+import io.horizontalsystems.marketkit.models.CoinResponse
+import io.horizontalsystems.marketkit.models.CoinTreasury
+import io.horizontalsystems.marketkit.models.CoinTreasuryResponse
+import io.horizontalsystems.marketkit.models.DefiMarketInfoResponse
+import io.horizontalsystems.marketkit.models.EtfPointResponse
+import io.horizontalsystems.marketkit.models.EtfResponse
+import io.horizontalsystems.marketkit.models.GlobalMarketPoint
+import io.horizontalsystems.marketkit.models.HsPointTimePeriod
+import io.horizontalsystems.marketkit.models.HsStatus
+import io.horizontalsystems.marketkit.models.HsTimePeriod
+import io.horizontalsystems.marketkit.models.MarketGlobal
+import io.horizontalsystems.marketkit.models.MarketInfoDetailsResponse
+import io.horizontalsystems.marketkit.models.MarketInfoOverviewRaw
+import io.horizontalsystems.marketkit.models.MarketInfoRaw
+import io.horizontalsystems.marketkit.models.MarketInfoTvlResponse
+import io.horizontalsystems.marketkit.models.MarketOverviewResponse
+import io.horizontalsystems.marketkit.models.MarketTicker
+import io.horizontalsystems.marketkit.models.RankMultiValue
+import io.horizontalsystems.marketkit.models.RankValue
+import io.horizontalsystems.marketkit.models.SubscriptionResponse
+import io.horizontalsystems.marketkit.models.TokenHolders
+import io.horizontalsystems.marketkit.models.TokenResponse
+import io.horizontalsystems.marketkit.models.TopMoversRaw
+import io.horizontalsystems.marketkit.models.TopPair
+import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
+import io.horizontalsystems.marketkit.models.TopPlatformResponse
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.Body
@@ -141,11 +177,15 @@ class HsProvider(baseUrl: String, apiKey: String) {
         coinUid: String,
         currencyCode: String,
         language: String,
+        roiUids: List<String>,
+        roiPeriods: List<String>,
     ): Single<MarketInfoOverviewRaw> {
         return service.getMarketInfoOverview(
             coinUid = coinUid,
             currencyCode = currencyCode,
-            language = language
+            language = language,
+            roiUids = roiUids.joinToString(","),
+            roiPeriods = roiPeriods.joinToString(","),
         )
     }
 
@@ -493,6 +533,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
             @Query("language") language: String,
+            @Query("roi_uids") roiUids: String,
+            @Query("roi_periods") roiPeriods: String,
         ): Single<MarketInfoOverviewRaw>
 
         @GET("defi-protocols")

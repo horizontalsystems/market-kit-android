@@ -353,7 +353,13 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     private fun doMarketInfoOverview(coinUid: String) {
         Log.w("AAA", "doMarketInfoOverview coinUid: $coinUid")
-        marketKit.marketInfoOverviewSingle(coinUid, "USD", "en")
+        marketKit.marketInfoOverviewSingle(
+            coinUid,
+            "USD",
+            "en",
+            listOf("bitcoin", "ethereum", "tether"),
+            listOf("7d", "30d", "90d")
+        )
             .subscribeOn(Schedulers.io())
             .subscribe({
                 Log.w("AAA", "marketInfoOverview: $it")
