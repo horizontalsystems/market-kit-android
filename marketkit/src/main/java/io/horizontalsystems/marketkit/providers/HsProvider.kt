@@ -185,10 +185,11 @@ class HsProvider(baseUrl: String, apiKey: String) {
             coinUid = coinUid,
             currencyCode = currencyCode,
             language = language,
-            roiUids = roiUids.joinToString(","),
-            roiPeriods = roiPeriods
-                .map { MarketInfoOverview.hsTimePeriodToStr(it) }
-                .joinToString(","),
+            roiUids = roiUids.ifEmpty { null }
+                ?.joinToString(","),
+            roiPeriods = roiPeriods.ifEmpty { null }
+                ?.map { MarketInfoOverview.hsTimePeriodToStr(it) }
+                ?.joinToString(",")
         )
     }
 
@@ -536,8 +537,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Path("coinUid") coinUid: String,
             @Query("currency") currencyCode: String,
             @Query("language") language: String,
-            @Query("roi_uids") roiUids: String,
-            @Query("roi_periods") roiPeriods: String,
+            @Query("roi_uids") roiUids: String?,
+            @Query("roi_periods") roiPeriods: String?,
         ): Single<MarketInfoOverviewRaw>
 
         @GET("defi-protocols")
