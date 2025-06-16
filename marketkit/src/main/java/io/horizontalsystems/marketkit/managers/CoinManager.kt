@@ -23,6 +23,9 @@ class CoinManager(
     fun fullCoin(uid: String): FullCoin? =
         storage.fullCoin(uid)
 
+    fun topFullCoins(limit: Int): List<FullCoin> =
+        storage.topFullCoins(limit)
+
     fun fullCoins(filter: String, limit: Int): List<FullCoin> =
         storage.fullCoins(filter, limit)
 
