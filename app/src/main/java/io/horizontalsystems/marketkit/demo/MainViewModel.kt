@@ -139,6 +139,14 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runTopFullCoins() {
+        val fullCoins = marketKit.topFullCoins(100)
+        Log.w("AAA", "Run topFullCoins and got ${fullCoins.size} coins")
+        fullCoins.forEach {
+            Log.w("AAA", "Coin ${it.coin.code}, ${it.coin.name}, platforms: ${it.tokens}")
+        }
+    }
+
     fun runFilterFullCoins() {
         val filter = "if"
         val fullCoins = marketKit.fullCoins(filter, 100)

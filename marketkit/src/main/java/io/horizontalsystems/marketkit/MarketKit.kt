@@ -89,6 +89,10 @@ class MarketKit(
     val fullCoinsUpdatedObservable: Observable<Unit>
         get() = coinSyncer.fullCoinsUpdatedObservable
 
+    fun topFullCoins(limit: Int = 20): List<FullCoin> {
+        return coinManager.topFullCoins(limit)
+    }
+
     fun fullCoins(filter: String, limit: Int = 20): List<FullCoin> {
         return coinManager.fullCoins(filter, limit)
     }
