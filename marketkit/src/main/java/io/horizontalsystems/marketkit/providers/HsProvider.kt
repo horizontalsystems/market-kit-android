@@ -24,6 +24,7 @@ import io.horizontalsystems.marketkit.models.HsStatus
 import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.MarketGlobal
 import io.horizontalsystems.marketkit.models.MarketInfoDetailsResponse
+import io.horizontalsystems.marketkit.models.MarketInfoOverview
 import io.horizontalsystems.marketkit.models.MarketInfoOverviewRaw
 import io.horizontalsystems.marketkit.models.MarketInfoRaw
 import io.horizontalsystems.marketkit.models.MarketInfoTvlResponse
@@ -178,14 +179,16 @@ class HsProvider(baseUrl: String, apiKey: String) {
         currencyCode: String,
         language: String,
         roiUids: List<String>,
-        roiPeriods: List<String>,
+        roiPeriods: List<HsTimePeriod>,
     ): Single<MarketInfoOverviewRaw> {
         return service.getMarketInfoOverview(
             coinUid = coinUid,
             currencyCode = currencyCode,
             language = language,
             roiUids = roiUids.joinToString(","),
-            roiPeriods = roiPeriods.joinToString(","),
+            roiPeriods = roiPeriods
+                .map { MarketInfoOverview.hsTimePeriodToStr(it) }
+                .joinToString(","),
         )
     }
 

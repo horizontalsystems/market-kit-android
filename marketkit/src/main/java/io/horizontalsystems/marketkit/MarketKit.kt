@@ -172,7 +172,7 @@ class MarketKit(
         currencyCode: String,
         language: String,
         roiUids: List<String>,
-        roiPeriods: List<String>,
+        roiPeriods: List<HsTimePeriod>,
     ): Single<MarketInfoOverview> {
         return hsProvider.getMarketInfoOverview(
             coinUid = coinUid,

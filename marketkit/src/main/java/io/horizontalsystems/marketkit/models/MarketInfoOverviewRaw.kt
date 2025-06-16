@@ -2,7 +2,7 @@ package io.horizontalsystems.marketkit.models
 
 import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
-import java.util.*
+import java.util.Date
 
 data class MarketInfoOverviewRaw(
     val performance: Map<String, Map<String, BigDecimal?>>,
@@ -19,12 +19,8 @@ data class MarketInfoOverviewRaw(
             val performance = performance.map { (vsCurrency, v) ->
                 vsCurrency to v.mapNotNull { (timePeriodRaw, performance) ->
                     if (performance == null) return@mapNotNull null
-
-                    val timePeriod = when (timePeriodRaw) {
-                        "7d" -> HsTimePeriod.Week1
-                        "30d" -> HsTimePeriod.Month1
-                        else -> return@mapNotNull null
-                    }
+                    val timePeriod = MarketInfoOverview.strToHsTimePeriod(timePeriodRaw)
+                        ?: return@mapNotNull null
 
                     timePeriod to performance
                 }.toMap()

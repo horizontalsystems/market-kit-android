@@ -358,7 +358,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             "USD",
             "en",
             listOf("bitcoin", "ethereum", "tether"),
-            listOf("7d", "30d", "90d")
+            listOf(HsTimePeriod.Week1, HsTimePeriod.Month1, HsTimePeriod.Month3)
         )
             .subscribeOn(Schedulers.io())
             .subscribe({
