@@ -9,7 +9,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(
     indices = [
-        Index(value = arrayOf("uid"))
+        Index(value = arrayOf("uid")),
+        Index(value = arrayOf("code"))
     ]
 )
 data class Coin(

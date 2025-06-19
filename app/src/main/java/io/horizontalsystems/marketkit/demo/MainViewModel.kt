@@ -727,6 +727,14 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
     }
 
+    fun runFullCoinsByCoinCodes() {
+        val fullCoins = marketKit.fullCoinsByCoinCodes(listOf("BTC", "ETH", "USDT", "USDC", "BUSD", "BSC-USD"))
+        Log.w("AAA", "runFullCoins ${fullCoins.size} coins found")
+        fullCoins.forEach {
+            Log.w("AAA", "runFullCoinsByCoinCodes code: ${it.coin.code} uid: ${it.coin.uid} tokens: ${it.tokens.joinToString { it.type.id }}")
+        }
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
