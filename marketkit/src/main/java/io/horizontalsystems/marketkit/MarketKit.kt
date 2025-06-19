@@ -101,6 +101,10 @@ class MarketKit(
         return coinManager.fullCoins(coinUids)
     }
 
+    fun fullCoinsByCoinCodes(coinCodes: List<String>): List<FullCoin> {
+        return coinManager.fullCoinsByCoinCodes(coinCodes)
+    }
+
     fun allCoins(): List<Coin> = coinManager.allCoins()
 
     fun token(query: TokenQuery): Token? =

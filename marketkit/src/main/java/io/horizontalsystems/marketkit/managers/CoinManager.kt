@@ -32,6 +32,9 @@ class CoinManager(
     fun fullCoins(coinUids: List<String>): List<FullCoin> =
         storage.fullCoins(coinUids)
 
+    fun fullCoinsByCoinCodes(coinCodes: List<String>): List<FullCoin> =
+        storage.fullCoinsByCoinCodes(coinCodes)
+
     fun allCoins(): List<Coin> = storage.allCoins()
 
     fun token(query: TokenQuery): Token? =

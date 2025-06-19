@@ -49,6 +49,9 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
     fun fullCoins(uids: List<String>): List<FullCoin> =
         coinDao.getFullCoins(uids).map { it.fullCoin }
 
+    fun fullCoinsByCoinCodes(coinCodes: List<String>): List<FullCoin> =
+        coinDao.getFullCoinsByCoinCodes(coinCodes).map { it.fullCoin }
+
     fun getToken(query: TokenQuery): Token? {
         val sql = "SELECT * FROM TokenEntity WHERE ${filterByTokenQuery(query)} LIMIT 1"
 
