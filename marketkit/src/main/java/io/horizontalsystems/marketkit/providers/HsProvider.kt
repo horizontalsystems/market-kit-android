@@ -39,6 +39,7 @@ import io.horizontalsystems.marketkit.models.TopMoversRaw
 import io.horizontalsystems.marketkit.models.TopPair
 import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
 import io.horizontalsystems.marketkit.models.TopPlatformResponse
+import io.horizontalsystems.marketkit.models.Vault
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.Body
@@ -449,6 +450,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getEtfPoints(currencyCode)
     }
 
+    fun vaultsSingle(): Single<List<Vault>> {
+        return service.getVaults()
+    }
+
+    fun vaultSingle(tokenAddress: String): Single<Vault> {
+        return service.getVault(tokenAddress)
+    }
+
     private interface MarketService {
 
         @GET("coins")
@@ -776,6 +785,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getEtfPoints(
             @Query("currency") currencyCode: String
         ): Single<List<EtfPointResponse>>
+
+        @GET("vaults")
+        fun getVaults(): Single<List<Vault>>
+
+        @GET("vaults/{tokenAddress}")
+        fun getVault(
+            @Path("tokenAddress") coinUid: String,
+        ): Single<Vault>
 
         companion object {
             private const val marketInfoFields =

@@ -762,4 +762,19 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             }
         }
     }
+
+    fun runVaults() {
+        marketKit.vaultsSingle()
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "vault: ${it.name} ${it.assetSymbol} ${it.tvl} ${it.chain} ${it.protocolName} ${it.apy}")
+                }
+            }, {
+                Log.e("AAA", "vaults Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
 }
