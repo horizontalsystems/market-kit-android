@@ -51,6 +51,7 @@ import io.horizontalsystems.marketkit.models.TopMovers
 import io.horizontalsystems.marketkit.models.TopPair
 import io.horizontalsystems.marketkit.models.TopPlatform
 import io.horizontalsystems.marketkit.models.TopPlatformMarketCapPoint
+import io.horizontalsystems.marketkit.models.Vault
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
 import io.horizontalsystems.marketkit.providers.CryptoCompareProvider
 import io.horizontalsystems.marketkit.providers.HsNftProvider
@@ -634,6 +635,15 @@ class MarketKit(
             .map { points ->
                 points.mapNotNull { EtfPointResponse.toEtfPoint(it) }
             }
+    }
+
+    // Vaults
+    fun vaultsSingle(): Single<List<Vault>> {
+        return hsProvider.vaultsSingle()
+    }
+
+    fun vaultSingle(tokenAddress: String): Single<Vault> {
+        return hsProvider.vaultSingle(tokenAddress)
     }
 
     //Stats
