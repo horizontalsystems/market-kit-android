@@ -782,7 +782,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
-                    Log.w("AAA", "vault: ${it.name} ${it.assetSymbol} ${it.tvl} ${it.chain} ${it.protocolName} ${it.apy}")
+                    Log.w("AAA", "vault: ${it.name} ${it.assetSymbol} ${it.tvl} ${it.chain} ${it.protocolName} ${it.url} ${it.apy}")
                 }
             }, {
                 Log.e("AAA", "vaults Error", it)

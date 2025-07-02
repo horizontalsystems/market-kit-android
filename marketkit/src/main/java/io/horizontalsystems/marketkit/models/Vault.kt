@@ -9,7 +9,7 @@ data class Vault(
     val tvl: String,
     val chain: String,
     val holders: Int?,
-    val url: String,
+    val url: String?,
 
     @SerializedName("asset_symbol")
     val assetSymbol: String,
