@@ -642,8 +642,8 @@ class MarketKit(
         return hsProvider.vaultsSingle()
     }
 
-    fun vaultSingle(tokenAddress: String): Single<Vault> {
-        return hsProvider.vaultSingle(tokenAddress)
+    fun vaultSingle(tokenAddress: String, period: HsTimePeriod = HsTimePeriod.Month1): Single<Vault> {
+        return hsProvider.vaultSingle(tokenAddress, period)
     }
 
     //Stats

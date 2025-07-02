@@ -8,7 +8,7 @@ data class Vault(
     val apy: Apy,
     val tvl: String,
     val chain: String,
-    val holders: Int,
+    val holders: Int?,
     val url: String,
 
     @SerializedName("asset_symbol")
@@ -19,6 +19,9 @@ data class Vault(
 
     @SerializedName("protocol_logo")
     val protocolLogo: String,
+
+    @SerializedName("apy_chart")
+    val apyChart: List<ApyChartPoint>
 )
 
 data class Apy(
@@ -30,4 +33,12 @@ data class Apy(
 
     @SerializedName("30d")
     val thirtyDay: String
+)
+
+data class ApyChartPoint(
+    @SerializedName("timestamp")
+    val timestamp: String,
+
+    @SerializedName("apy")
+    val apy: String
 )

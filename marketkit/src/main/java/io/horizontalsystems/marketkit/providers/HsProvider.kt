@@ -454,8 +454,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getVaults()
     }
 
-    fun vaultSingle(tokenAddress: String): Single<Vault> {
-        return service.getVault(tokenAddress)
+    fun vaultSingle(tokenAddress: String, period: HsTimePeriod): Single<Vault> {
+        return service.getVault(tokenAddress, period.value)
     }
 
     private interface MarketService {
@@ -792,6 +792,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         @GET("vaults/{tokenAddress}")
         fun getVault(
             @Path("tokenAddress") coinUid: String,
+            @Query("range_interval") interval: String,
         ): Single<Vault>
 
         companion object {

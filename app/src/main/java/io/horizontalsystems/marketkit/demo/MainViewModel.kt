@@ -763,6 +763,20 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
         }
     }
 
+    fun runVault() {
+        marketKit.vaultSingle("0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a", HsTimePeriod.Month1)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ vault ->
+                Log.w("AAA", "vault: ${vault.name} ${vault.assetSymbol} ${vault.tvl} ${vault.chain} ${vault.protocolName} ${vault.apy}")
+                Log.w("AAA", "vault chart data: ${vault.apyChart} ")
+            }, {
+                Log.e("AAA", "vaults Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     fun runVaults() {
         marketKit.vaultsSingle()
             .subscribeOn(Schedulers.io())
