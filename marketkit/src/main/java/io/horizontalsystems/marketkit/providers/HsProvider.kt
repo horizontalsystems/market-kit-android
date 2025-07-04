@@ -32,6 +32,7 @@ import io.horizontalsystems.marketkit.models.MarketOverviewResponse
 import io.horizontalsystems.marketkit.models.MarketTicker
 import io.horizontalsystems.marketkit.models.RankMultiValue
 import io.horizontalsystems.marketkit.models.RankValue
+import io.horizontalsystems.marketkit.models.Stock
 import io.horizontalsystems.marketkit.models.SubscriptionResponse
 import io.horizontalsystems.marketkit.models.TokenHolders
 import io.horizontalsystems.marketkit.models.TokenResponse
@@ -458,6 +459,10 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getVault(tokenAddress, period.value)
     }
 
+    fun getStocks(): Single<List<Stock>> {
+        return service.getStocks()
+    }
+
     private interface MarketService {
 
         @GET("coins")
@@ -794,6 +799,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Path("tokenAddress") coinUid: String,
             @Query("range_interval") interval: String,
         ): Single<Vault>
+
+        @GET("stocks")
+        fun getStocks(): Single<List<Stock>>
 
         companion object {
             private const val marketInfoFields =

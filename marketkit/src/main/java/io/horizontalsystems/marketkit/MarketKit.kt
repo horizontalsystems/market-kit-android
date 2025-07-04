@@ -43,6 +43,7 @@ import io.horizontalsystems.marketkit.models.NftTopCollection
 import io.horizontalsystems.marketkit.models.Post
 import io.horizontalsystems.marketkit.models.RankMultiValue
 import io.horizontalsystems.marketkit.models.RankValue
+import io.horizontalsystems.marketkit.models.Stock
 import io.horizontalsystems.marketkit.models.SubscriptionResponse
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenHolders
@@ -619,6 +620,10 @@ class MarketKit(
 
     fun getInitialDump(): String {
         return dumpManager.getInitialDump()
+    }
+
+    fun getStocks(): Single<List<Stock>> {
+        return hsProvider.getStocks()
     }
 
     //ETF
