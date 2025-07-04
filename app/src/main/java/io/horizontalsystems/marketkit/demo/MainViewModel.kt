@@ -770,7 +770,7 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 Log.w("AAA", "vault: ${vault.name} ${vault.assetSymbol} ${vault.tvl} ${vault.chain} ${vault.protocolName} ${vault.apy}")
                 Log.w("AAA", "vault chart data: ${vault.apyChart} ")
             }, {
-                Log.e("AAA", "vaults Error", it)
+                Log.e("AAA", "vault Error", it)
             })
             .let {
                 disposables.add(it)
@@ -786,6 +786,21 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
                 }
             }, {
                 Log.e("AAA", "vaults Error", it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    fun runStocks() {
+        marketKit.getStocks()
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.forEach {
+                    Log.w("AAA", "stock: ${it.name} ${it.symbol} ${it.marketPrice} ${it.priceChange}")
+                }
+            }, {
+                Log.e("AAA", "stocks Error", it)
             })
             .let {
                 disposables.add(it)
