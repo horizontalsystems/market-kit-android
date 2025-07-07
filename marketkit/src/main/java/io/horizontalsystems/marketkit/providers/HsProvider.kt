@@ -443,12 +443,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getCoinsSignals(uids.joinToString(separator = ","))
     }
 
-    fun etfsSingle(currencyCode: String): Single<List<EtfResponse>> {
-        return service.getEtfs(currencyCode)
+    fun etfsSingle(category: String): Single<List<EtfResponse>> {
+        return service.getEtfs(category)
     }
 
-    fun etfPointsSingle(currencyCode: String): Single<List<EtfPointResponse>> {
-        return service.getEtfPoints(currencyCode)
+    fun etfPointsSingle(category: String): Single<List<EtfPointResponse>> {
+        return service.getEtfPoints(category)
     }
 
     fun vaultsSingle(): Single<List<Vault>> {
@@ -781,14 +781,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
             @Query("uids") uids: String,
         ): Single<List<SignalResponse>>
 
-        @GET("etfs")
+        @GET("etfs/all")
         fun getEtfs(
-            @Query("currency") currencyCode: String
+            @Query("category") category: String,
         ): Single<List<EtfResponse>>
 
-        @GET("etfs/total")
+        @GET("etfs/chart")
         fun getEtfPoints(
-            @Query("currency") currencyCode: String
+            @Query("category") category: String,
         ): Single<List<EtfPointResponse>>
 
         @GET("vaults")
