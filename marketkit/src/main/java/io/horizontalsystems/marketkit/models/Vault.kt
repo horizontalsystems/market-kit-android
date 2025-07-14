@@ -14,6 +14,9 @@ data class Vault(
     @SerializedName("asset_symbol")
     val assetSymbol: String,
 
+    @SerializedName("asset_logo")
+    val assetLogo: String?,
+
     @SerializedName("protocol_name")
     val protocolName: String,
 
