@@ -443,12 +443,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getCoinsSignals(uids.joinToString(separator = ","))
     }
 
-    fun etfsSingle(category: String): Single<List<EtfResponse>> {
-        return service.getEtfs(category)
+    fun etfsSingle(category: String, currencyCode: String): Single<List<EtfResponse>> {
+        return service.getEtfs(category, currencyCode)
     }
 
-    fun etfPointsSingle(category: String): Single<List<EtfPointResponse>> {
-        return service.getEtfPoints(category)
+    fun etfPointsSingle(category: String, currencyCode: String): Single<List<EtfPointResponse>> {
+        return service.getEtfPoints(category, currencyCode)
     }
 
     fun vaultsSingle(): Single<List<Vault>> {
@@ -459,8 +459,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getVault(tokenAddress, period.value)
     }
 
-    fun getStocks(): Single<List<Stock>> {
-        return service.getStocks()
+    fun getStocks(currencyCode: String): Single<List<Stock>> {
+        return service.getStocks(currencyCode)
     }
 
     private interface MarketService {
@@ -784,11 +784,13 @@ class HsProvider(baseUrl: String, apiKey: String) {
         @GET("etfs/all")
         fun getEtfs(
             @Query("category") category: String,
+            @Query("currency") currencyCode: String,
         ): Single<List<EtfResponse>>
 
         @GET("etfs/chart")
         fun getEtfPoints(
             @Query("category") category: String,
+            @Query("currency") currencyCode: String,
         ): Single<List<EtfPointResponse>>
 
         @GET("vaults")
@@ -801,7 +803,9 @@ class HsProvider(baseUrl: String, apiKey: String) {
         ): Single<Vault>
 
         @GET("stocks")
-        fun getStocks(): Single<List<Stock>>
+        fun getStocks(
+            @Query("currency") currencyCode: String,
+        ): Single<List<Stock>>
 
         companion object {
             private const val marketInfoFields =
