@@ -622,21 +622,21 @@ class MarketKit(
         return dumpManager.getInitialDump()
     }
 
-    fun getStocks(): Single<List<Stock>> {
-        return hsProvider.getStocks()
+    fun getStocks(currencyCode: String): Single<List<Stock>> {
+        return hsProvider.getStocks(currencyCode)
     }
 
     //ETF
 
-    fun etfSingle(category: String): Single<List<Etf>> {
-        return hsProvider.etfsSingle(category)
+    fun etfSingle(category: String, currencyCode: String): Single<List<Etf>> {
+        return hsProvider.etfsSingle(category, currencyCode)
             .map { items ->
                 items.map { EtfResponse.toEtf(it) }
             }
     }
 
-    fun etfPointSingle(category: String): Single<List<EtfPoint>> {
-        return hsProvider.etfPointsSingle(category)
+    fun etfPointSingle(category: String, currencyCode: String): Single<List<EtfPoint>> {
+        return hsProvider.etfPointsSingle(category, currencyCode)
             .map { points ->
                 points.mapNotNull { EtfPointResponse.toEtfPoint(it) }
             }

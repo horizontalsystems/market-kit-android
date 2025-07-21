@@ -683,7 +683,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runEtfs() {
         val category = "eth"
-        marketKit.etfSingle(category)
+        val currencyCode = "usd"
+        marketKit.etfSingle(category, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -699,7 +700,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
 
     fun runEtfPoints() {
         val category = "btc"
-        marketKit.etfPointSingle(category)
+        val currencyCode = "rub"
+        marketKit.etfPointSingle(category, currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
@@ -793,7 +795,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runStocks() {
-        marketKit.getStocks()
+        val currencyCode = "usd"
+        marketKit.getStocks(currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
