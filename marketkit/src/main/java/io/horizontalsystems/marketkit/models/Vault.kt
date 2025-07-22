@@ -3,6 +3,7 @@ package io.horizontalsystems.marketkit.models
 import com.google.gson.annotations.SerializedName
 
 data class Vault(
+    val rank: Int,
     val address: String,
     val name: String,
     val apy: Apy,
