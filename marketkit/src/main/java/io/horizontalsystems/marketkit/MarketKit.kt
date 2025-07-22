@@ -643,12 +643,12 @@ class MarketKit(
     }
 
     // Vaults
-    fun vaultsSingle(): Single<List<Vault>> {
-        return hsProvider.vaultsSingle()
+    fun vaultsSingle(currencyCode: String): Single<List<Vault>> {
+        return hsProvider.vaultsSingle(currencyCode)
     }
 
-    fun vaultSingle(tokenAddress: String, period: HsTimePeriod = HsTimePeriod.Month1): Single<Vault> {
-        return hsProvider.vaultSingle(tokenAddress, period)
+    fun vaultSingle(tokenAddress: String, currencyCode: String, period: HsTimePeriod = HsTimePeriod.Month1): Single<Vault> {
+        return hsProvider.vaultSingle(tokenAddress, currencyCode, period)
     }
 
     //Stats

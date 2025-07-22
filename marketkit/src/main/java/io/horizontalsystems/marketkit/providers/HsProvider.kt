@@ -451,12 +451,12 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getEtfPoints(category, currencyCode)
     }
 
-    fun vaultsSingle(): Single<List<Vault>> {
-        return service.getVaults()
+    fun vaultsSingle(currencyCode: String): Single<List<Vault>> {
+        return service.getVaults(currencyCode)
     }
 
-    fun vaultSingle(tokenAddress: String, period: HsTimePeriod): Single<Vault> {
-        return service.getVault(tokenAddress, period.value)
+    fun vaultSingle(tokenAddress: String, currencyCode: String, period: HsTimePeriod): Single<Vault> {
+        return service.getVault(tokenAddress, currencyCode, period.value)
     }
 
     fun getStocks(currencyCode: String): Single<List<Stock>> {
@@ -794,11 +794,14 @@ class HsProvider(baseUrl: String, apiKey: String) {
         ): Single<List<EtfPointResponse>>
 
         @GET("vaults")
-        fun getVaults(): Single<List<Vault>>
+        fun getVaults(
+            @Query("currency") currencyCode: String
+        ): Single<List<Vault>>
 
         @GET("vaults/{tokenAddress}")
         fun getVault(
             @Path("tokenAddress") coinUid: String,
+            @Query("currency") currencyCode: String,
             @Query("range_interval") interval: String,
         ): Single<Vault>
 

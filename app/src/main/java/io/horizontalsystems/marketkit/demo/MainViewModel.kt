@@ -766,10 +766,11 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runVault() {
-        marketKit.vaultSingle("0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a", HsTimePeriod.Month1)
+        val currencyCode = "usd"
+        marketKit.vaultSingle("0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a", currencyCode, HsTimePeriod.Month1)
             .subscribeOn(Schedulers.io())
             .subscribe({ vault ->
-                Log.w("AAA", "vault: ${vault.name} ${vault.assetSymbol} ${vault.tvl} ${vault.chain} ${vault.protocolName} ${vault.apy}")
+                Log.w("AAA", "vault: ${vault.name} ${vault.assetSymbol} ${vault.tvl} ${vault.chain} ${vault.protocolName} ${vault.apy} ${vault.rank}")
                 Log.w("AAA", "vault chart data: ${vault.apyChart} ")
             }, {
                 Log.e("AAA", "vault Error", it)
@@ -780,11 +781,12 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runVaults() {
-        marketKit.vaultsSingle()
+        val currencyCode = "rub"
+        marketKit.vaultsSingle(currencyCode)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {
-                    Log.w("AAA", "vault: ${it.name} ${it.assetSymbol} ${it.assetLogo} ${it.tvl} ${it.chain} ${it.protocolName} ${it.url} ${it.apy}")
+                    Log.w("AAA", "vault: ${it.rank} ${it.name} ${it.assetSymbol} ${it.assetLogo} ${it.tvl} ${it.chain} ${it.protocolName} ${it.url} ${it.apy}")
                 }
             }, {
                 Log.e("AAA", "vaults Error", it)
