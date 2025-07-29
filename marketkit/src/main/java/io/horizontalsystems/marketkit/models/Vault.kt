@@ -25,7 +25,10 @@ data class Vault(
     val protocolLogo: String,
 
     @SerializedName("apy_chart")
-    val apyChart: List<ApyChartPoint>
+    val apyChart: List<ApyChartPoint>,
+
+    @SerializedName("tvl_chart")
+    val tvlChart: List<TvlChartPoint>,
 )
 
 data class Apy(
@@ -45,4 +48,12 @@ data class ApyChartPoint(
 
     @SerializedName("apy")
     val apy: String
+)
+
+data class TvlChartPoint(
+    @SerializedName("timestamp")
+    val timestamp: String,
+
+    @SerializedName("tvl")
+    val tvl: String
 )
