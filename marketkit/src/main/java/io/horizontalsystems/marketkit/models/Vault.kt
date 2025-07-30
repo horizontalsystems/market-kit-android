@@ -24,11 +24,7 @@ data class Vault(
     @SerializedName("protocol_logo")
     val protocolLogo: String,
 
-    @SerializedName("apy_chart")
-    val apyChart: List<ApyChartPoint>,
-
-    @SerializedName("tvl_chart")
-    val tvlChart: List<TvlChartPoint>,
+    val chart: List<VaultChartPoint>,
 )
 
 data class Apy(
@@ -42,17 +38,12 @@ data class Apy(
     val thirtyDay: String
 )
 
-data class ApyChartPoint(
+data class VaultChartPoint(
     @SerializedName("timestamp")
     val timestamp: String,
 
     @SerializedName("apy")
-    val apy: String
-)
-
-data class TvlChartPoint(
-    @SerializedName("timestamp")
-    val timestamp: String,
+    val apy: String,
 
     @SerializedName("tvl")
     val tvl: String
