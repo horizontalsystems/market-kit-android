@@ -701,7 +701,8 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     fun runEtfPoints() {
         val category = "btc"
         val currencyCode = "rub"
-        marketKit.etfPointSingle(category, currencyCode)
+        val period = HsTimePeriod.Month1.value
+        marketKit.etfPointSingle(category, currencyCode, period)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 it.forEach {

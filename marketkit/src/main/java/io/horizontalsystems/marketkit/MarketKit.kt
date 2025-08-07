@@ -635,8 +635,8 @@ class MarketKit(
             }
     }
 
-    fun etfPointSingle(category: String, currencyCode: String): Single<List<EtfPoint>> {
-        return hsProvider.etfPointsSingle(category, currencyCode)
+    fun etfPointSingle(category: String, currencyCode: String, period: String): Single<List<EtfPoint>> {
+        return hsProvider.etfPointsSingle(category, currencyCode, period)
             .map { points ->
                 points.mapNotNull { EtfPointResponse.toEtfPoint(it) }
             }

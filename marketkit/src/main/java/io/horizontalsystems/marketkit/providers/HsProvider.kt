@@ -447,8 +447,8 @@ class HsProvider(baseUrl: String, apiKey: String) {
         return service.getEtfs(category, currencyCode)
     }
 
-    fun etfPointsSingle(category: String, currencyCode: String): Single<List<EtfPointResponse>> {
-        return service.getEtfPoints(category, currencyCode)
+    fun etfPointsSingle(category: String, currencyCode: String, period: String): Single<List<EtfPointResponse>> {
+        return service.getEtfPoints(category, currencyCode, period)
     }
 
     fun vaultsSingle(currencyCode: String): Single<List<Vault>> {
@@ -791,6 +791,7 @@ class HsProvider(baseUrl: String, apiKey: String) {
         fun getEtfPoints(
             @Query("category") category: String,
             @Query("currency") currencyCode: String,
+            @Query("interval") interval: String,
         ): Single<List<EtfPointResponse>>
 
         @GET("vaults")
