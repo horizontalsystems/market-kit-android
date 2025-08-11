@@ -65,6 +65,9 @@ sealed class BlockchainType : Parcelable {
     object Stellar: BlockchainType()
 
     @Parcelize
+    object Monero: BlockchainType()
+
+    @Parcelize
     class Unsupported(val _uid: String) : BlockchainType()
 
     val uid: String
@@ -89,6 +92,7 @@ sealed class BlockchainType : Parcelable {
             is Base -> "base"
             is ZkSync -> "zksync"
             is Stellar -> "stellar"
+            is Monero -> "monero"
             is Unsupported -> this._uid
         }
 
@@ -121,6 +125,7 @@ sealed class BlockchainType : Parcelable {
         Base -> "base"
         ZkSync -> "zksync"
         Stellar -> "stellar"
+        Monero -> "monero"
         is Unsupported -> "unsupported|$uid"
     }
 
@@ -148,6 +153,7 @@ sealed class BlockchainType : Parcelable {
                 "base" -> Base
                 "zksync" -> ZkSync
                 "stellar" -> Stellar
+                "monero" -> Monero
                 else -> Unsupported(uid)
             }
 
