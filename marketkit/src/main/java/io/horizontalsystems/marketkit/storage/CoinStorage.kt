@@ -112,8 +112,13 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
         return conditions.joinToString(" AND ", "(", ")")
     }
 
-    private fun filterWhereStatement(filter: String) =
-        "`Coin`.`name` LIKE '%$filter%' OR `Coin`.`code` LIKE '%$filter%'"
+    private fun filterWhereStatement(filter: String): String {
+        return if (filter.isBlank()) {
+            "`Coin`.`code` IS NOT NULL AND `Coin`.`code` != '' AND `Coin`.`name` IS NOT NULL AND `Coin`.`name` != '' AND `Coin`.`marketCapRank` IS NOT NULL"
+        } else {
+            "`Coin`.`name` LIKE '%$filter%' OR `Coin`.`code` LIKE '%$filter%'"
+        }
+    }
 
     private fun orderByMarketCapAndName() = """
         CASE 
@@ -124,15 +129,21 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
         `Coin`.`name` ASC 
     """
 
-    private fun filterOrderByStatement(filter: String) = """
+    private fun filterOrderByStatement(filter: String): String {
+        return if (filter.isBlank()) {
+            "`Coin`.`marketCapRank` ASC, `Coin`.`name` ASC"
+        } else {
+            """
         CASE 
             WHEN `Coin`.`code` LIKE '$filter' THEN 1 
             WHEN `Coin`.`code` LIKE '$filter%' THEN 2 
             WHEN `Coin`.`name` LIKE '$filter%' THEN 3 
             ELSE 4 
         END, 
-        ${orderByMarketCapAndName()} 
-    """
+        ${orderByMarketCapAndName()}
+        """
+        }
+    }
 
     fun update(coins: List<Coin>, blockchainEntities: List<BlockchainEntity>, tokenEntities: List<TokenEntity>) {
         marketDatabase.runInTransaction {
