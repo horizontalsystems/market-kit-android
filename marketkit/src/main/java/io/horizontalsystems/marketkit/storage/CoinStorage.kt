@@ -106,7 +106,7 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
         )
 
         if (reference.isNotBlank()) {
-            conditions.add("`TokenEntity`.`reference` LIKE '%$reference'")
+            conditions.add("`TokenEntity`.`reference` = '$reference'")
         }
 
         return conditions.joinToString(" AND ", "(", ")")
