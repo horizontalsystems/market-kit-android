@@ -1,6 +1,7 @@
 package io.horizontalsystems.marketkit.models
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
@@ -27,7 +28,8 @@ import kotlinx.parcelize.Parcelize
     ],
     indices = [
         Index(value = arrayOf("coinUid")),
-        Index(value = arrayOf("blockchainUid"))
+        Index(value = arrayOf("blockchainUid")),
+        Index(value = arrayOf("blockchainUid", "type", "reference"))
     ]
 )
 data class TokenEntity(
@@ -37,5 +39,6 @@ data class TokenEntity(
     val blockchainUid: String,
     val type: String,
     val decimals: Int?,
+    @ColumnInfo(collate = ColumnInfo.NOCASE)
     val reference: String
 ) : Parcelable
