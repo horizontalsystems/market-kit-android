@@ -1,8 +1,8 @@
 package io.horizontalsystems.marketkit.managers
 
+import io.horizontalsystems.marketkit.Scheduler
 import io.horizontalsystems.marketkit.models.CoinPrice
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
-import io.horizontalsystems.marketkit.Scheduler
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.ConcurrentHashMap
@@ -16,7 +16,6 @@ data class CoinPriceKey(
 
 interface ICoinPriceCoinUidDataSource {
     fun allCoinUids(currencyCode: String): List<String>
-    fun combinedCoinUids(currencyCode: String): Pair<List<String>, List<String>>
 }
 
 class CoinPriceSyncManager(
@@ -116,12 +115,6 @@ class CoinPriceSyncManager(
     // ICoinPriceCoinUidDataSource
     override fun allCoinUids(currencyCode: String): List<String> {
         return observingCoinUids(currencyCode).toList()
-    }
-
-    override fun combinedCoinUids(currencyCode: String): Pair<List<String>, List<String>> {
-        val allCoinUids = observingCoinUids(currencyCode).toList()
-        val walletCoinUids = observingCoinUids("wallet", currencyCode).toList()
-        return Pair(allCoinUids, walletCoinUids)
     }
 
     fun coinPriceObservable(tag: String, coinUid: String, currencyCode: String): Observable<CoinPrice> {

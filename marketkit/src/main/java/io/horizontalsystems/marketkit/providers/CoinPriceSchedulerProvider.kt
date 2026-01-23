@@ -30,19 +30,13 @@ class CoinPriceSchedulerProvider(
         get() = CoinPrice.expirationInterval
 
     override val syncSingle: Single<Unit>
-        get() {
-            val (coinUids, walletUids) = combinedCoinUids
-            return provider.getCoinPrices(coinUids, walletUids, currencyCode)
-                .doOnSuccess {
-                    handle(it)
-                }.map {}
-        }
+        get() = provider.getCoinPrices(allCoinUids, currencyCode)
+            .doOnSuccess {
+                handle(it)
+            }.map {}
 
     private val allCoinUids: List<String>
         get() = dataSource?.allCoinUids(currencyCode) ?: listOf()
-
-    private val combinedCoinUids: Pair<List<String>, List<String>>
-        get() = dataSource?.combinedCoinUids(currencyCode) ?: Pair(listOf(), listOf())
 
     override fun notifyExpired() {
         manager.notifyExpired(allCoinUids, currencyCode)
