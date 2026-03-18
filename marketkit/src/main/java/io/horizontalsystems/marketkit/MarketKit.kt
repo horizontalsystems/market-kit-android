@@ -662,6 +662,7 @@ class MarketKit(
             context: Context,
             hsApiBaseUrl: String,
             hsApiKey: String,
+            newsApiKey: String,
         ): MarketKit {
             // init cache
             (context.getSystemService(Context.STORAGE_SERVICE) as StorageManager?)?.let { storageManager ->
@@ -690,7 +691,7 @@ class MarketKit(
             val coinPriceSchedulerFactory = CoinPriceSchedulerFactory(coinPriceManager, hsProvider)
             val coinPriceSyncManager = CoinPriceSyncManager(coinPriceSchedulerFactory)
             coinPriceManager.listener = coinPriceSyncManager
-            val cryptoCompareProvider = CryptoCompareProvider()
+            val cryptoCompareProvider = CryptoCompareProvider(newsApiKey)
             val postManager = PostManager(cryptoCompareProvider)
             val globalMarketInfoStorage = GlobalMarketInfoStorage(marketDatabase)
             val globalMarketInfoManager =

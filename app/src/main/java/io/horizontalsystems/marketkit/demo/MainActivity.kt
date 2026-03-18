@@ -93,6 +93,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
             context,
             "https://api-dev.blocksdecoded.com",
             "IQf1uAjkthZp1i2pYzkXFDom",
+            "news_api_key"
         )
     }
 
