@@ -5,10 +5,9 @@ import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-class CryptoCompareProvider {
+class CryptoCompareProvider(val apiKey: String) {
     private val baseUrl = "https://min-api.cryptocompare.com/"
     private val newsFeeds = "cointelegraph,theblock,decrypt"
-    private val extraParams = "Blocksdecoded"
     private val excludeCategories = "Sponsored"
 
     private val cryptoCompareService: CryptoCompareService by lazy {
@@ -16,7 +15,7 @@ class CryptoCompareProvider {
     }
 
     fun postsSingle(): Single<List<Post>> {
-        return cryptoCompareService.news(excludeCategories, newsFeeds, extraParams)
+        return cryptoCompareService.news(excludeCategories, newsFeeds, apiKey)
             .map { postsResponse ->
                 postsResponse.Data.map { postItem ->
                     Post(postItem.source_info["name"] ?: "", postItem.title, postItem.body, postItem.published_on, postItem.url)
@@ -30,7 +29,7 @@ class CryptoCompareProvider {
         fun news(
             @Query("excludedCategories") excludedCategories: String,
             @Query("feeds") feeds: String,
-            @Query("extraParams") extraParams: String,
+            @Query("api_key") apiKey: String,
         ): Single<PostsResponse>
     }
 
