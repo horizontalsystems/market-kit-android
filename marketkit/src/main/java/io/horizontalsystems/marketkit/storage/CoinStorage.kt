@@ -13,12 +13,14 @@ import io.horizontalsystems.marketkit.models.TokenQuery
 class CoinStorage(val marketDatabase: MarketDatabase) {
 
     private val coinDao = marketDatabase.coinDao()
+    private val sqliteMaxVariableNumber = 999
+    private val sqliteMaxExpressionDepth = 500
 
     fun coin(coinUid: String): Coin? =
         coinDao.getCoin(coinUid)
 
     fun coins(coinUids: List<String>): List<Coin> =
-        coinDao.getCoins(coinUids)
+        coinUids.chunked(sqliteMaxVariableNumber).flatMap { coinDao.getCoins(it) }
 
     fun allCoins(): List<Coin> = coinDao.getAllCoins()
 
@@ -47,10 +49,10 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
         coinDao.getFullCoin(uid)?.fullCoin
 
     fun fullCoins(uids: List<String>): List<FullCoin> =
-        coinDao.getFullCoins(uids).map { it.fullCoin }
+        uids.chunked(sqliteMaxVariableNumber).flatMap { coinDao.getFullCoins(it).map { w -> w.fullCoin } }
 
     fun fullCoinsByCoinCodes(coinCodes: List<String>): List<FullCoin> =
-        coinDao.getFullCoinsByCoinCodes(coinCodes).map { it.fullCoin }
+        coinCodes.chunked(sqliteMaxVariableNumber).flatMap { coinDao.getFullCoinsByCoinCodes(it).map { w -> w.fullCoin } }
 
     fun getToken(query: TokenQuery): Token? {
         val sql = "SELECT * FROM TokenEntity WHERE ${filterByTokenQuery(query)} LIMIT 1"
@@ -61,10 +63,11 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
     fun getTokens(queries: List<TokenQuery>): List<Token> {
         if (queries.isEmpty()) return listOf()
 
-        val queriesStr = queries.toSet().toList().map { filterByTokenQuery(it) }.joinToString(" OR ")
-        val sql = "SELECT * FROM TokenEntity WHERE $queriesStr"
-
-        return coinDao.getTokens(SimpleSQLiteQuery(sql)).map { it.token }
+        return queries.distinct().chunked(sqliteMaxExpressionDepth).flatMap { chunk ->
+            val queriesStr = chunk.joinToString(" OR ") { filterByTokenQuery(it) }
+            val sql = "SELECT * FROM TokenEntity WHERE $queriesStr"
+            coinDao.getTokens(SimpleSQLiteQuery(sql)).map { it.token }
+        }
     }
 
     fun getTokens(reference: String): List<Token> {
@@ -92,7 +95,7 @@ class CoinStorage(val marketDatabase: MarketDatabase) {
         coinDao.getBlockchain(uid)?.blockchain
 
     fun getBlockchains(uids: List<String>): List<Blockchain> =
-        coinDao.getBlockchains(uids).map { it.blockchain }
+        uids.chunked(sqliteMaxVariableNumber).flatMap { coinDao.getBlockchains(it).map { e -> e.blockchain } }
 
     fun getAllBlockchains(): List<Blockchain> =
         coinDao.getAllBlockchains().map { it.blockchain }
