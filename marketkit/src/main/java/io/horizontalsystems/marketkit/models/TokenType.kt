@@ -39,6 +39,9 @@ sealed class TokenType : Parcelable {
     data class Asset(val code: String, val issuer: String) : TokenType()
 
     @Parcelize
+    data class ZanoAsset(val reference: String): TokenType()
+
+    @Parcelize
     data class Unsupported(val type: String, val reference: String) : TokenType()
 
     val id: String
@@ -51,6 +54,7 @@ sealed class TokenType : Parcelable {
                 is Asset -> listOf("stellar", "$code-$issuer")
                 is AddressTyped -> listOf("address_type", type.name.lowercase())
                 is Derived -> listOf("derived", derivation.name.lowercase())
+                is ZanoAsset -> listOf("zano", reference)
                 is Unsupported -> if (reference.isNotBlank()) {
                     listOf("unsupported", type, reference)
                 } else {
@@ -69,6 +73,7 @@ sealed class TokenType : Parcelable {
             is Asset -> Value("stellar", "$code-$issuer")
             is AddressTyped -> Value("address_type", type.name)
             is Derived -> Value("derived", derivation.name)
+            is ZanoAsset -> Value("zano", reference)
             is Unsupported -> Value(type, reference)
         }
 
@@ -123,6 +128,12 @@ sealed class TokenType : Parcelable {
                             return Derived(Derivation.valueOf(reference.lowercase().replaceFirstChar(Char::uppercase)))
                         } catch (e: IllegalArgumentException) {
                         }
+                    }
+                }
+
+                "zano" -> {
+                    if (reference.isNotBlank()) {
+                        return ZanoAsset(reference)
                     }
                 }
             }
