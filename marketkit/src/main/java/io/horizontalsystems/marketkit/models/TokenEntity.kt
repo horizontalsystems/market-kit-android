@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.CASCADE
 import androidx.room.Index
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
@@ -17,13 +16,13 @@ import kotlinx.parcelize.Parcelize
             entity = Coin::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("coinUid"),
-            onDelete = CASCADE
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = BlockchainEntity::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("blockchainUid"),
-            onDelete = CASCADE
+            onDelete = ForeignKey.CASCADE
         ),
     ],
     indices = [
