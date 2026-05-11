@@ -2,9 +2,11 @@ package io.horizontalsystems.marketkit.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import kotlinx.serialization.Serializable
+import java.util.Objects
 
 @Parcelize
+@Serializable
 data class Blockchain(
     val type: BlockchainType,
     val name: String,
