@@ -3,6 +3,7 @@ plugins {
     alias libs.plugins.kotlin.android
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    alias libs.plugins.kotlin.serialization
     id 'maven-publish'
 }
 
@@ -63,6 +64,7 @@ dependencies {
     implementation libs.okhttp.logging.interceptor
     implementation libs.retrofit.converter.scalars
     implementation libs.google.gson
+    implementation libs.kotlinx.serialization.json
 
 }
 

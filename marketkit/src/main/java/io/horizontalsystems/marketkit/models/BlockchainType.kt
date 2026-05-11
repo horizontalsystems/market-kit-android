@@ -2,75 +2,77 @@ package io.horizontalsystems.marketkit.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class BlockchainType : Parcelable {
-    @Parcelize
+    @Parcelize @Serializable
     object Bitcoin : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object BitcoinCash : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object ECash : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Litecoin : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Dash : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Zcash : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Ethereum : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object BinanceSmartChain : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Polygon : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Avalanche : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Optimism : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object ArbitrumOne : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Solana : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Gnosis : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Fantom : BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Tron: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Ton: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Base: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object ZkSync: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Stellar: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Monero: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     object Zano: BlockchainType()
 
-    @Parcelize
+    @Parcelize @Serializable
     class Unsupported(val _uid: String) : BlockchainType()
 
     val uid: String
