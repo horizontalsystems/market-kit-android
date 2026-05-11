@@ -2,7 +2,9 @@ package io.horizontalsystems.marketkit.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class TokenType : Parcelable {
 
     enum class Derivation {
@@ -17,31 +19,31 @@ sealed class TokenType : Parcelable {
         Type145,
     }
 
-    @Parcelize
+    @Parcelize @Serializable
     object Native : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class Derived(val derivation: Derivation) : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class AddressTyped(val type: AddressType) : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class Eip20(val address: String) : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class Spl(val address: String) : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class Jetton(val address: String) : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class Asset(val code: String, val issuer: String) : TokenType()
 
     @Parcelize
     data class ZanoAsset(val reference: String): TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class Unsupported(val type: String, val reference: String) : TokenType()
 
     val id: String

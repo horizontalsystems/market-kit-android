@@ -2,9 +2,11 @@ package io.horizontalsystems.marketkit.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import kotlinx.serialization.Serializable
+import java.util.Objects
 
 @Parcelize
+@Serializable
 data class Token(
     val coin: Coin,
     val blockchain: Blockchain,
