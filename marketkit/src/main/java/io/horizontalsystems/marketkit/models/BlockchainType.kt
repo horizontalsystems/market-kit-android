@@ -50,6 +50,9 @@ sealed class BlockchainType : Parcelable {
     object Fantom : BlockchainType()
 
     @Parcelize
+    object Sonic : BlockchainType()
+
+    @Parcelize
     object Tron: BlockchainType()
 
     @Parcelize
@@ -90,6 +93,7 @@ sealed class BlockchainType : Parcelable {
             is Solana -> "solana"
             is Gnosis -> "gnosis"
             is Fantom -> "fantom"
+            is Sonic -> "sonic-3"
             is Tron -> "tron"
             is Ton -> "the-open-network"
             is Base -> "base"
@@ -124,6 +128,7 @@ sealed class BlockchainType : Parcelable {
         Solana -> "solana"
         Gnosis -> "gnosis"
         Fantom -> "fantom"
+        Sonic -> "sonic-3"
         Tron -> "tron"
         Ton -> "the-open-network"
         Base -> "base"
@@ -153,6 +158,7 @@ sealed class BlockchainType : Parcelable {
                 "solana" -> Solana
                 "gnosis" -> Gnosis
                 "fantom" -> Fantom
+                "sonic-3" -> Sonic
                 "tron" -> Tron
                 "the-open-network" -> Ton
                 "base" -> Base
