@@ -44,6 +44,9 @@ sealed class TokenType : Parcelable {
     data class ZanoAsset(val reference: String): TokenType()
 
     @Parcelize @Serializable
+    data class ThorchainAsset(val denom: String): TokenType()
+
+    @Parcelize @Serializable
     data class Unsupported(val type: String, val reference: String) : TokenType()
 
     val id: String
@@ -57,6 +60,7 @@ sealed class TokenType : Parcelable {
                 is AddressTyped -> listOf("address_type", type.name.lowercase())
                 is Derived -> listOf("derived", derivation.name.lowercase())
                 is ZanoAsset -> listOf("zano", reference)
+                is ThorchainAsset -> listOf("thorchain", denom)
                 is Unsupported -> if (reference.isNotBlank()) {
                     listOf("unsupported", type, reference)
                 } else {
@@ -76,6 +80,7 @@ sealed class TokenType : Parcelable {
             is AddressTyped -> Value("address_type", type.name)
             is Derived -> Value("derived", derivation.name)
             is ZanoAsset -> Value("zano", reference)
+            is ThorchainAsset -> Value("thorchain", denom)
             is Unsupported -> Value(type, reference)
         }
 
@@ -136,6 +141,12 @@ sealed class TokenType : Parcelable {
                 "zano" -> {
                     if (reference.isNotBlank()) {
                         return ZanoAsset(reference)
+                    }
+                }
+
+                "thorchain" -> {
+                    if (reference.isNotBlank()) {
+                        return ThorchainAsset(reference)
                     }
                 }
             }
