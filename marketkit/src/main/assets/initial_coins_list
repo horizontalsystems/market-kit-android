@@ -1229,7 +1229,7 @@ INSERT INTO BlockchainEntity VALUES('hoo','Hoo',null);
 INSERT INTO BlockchainEntity VALUES('mixin-network','Mixin Network',null);
 INSERT INTO BlockchainEntity VALUES('exosama','Exosama',null);
 INSERT INTO BlockchainEntity VALUES('cosmos','Cosmos',null);
-INSERT INTO BlockchainEntity VALUES('thorchain','Thorchain',null);
+INSERT INTO BlockchainEntity VALUES('thorchain','THORChain','https://runescan.io/address/$ref');
 INSERT INTO BlockchainEntity VALUES('milkomeda-cardano','Milkomeda (Cardano)',null);
 INSERT INTO BlockchainEntity VALUES('acala','Acala',null);
 INSERT INTO BlockchainEntity VALUES('defi-kingdoms-blockchain','DFK Chain',null);
@@ -19673,3 +19673,5 @@ INSERT INTO Coin VALUES('kintara','Kintara','KINS',1303,'kintara','https://asset
 INSERT INTO Coin VALUES('claude-crab','Claude Crab','CRABAI',583,'claude-crab','https://assets.coingecko.com/coins/images/102173733/large/CRABAI_logo_200x200.png');
 INSERT INTO Coin VALUES('oneoneone','Oneoneone','SN111',1481,'oneoneone','https://assets.coingecko.com/coins/images/67737/large/111-logo.jpeg');
 INSERT INTO Coin VALUES('rich-kids-of-tao','Rich Kids of TAO','SN110',1583,'rich-kids-of-tao','https://assets.coingecko.com/coins/images/71708/large/richkidsoftao.jpg');
+INSERT INTO TokenEntity VALUES('thorchain','thorchain','native',8,'');
+INSERT INTO TokenEntity VALUES('tcy','thorchain','thorchain',8,'tcy');
