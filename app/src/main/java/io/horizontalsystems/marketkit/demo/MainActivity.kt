@@ -5,7 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -27,7 +31,22 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        // App is edge-to-edge on targetSdk 35+, so inset the whole content by the
+        // system bars to keep the toolbar below the status bar and the list above
+        // the navigation bar.
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = systemBars.top, bottom = systemBars.bottom)
+            insets
+        }
+
         viewModel = ViewModelProvider(this, ViewModelFactory(this)).get(MainViewModel::class.java)
+
+        viewModel.toastMessage.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+        })
 
         viewModel.exportDumpUri.observe(this, Observer { fileUri ->
             this.startActivity(Intent().apply {
