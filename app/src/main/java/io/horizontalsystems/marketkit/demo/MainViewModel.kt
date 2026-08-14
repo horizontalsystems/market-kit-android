@@ -15,7 +15,6 @@ import io.horizontalsystems.marketkit.models.HsPointTimePeriod
 import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -69,22 +68,6 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             .let { disposables.add(it) }
     }
 
-    // Same as above for a (single-shot) Observable, toasting on each emission.
-    private fun <T : Any> Observable<T>.report(name: String, onNext: (T) -> Unit) {
-        subscribeOn(Schedulers.io())
-            .subscribe(
-                {
-                    onNext(it)
-                    notifySuccess(name)
-                },
-                {
-                    Log.e("AAA", "$name error", it)
-                    notifyError(name)
-                }
-            )
-            .let { disposables.add(it) }
-    }
-
     fun runInvestments() {
         val coinUid = "ethereum"
 
@@ -106,16 +89,42 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
     }
 
     fun runSyncCoins() {
-        marketKit.sync()
-        marketKit.refreshCoinPrices("USD")
+        val coinUids = listOf("bitcoin", "ethereum", "solana")
+        val currencyCode = "USD"
 
-        marketKit.coinPriceMapObservable("wallet", listOf("bitcoin", "ethereum", "solana"), "USD")
-            .report("SyncCoins") {
-                Log.w("AAA", "coinPrices: ${it.size}")
-                it.forEach {
-                    Log.w("AAA", "coinPrice ${it.key}: ${it.value}")
+        // Timestamp of the prices currently in the database. The prices observable
+        // re-emits these cached values immediately (carrying the same timestamp) and
+        // then emits again once the refresh has fetched fresh prices and written them
+        // to the database (with a newer timestamp). Comparing against this baseline
+        // lets us toast success only for the latter — an actual new DB write.
+        val baselineTimestamp = marketKit.coinPriceMap(coinUids, currencyCode)
+            .values.maxOfOrNull { it.timestamp } ?: 0L
+
+        marketKit.sync()
+        marketKit.refreshCoinPrices(currencyCode)
+
+        var notified = false
+        marketKit.coinPriceMapObservable("wallet", coinUids, currencyCode)
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                { priceMap ->
+                    Log.w("AAA", "coinPrices: ${priceMap.size}")
+                    priceMap.forEach { (uid, price) ->
+                        Log.w("AAA", "coinPrice $uid: $price")
+                    }
+
+                    val newestTimestamp = priceMap.values.maxOfOrNull { it.timestamp } ?: 0L
+                    if (!notified && newestTimestamp > baselineTimestamp) {
+                        notified = true
+                        notifySuccess("SyncCoins")
+                    }
+                },
+                {
+                    Log.e("AAA", "SyncCoins error", it)
+                    notifyError("SyncCoins")
                 }
-            }
+            )
+            .let { disposables.add(it) }
     }
 
     fun runGetChartInfo() {
