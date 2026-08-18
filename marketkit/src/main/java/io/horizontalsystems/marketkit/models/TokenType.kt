@@ -40,7 +40,7 @@ sealed class TokenType : Parcelable {
     @Parcelize @Serializable
     data class Asset(val code: String, val issuer: String) : TokenType()
 
-    @Parcelize
+    @Parcelize @Serializable
     data class ZanoAsset(val reference: String): TokenType()
 
     @Parcelize @Serializable
