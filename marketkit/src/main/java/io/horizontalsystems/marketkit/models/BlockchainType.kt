@@ -43,6 +43,9 @@ sealed class BlockchainType : Parcelable {
     object ArbitrumOne : BlockchainType()
 
     @Parcelize @Serializable
+    object RobinhoodChain : BlockchainType()
+
+    @Parcelize @Serializable
     object Solana : BlockchainType()
 
     @Parcelize @Serializable
@@ -95,6 +98,7 @@ sealed class BlockchainType : Parcelable {
             is Avalanche -> "avalanche"
             is Optimism -> "optimistic-ethereum"
             is ArbitrumOne -> "arbitrum-one"
+            is RobinhoodChain -> "robinhood-chain"
             is Solana -> "solana"
             is Gnosis -> "gnosis"
             is Fantom -> "fantom"
@@ -130,6 +134,7 @@ sealed class BlockchainType : Parcelable {
         Polygon -> "polygon"
         Avalanche -> "avalanche"
         ArbitrumOne -> "arbitrumOne"
+        RobinhoodChain -> "robinhoodChain"
         Optimism -> "optimism"
         Solana -> "solana"
         Gnosis -> "gnosis"
@@ -162,6 +167,7 @@ sealed class BlockchainType : Parcelable {
                 "avalanche" -> Avalanche
                 "optimistic-ethereum" -> Optimism
                 "arbitrum-one" -> ArbitrumOne
+                "robinhood-chain" -> RobinhoodChain
                 "solana" -> Solana
                 "gnosis" -> Gnosis
                 "fantom" -> Fantom

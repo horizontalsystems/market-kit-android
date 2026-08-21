@@ -22,9 +22,16 @@ class CoinSyncer(
 
     private var disposable: Disposable? = null
 
+    // TEMPORARY: set back to true to re-enable server coin/blockchain/token catalog sync.
+    // Kept false so locally-seeded records in initial_coins_list (Robinhood Chain + tokens)
+    // are not overwritten by the server. Revert before release.
+    private val serverCatalogSyncEnabled = false
+
     val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
 
     fun sync(coinsTimestamp: Long, blockchainsTimestamp: Long, tokensTimestamp: Long) {
+        if (!serverCatalogSyncEnabled) return
+
         val lastCoinsSyncTimestamp = syncerStateDao.get(keyCoinsLastSyncTimestamp)?.toLong() ?: 0
         val coinsOutdated = lastCoinsSyncTimestamp != coinsTimestamp
 

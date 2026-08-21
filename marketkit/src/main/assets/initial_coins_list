@@ -1158,6 +1158,7 @@ INSERT INTO BlockchainEntity VALUES('evmos','Evmos',null);
 INSERT INTO BlockchainEntity VALUES('stride-staked-atom','Stride Staked Atom',null);
 INSERT INTO BlockchainEntity VALUES('neurai','Neurai',null);
 INSERT INTO BlockchainEntity VALUES('arbitrum-one','Arbitrum','https://arbiscan.io/token/$ref');
+INSERT INTO BlockchainEntity VALUES('robinhood-chain','Robinhood Chain','https://robinhoodchain.blockscout.com/token/$ref');
 INSERT INTO BlockchainEntity VALUES('uchain-2','UCHAIN',null);
 INSERT INTO BlockchainEntity VALUES('rebel-cars','Rebel Cars',null);
 INSERT INTO BlockchainEntity VALUES('shardeum','Shardeum',null);
@@ -2850,6 +2851,10 @@ INSERT INTO TokenEntity VALUES('dogelana','solana','spl',9,'E6UU5M1z4CvSAAF99d9w
 INSERT INTO TokenEntity VALUES('dex-game','ethereum','eip20',18,'0x66f73d0fd4161cfad4302dc145ff994375c13475');
 INSERT INTO TokenEntity VALUES('ethereum','zksync','native',18,'');
 INSERT INTO TokenEntity VALUES('ethereum','arbitrum-one','native',18,'');
+INSERT INTO TokenEntity VALUES('ethereum','robinhood-chain','native',18,'');
+INSERT INTO TokenEntity VALUES('robinhood-wrapped-eth-robinhood-chain','robinhood-chain','eip20',18,'0x0bd7d308f8e1639fab988df18a8011f41eacad73');
+INSERT INTO TokenEntity VALUES('nvidia-robinhood-tokenized-stock','robinhood-chain','eip20',18,'0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec');
+INSERT INTO TokenEntity VALUES('wojak-6','robinhood-chain','eip20',18,'0xace55fe98bab14366dd49ab5aa5df76aa11a3c6f');
 INSERT INTO TokenEntity VALUES('ethereum','optimistic-ethereum','native',18,'');
 INSERT INTO TokenEntity VALUES('ethereum','ethereum','native',18,'');
 INSERT INTO TokenEntity VALUES('ethereum','base','native',18,'');
