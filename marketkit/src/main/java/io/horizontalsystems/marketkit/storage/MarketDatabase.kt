@@ -28,7 +28,7 @@ import java.util.logging.Logger
         GlobalMarketInfo::class,
         SyncerState::class,
     ],
-    version = 17,
+    version = 18,
     exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
