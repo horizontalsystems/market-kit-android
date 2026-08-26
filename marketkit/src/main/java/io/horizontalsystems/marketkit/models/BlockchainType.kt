@@ -98,7 +98,7 @@ sealed class BlockchainType : Parcelable {
             is Avalanche -> "avalanche"
             is Optimism -> "optimistic-ethereum"
             is ArbitrumOne -> "arbitrum-one"
-            is RobinhoodChain -> "robinhood-chain"
+            is RobinhoodChain -> "robinhood"
             is Solana -> "solana"
             is Gnosis -> "gnosis"
             is Fantom -> "fantom"
@@ -167,7 +167,7 @@ sealed class BlockchainType : Parcelable {
                 "avalanche" -> Avalanche
                 "optimistic-ethereum" -> Optimism
                 "arbitrum-one" -> ArbitrumOne
-                "robinhood-chain" -> RobinhoodChain
+                "robinhood" -> RobinhoodChain
                 "solana" -> Solana
                 "gnosis" -> Gnosis
                 "fantom" -> Fantom
