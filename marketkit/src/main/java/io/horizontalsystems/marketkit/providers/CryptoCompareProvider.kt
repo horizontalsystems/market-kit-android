@@ -1,7 +1,6 @@
 package io.horizontalsystems.marketkit.providers
 
 import io.horizontalsystems.marketkit.models.Post
-import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,23 +13,22 @@ class CryptoCompareProvider(val apiKey: String) {
         RetrofitUtils.build(baseUrl).create(CryptoCompareService::class.java)
     }
 
-    fun postsSingle(): Single<List<Post>> {
-        return cryptoCompareService.news(excludeCategories, newsFeeds, apiKey)
-            .map { postsResponse ->
-                postsResponse.Data.map { postItem ->
-                    Post(postItem.source_info["name"] ?: "", postItem.title, postItem.body, postItem.published_on, postItem.url)
-                }
+    suspend fun postsSingle(): List<Post> {
+        return retryWhenError(Throwable::class) {
+            val postsResponse = cryptoCompareService.news(excludeCategories, newsFeeds, apiKey)
+            postsResponse.Data.map { postItem ->
+                Post(postItem.source_info["name"] ?: "", postItem.title, postItem.body, postItem.published_on, postItem.url)
             }
-            .retryWhenError(Throwable::class)
+        }
     }
 
     interface CryptoCompareService {
         @GET("data/v2/news/")
-        fun news(
+        suspend fun news(
             @Query("excludedCategories") excludedCategories: String,
             @Query("feeds") feeds: String,
             @Query("api_key") apiKey: String,
-        ): Single<PostsResponse>
+        ): PostsResponse
     }
 
     data class PostsResponse(

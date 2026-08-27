@@ -3,14 +3,13 @@ package io.horizontalsystems.marketkit.providers
 import io.horizontalsystems.marketkit.managers.CoinPriceManager
 import io.horizontalsystems.marketkit.managers.ICoinPriceCoinUidDataSource
 import io.horizontalsystems.marketkit.models.CoinPrice
-import io.reactivex.Single
 
 interface ISchedulerProvider {
     val id: String
     val lastSyncTimestamp: Long?
     val expirationInterval: Long
-    val syncSingle: Single<Unit>
 
+    suspend fun sync()
     fun notifyExpired()
 }
 
@@ -29,11 +28,9 @@ class CoinPriceSchedulerProvider(
     override val expirationInterval: Long
         get() = CoinPrice.expirationInterval
 
-    override val syncSingle: Single<Unit>
-        get() = provider.getCoinPrices(allCoinUids, currencyCode)
-            .doOnSuccess {
-                handle(it)
-            }.map {}
+    override suspend fun sync() {
+        handle(provider.getCoinPrices(allCoinUids, currencyCode))
+    }
 
     private val allCoinUids: List<String>
         get() = dataSource?.allCoinUids(currencyCode) ?: listOf()

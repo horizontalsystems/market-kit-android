@@ -6,10 +6,16 @@ import io.horizontalsystems.marketkit.models.*
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinStorage
 import io.horizontalsystems.marketkit.storage.SyncerStateDao
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 class CoinSyncer(
     private val hsProvider: HsProvider,
@@ -20,9 +26,11 @@ class CoinSyncer(
     private val keyBlockchainsLastSyncTimestamp = "coin-syncer-blockchains-last-sync-timestamp"
     private val keyTokensLastSyncTimestamp = "coin-syncer-tokens-last-sync-timestamp"
 
-    private var disposable: Disposable? = null
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var job: Job? = null
 
-    val fullCoinsUpdatedObservable = PublishSubject.create<Unit>()
+    private val _fullCoinsUpdatedObservable = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val fullCoinsUpdatedObservable: SharedFlow<Unit> = _fullCoinsUpdatedObservable.asSharedFlow()
 
     fun sync(coinsTimestamp: Long, blockchainsTimestamp: Long, tokensTimestamp: Long) {
         val lastCoinsSyncTimestamp = syncerStateDao.get(keyCoinsLastSyncTimestamp)?.toLong() ?: 0
@@ -36,19 +44,22 @@ class CoinSyncer(
 
         if (!coinsOutdated && !blockchainsOutdated && !tokensOutdated) return
 
-        disposable = Single.zip(
-            hsProvider.allCoinsSingle().map { it.map { coinResponse -> coinEntity(coinResponse) } },
-            hsProvider.allBlockchainsSingle().map { it.map { blockchainResponse -> blockchainEntity(blockchainResponse) } },
-            hsProvider.allTokensSingle().map { it.map { tokenResponse -> tokenEntity(tokenResponse) } }
-        ) { r1, r2, r3 -> Triple(r1, r2, r3) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe({ coinsData ->
-                handleFetched(coinsData.first, coinsData.second, coinsData.third)
+        job?.cancel()
+        job = scope.launch {
+            try {
+                val (coins, blockchains, tokens) = coroutineScope {
+                    val coins = async { hsProvider.allCoinsSingle().map { coinEntity(it) } }
+                    val blockchains = async { hsProvider.allBlockchainsSingle().map { blockchainEntity(it) } }
+                    val tokens = async { hsProvider.allTokensSingle().map { tokenEntity(it) } }
+                    Triple(coins.await(), blockchains.await(), tokens.await())
+                }
+                handleFetched(coins, blockchains, tokens)
                 saveLastSyncTimestamps(coinsTimestamp, blockchainsTimestamp, tokensTimestamp)
-            }, {
-                Log.e("CoinSyncer", "sync() error", it)
-            })
+            } catch (e: Throwable) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
+                Log.e("CoinSyncer", "sync() error", e)
+            }
+        }
     }
 
     private fun coinEntity(response: CoinResponse): Coin =
@@ -79,13 +90,13 @@ class CoinSyncer(
         )
 
     fun stop() {
-        disposable?.dispose()
-        disposable = null
+        job?.cancel()
+        job = null
     }
 
     private fun handleFetched(coins: List<Coin>, blockchainEntities: List<BlockchainEntity>, tokenEntities: List<TokenEntity>) {
         storage.update(coins, blockchainEntities, transform(tokenEntities))
-        fullCoinsUpdatedObservable.onNext(Unit)
+        _fullCoinsUpdatedObservable.tryEmit(Unit)
     }
 
     private fun transform(tokenEntities: List<TokenEntity>): List<TokenEntity> {

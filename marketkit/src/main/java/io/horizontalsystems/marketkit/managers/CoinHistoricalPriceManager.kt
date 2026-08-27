@@ -4,7 +4,6 @@ import io.horizontalsystems.marketkit.ProviderError
 import io.horizontalsystems.marketkit.models.CoinHistoricalPrice
 import io.horizontalsystems.marketkit.providers.HsProvider
 import io.horizontalsystems.marketkit.storage.CoinHistoricalPriceStorage
-import io.reactivex.Single
 import java.math.BigDecimal
 import kotlin.math.abs
 
@@ -13,26 +12,24 @@ class CoinHistoricalPriceManager(
     private val hsProvider: HsProvider,
 ) {
 
-    fun coinHistoricalPriceSingle(
+    suspend fun coinHistoricalPriceSingle(
         coinUid: String,
         currencyCode: String,
         timestamp: Long
-    ): Single<BigDecimal> {
+    ): BigDecimal {
 
         storage.coinPrice(coinUid, currencyCode, timestamp)?.let {
-            return Single.just(it.value)
+            return it.value
         }
 
-        return hsProvider.historicalCoinPriceSingle(coinUid, currencyCode, timestamp)
-            .flatMap { response ->
-                if (abs(timestamp - response.timestamp) < 24 * 60 * 60) {
-                    val coinHistoricalPrice = CoinHistoricalPrice(coinUid, currencyCode, response.price, timestamp)
-                    storage.save(coinHistoricalPrice)
-                    Single.just(response.price)
-                } else {
-                    Single.error(ProviderError.ReturnedTimestampIsVeryInaccurate())
-                }
-            }
+        val response = hsProvider.historicalCoinPriceSingle(coinUid, currencyCode, timestamp)
+        if (abs(timestamp - response.timestamp) < 24 * 60 * 60) {
+            val coinHistoricalPrice = CoinHistoricalPrice(coinUid, currencyCode, response.price, timestamp)
+            storage.save(coinHistoricalPrice)
+            return response.price
+        } else {
+            throw ProviderError.ReturnedTimestampIsVeryInaccurate()
+        }
     }
 
     fun coinHistoricalPrice(coinUid: String, currencyCode: String, timestamp: Long): BigDecimal? {

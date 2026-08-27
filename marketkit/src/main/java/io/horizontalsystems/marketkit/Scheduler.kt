@@ -1,11 +1,14 @@
 package io.horizontalsystems.marketkit
 
 import io.horizontalsystems.marketkit.providers.ISchedulerProvider
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 class Scheduler(
@@ -13,8 +16,9 @@ class Scheduler(
     private val bufferInterval: Int = 5
 ) {
     private val retryInterval = 30L
-    private var timeDisposable: Disposable? = null
-    private var syncDisposable: Disposable? = null
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var timeJob: Job? = null
+    private var syncJob: Job? = null
 
     private var isExpiredRatesNotified = false
 
@@ -33,8 +37,9 @@ class Scheduler(
     @Synchronized
     fun stop() {
         stopped = true
-        timeDisposable?.dispose()
-        syncDisposable?.dispose()
+        timeJob?.cancel()
+        syncJob?.cancel()
+        scope.cancel()
     }
 
     private fun autoSchedule(minDelay: Long = 0) {
@@ -55,28 +60,28 @@ class Scheduler(
 
         notifyRatesIfExpired()
 
-        timeDisposable?.dispose()
-        timeDisposable = Observable
-            .timer(delay, TimeUnit.SECONDS)
-            .subscribe({
-                onFire()
-            }, {
-                it.printStackTrace()
-            })
+        timeJob?.cancel()
+        timeJob = scope.launch {
+            delay(delay * 1000)
+            onFire()
+        }
     }
 
+    @Synchronized
     private fun onFire() {
         if (stopped) return
 
-        syncDisposable?.dispose()
-        syncDisposable = provider.syncSingle
-            .subscribeOn(Schedulers.io())
-            .subscribe({
+        syncJob?.cancel()
+        syncJob = scope.launch {
+            try {
+                provider.sync()
                 autoSchedule(retryInterval)
                 isExpiredRatesNotified = false
-            }, {
+            } catch (e: Throwable) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
                 schedule(retryInterval)
-            })
+            }
+        }
     }
 
     private fun notifyRatesIfExpired() {
