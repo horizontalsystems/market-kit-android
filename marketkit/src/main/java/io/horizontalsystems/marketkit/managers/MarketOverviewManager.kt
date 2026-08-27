@@ -4,7 +4,6 @@ import io.horizontalsystems.marketkit.models.HsTimePeriod
 import io.horizontalsystems.marketkit.models.MarketOverview
 import io.horizontalsystems.marketkit.models.MarketOverviewResponse
 import io.horizontalsystems.marketkit.providers.HsProvider
-import io.reactivex.Single
 
 class MarketOverviewManager(
     private val nftManager: NftManager,
@@ -24,7 +23,7 @@ class MarketOverviewManager(
             topPairs = response.pairs
         )
 
-    fun marketOverviewSingle(currencyCode: String): Single<MarketOverview> =
-        hsProvider.marketOverviewSingle(currencyCode).map { marketOverview(it) }
+    suspend fun marketOverviewSingle(currencyCode: String): MarketOverview =
+        marketOverview(hsProvider.marketOverviewSingle(currencyCode))
 
 }

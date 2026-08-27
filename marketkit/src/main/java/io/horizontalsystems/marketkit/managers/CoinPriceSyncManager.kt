@@ -3,8 +3,11 @@ package io.horizontalsystems.marketkit.managers
 import io.horizontalsystems.marketkit.Scheduler
 import io.horizontalsystems.marketkit.models.CoinPrice
 import io.horizontalsystems.marketkit.providers.CoinPriceSchedulerFactory
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onSubscription
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -23,7 +26,7 @@ class CoinPriceSyncManager(
 ) : CoinPriceManager.Listener, ICoinPriceCoinUidDataSource {
 
     private val schedulers = ConcurrentHashMap<String, Scheduler>()
-    private val subjects = ConcurrentHashMap<CoinPriceKey, PublishSubject<Map<String, CoinPrice>>>()
+    private val subjects = ConcurrentHashMap<CoinPriceKey, MutableSharedFlow<Map<String, CoinPrice>>>()
     private val observers = ConcurrentHashMap<CoinPriceKey, AtomicInteger>()
 
     private fun observingCoinUids(currencyCode: String): Set<String> {
@@ -62,10 +65,9 @@ class CoinPriceSyncManager(
     }
 
     private fun cleanUp(key: CoinPriceKey) {
-        val subject = subjects[key] ?: return
+        subjects[key] ?: return
         if (getCounter(key).get() > 0) return
 
-        subject.onComplete()
         subjects.remove(key)
 
         if (subjects.none { it.key.currencyCode == key.currencyCode }) {
@@ -74,8 +76,8 @@ class CoinPriceSyncManager(
         }
     }
 
-    private fun subject(key: CoinPriceKey): Observable<Map<String, CoinPrice>> {
-        val subject: PublishSubject<Map<String, CoinPrice>>
+    private fun subject(key: CoinPriceKey): Flow<Map<String, CoinPrice>> {
+        val subject: MutableSharedFlow<Map<String, CoinPrice>>
         var forceUpdate = false
 
         val candidate = subjects[key]
@@ -84,7 +86,7 @@ class CoinPriceSyncManager(
         } else {                                        // create new subject
             forceUpdate = needForceUpdate(key)     // if subject has non-subscribed tokens we need force schedule
 
-            subject = PublishSubject.create()
+            subject = MutableSharedFlow(extraBufferCapacity = 1)
             subjects[key] = subject
         }
 
@@ -99,14 +101,10 @@ class CoinPriceSyncManager(
         }
 
         return subject
-            .doOnSubscribe {
+            .onSubscription {
                 getCounter(key).incrementAndGet()
             }
-            .doOnDispose {
-                getCounter(key).decrementAndGet()
-                cleanUp(key)
-            }
-            .doOnError {
+            .onCompletion {
                 getCounter(key).decrementAndGet()
                 cleanUp(key)
             }
@@ -117,17 +115,13 @@ class CoinPriceSyncManager(
         return observingCoinUids(currencyCode).toList()
     }
 
-    fun coinPriceObservable(tag: String, coinUid: String, currencyCode: String): Observable<CoinPrice> {
+    fun coinPriceObservable(tag: String, coinUid: String, currencyCode: String): Flow<CoinPrice> {
         val key = CoinPriceKey(tag, listOf(coinUid), currencyCode)
 
-        return subject(key).flatMap { coinPriceMap ->
-            coinPriceMap[coinUid]?.let { coinPrice ->
-                Observable.just(coinPrice)
-            } ?: Observable.never()
-        }
+        return subject(key).mapNotNull { coinPriceMap -> coinPriceMap[coinUid] }
     }
 
-    fun coinPriceMapObservable(tag: String, coinUids: List<String>, currencyCode: String): Observable<Map<String, CoinPrice>> {
+    fun coinPriceMapObservable(tag: String, coinUids: List<String>, currencyCode: String): Flow<Map<String, CoinPrice>> {
         val key = CoinPriceKey(tag, coinUids, currencyCode)
         return subject(key)
     }
@@ -145,7 +139,7 @@ class CoinPriceSyncManager(
                     key.coinUids.contains(coinUid)
                 }
                 if (rates.isNotEmpty()) {
-                    subject.onNext(rates)
+                    subject.tryEmit(rates)
                 }
             }
         }

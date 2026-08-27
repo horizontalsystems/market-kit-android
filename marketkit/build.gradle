@@ -52,14 +52,13 @@ dependencies {
 
     //Room
     implementation libs.room.runtime
-    implementation libs.room.rxjava2
     kapt libs.room.compiler
 
+    //Coroutines
+    api libs.kotlinx.coroutines.android
+
     //Retrofit
-    implementation libs.rxjava
-    implementation libs.rxandroid
     implementation libs.retrofit.lib
-    implementation libs.retrofit.adapter.rxjava2
     implementation libs.retrofit.converter.gson
     implementation libs.okhttp.logging.interceptor
     implementation libs.retrofit.converter.scalars

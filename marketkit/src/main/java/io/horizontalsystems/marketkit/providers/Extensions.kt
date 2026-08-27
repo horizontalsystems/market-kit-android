@@ -1,18 +1,22 @@
 package io.horizontalsystems.marketkit.providers
 
-import io.reactivex.Flowable
-import io.reactivex.Single
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
 import kotlin.reflect.KClass
 
-fun <T> Single<T>.retryWhenError(errorForRetry: KClass<*>, maxRetries: Int = 3): Single<T> {
-    return retryWhen { errors ->
-        var retryCounter = 0L
-        errors.flatMap { error ->
+suspend fun <T> retryWhenError(
+    errorForRetry: KClass<*>,
+    maxRetries: Int = 3,
+    block: suspend () -> T
+): T {
+    var retryCounter = 0L
+    while (true) {
+        try {
+            return block()
+        } catch (error: Throwable) {
             if (errorForRetry.isInstance(error) && retryCounter++ < maxRetries) {
-                Flowable.timer(retryCounter, TimeUnit.SECONDS)
+                delay(retryCounter * 1000)
             } else {
-                Flowable.error(error)
+                throw error
             }
         }
     }
