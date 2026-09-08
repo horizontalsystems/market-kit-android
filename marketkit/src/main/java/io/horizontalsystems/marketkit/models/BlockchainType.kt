@@ -82,6 +82,9 @@ sealed class BlockchainType : Parcelable {
     object Mayachain: BlockchainType()
 
     @Parcelize @Serializable
+    object Xrp: BlockchainType()
+
+    @Parcelize @Serializable
     class Unsupported(val _uid: String) : BlockchainType()
 
     val uid: String
@@ -111,6 +114,7 @@ sealed class BlockchainType : Parcelable {
             is Zano -> "zano"
             is Thorchain -> "thorchain"
             is Mayachain -> "mayachain"
+            is Xrp -> "xrp"
             is Unsupported -> this._uid
         }
 
@@ -148,6 +152,7 @@ sealed class BlockchainType : Parcelable {
         Zano -> "zano"
         Thorchain -> "thorchain"
         Mayachain -> "mayachain"
+        Xrp -> "xrp"
         is Unsupported -> "unsupported|$uid"
     }
 
@@ -180,6 +185,7 @@ sealed class BlockchainType : Parcelable {
                 "zano" -> Zano
                 "thorchain" -> Thorchain
                 "mayachain" -> Mayachain
+                "xrp" -> Xrp
                 else -> Unsupported(uid)
             }
 
