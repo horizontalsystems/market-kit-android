@@ -22,8 +22,6 @@ class CoinSyncer(
     private val storage: CoinStorage,
     private val syncerStateDao: SyncerStateDao
 ) {
-    private val BACKEND_SYNC_DISABLED = true
-
     private val keyCoinsLastSyncTimestamp = "coin-syncer-coins-last-sync-timestamp"
     private val keyBlockchainsLastSyncTimestamp = "coin-syncer-blockchains-last-sync-timestamp"
     private val keyTokensLastSyncTimestamp = "coin-syncer-tokens-last-sync-timestamp"
@@ -35,11 +33,6 @@ class CoinSyncer(
     val fullCoinsUpdatedObservable: SharedFlow<Unit> = _fullCoinsUpdatedObservable.asSharedFlow()
 
     fun sync(coinsTimestamp: Long, blockchainsTimestamp: Long, tokensTimestamp: Long) {
-        // TEMP (xrp-chain): backend sync disabled so the XRPL token rows preset in
-        // initial_coins_list (uid `ripple`, CURRENCY-ISSUER references) are not overwritten by the
-        // backend's `xrp` rows. Remove once the backend serves XRPL tokens in that shape.
-        if (BACKEND_SYNC_DISABLED) return
-
         val lastCoinsSyncTimestamp = syncerStateDao.get(keyCoinsLastSyncTimestamp)?.toLong() ?: 0
         val coinsOutdated = lastCoinsSyncTimestamp != coinsTimestamp
 
