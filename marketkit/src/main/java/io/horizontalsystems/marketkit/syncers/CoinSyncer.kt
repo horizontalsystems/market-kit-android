@@ -24,7 +24,10 @@ class CoinSyncer(
 ) {
     private val keyCoinsLastSyncTimestamp = "coin-syncer-coins-last-sync-timestamp"
     private val keyBlockchainsLastSyncTimestamp = "coin-syncer-blockchains-last-sync-timestamp"
-    private val keyTokensLastSyncTimestamp = "coin-syncer-tokens-last-sync-timestamp"
+    // "-v2": forces one token re-fetch so installs synced before normalizeNear() get the fixed rows
+    private val keyTokensLastSyncTimestamp = "coin-syncer-tokens-last-sync-timestamp-v2"
+
+    private val BACKEND_SYNC_DISABLED = true
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var job: Job? = null
@@ -33,6 +36,11 @@ class CoinSyncer(
     val fullCoinsUpdatedObservable: SharedFlow<Unit> = _fullCoinsUpdatedObservable.asSharedFlow()
 
     fun sync(coinsTimestamp: Long, blockchainsTimestamp: Long, tokensTimestamp: Long) {
+        // TEMP (near-chain): backend sync disabled so the NEAR rows preset in initial_coins_list
+        // (native NEAR under `near-protocol` with 24 decimals) are not overwritten by the
+        // backend's rows. Remove once the backend serves NEAR in that shape.
+        if (BACKEND_SYNC_DISABLED) return
+
         val lastCoinsSyncTimestamp = syncerStateDao.get(keyCoinsLastSyncTimestamp)?.toLong() ?: 0
         val coinsOutdated = lastCoinsSyncTimestamp != coinsTimestamp
 
@@ -103,7 +111,7 @@ class CoinSyncer(
         val derivationReferences = TokenType.Derivation.values().map { it.name }
         val addressTypes = TokenType.AddressType.values().map { it.name }
 
-        var result = tokenEntities
+        var result = normalizeNear(tokenEntities)
         result = transform(
             result,
             BlockchainType.Bitcoin.uid,
@@ -160,4 +168,29 @@ class CoinSyncer(
         )
     }
 
+
+    companion object {
+        private const val NEAR_LEGACY_BLOCKCHAIN_UID = "near"
+        private const val NEAR_DECIMALS = 24
+
+        /**
+         * The backend lists native NEAR under a separate `near` blockchain without decimals, while
+         * NEP-141 tokens are under `near-protocol`. Moves native NEAR next to its tokens with its
+         * 24 decimals; a no-op once the backend serves it that way.
+         */
+        internal fun normalizeNear(tokenEntities: List<TokenEntity>): List<TokenEntity> {
+            val nearUid = BlockchainType.Near.uid
+            val hasNative = tokenEntities.any { it.blockchainUid == nearUid && it.type == "native" }
+            return tokenEntities.mapNotNull { entity ->
+                when {
+                    entity.blockchainUid == NEAR_LEGACY_BLOCKCHAIN_UID && entity.type == "native" ->
+                        if (hasNative) null
+                        else entity.copy(blockchainUid = nearUid, decimals = entity.decimals ?: NEAR_DECIMALS)
+                    entity.blockchainUid == nearUid && entity.type == "native" && entity.decimals == null ->
+                        entity.copy(decimals = NEAR_DECIMALS)
+                    else -> entity
+                }
+            }
+        }
+    }
 }

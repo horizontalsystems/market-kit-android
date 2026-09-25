@@ -53,6 +53,10 @@ sealed class TokenType : Parcelable {
     @Parcelize @Serializable
     data class XrpAsset(val currency: String, val issuer: String) : TokenType()
 
+    /** NEAR NEP-141 fungible token; [contractId] is the token contract's account id, e.g. `usdt.tether-token.near`. */
+    @Parcelize @Serializable
+    data class Nep141(val contractId: String) : TokenType()
+
     @Parcelize @Serializable
     data class Unsupported(val type: String, val reference: String) : TokenType()
 
@@ -69,6 +73,7 @@ sealed class TokenType : Parcelable {
                 is ZanoAsset -> listOf("zano", reference)
                 is ThorchainAsset -> listOf("thorchain", denom)
                 is XrpAsset -> listOf("xrp", "$currency-$issuer")
+                is Nep141 -> listOf("near-protocol", contractId)
                 is Unsupported -> if (reference.isNotBlank()) {
                     listOf("unsupported", type, reference)
                 } else {
@@ -90,6 +95,7 @@ sealed class TokenType : Parcelable {
             is ZanoAsset -> Value("zano", reference)
             is ThorchainAsset -> Value("thorchain", denom)
             is XrpAsset -> Value("xrp", "$currency-$issuer")
+            is Nep141 -> Value("near-protocol", contractId)
             is Unsupported -> Value(type, reference)
         }
 
@@ -163,6 +169,12 @@ sealed class TokenType : Parcelable {
                     val parts = reference.split("-")
                     if (parts.size == 2 && parts[0].isNotBlank() && parts[1].isNotBlank()) {
                         return XrpAsset(parts[0], parts[1])
+                    }
+                }
+
+                "near-protocol" -> {
+                    if (reference.isNotBlank()) {
+                        return Nep141(reference)
                     }
                 }
             }

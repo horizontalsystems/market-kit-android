@@ -88,6 +88,9 @@ sealed class BlockchainType : Parcelable {
     object Xrp: BlockchainType()
 
     @Parcelize @Serializable
+    object Near: BlockchainType()
+
+    @Parcelize @Serializable
     class Unsupported(val _uid: String) : BlockchainType()
 
     val uid: String
@@ -119,6 +122,7 @@ sealed class BlockchainType : Parcelable {
             is Thorchain -> "thorchain"
             is Mayachain -> "mayachain"
             is Xrp -> "xrp"
+            is Near -> "near-protocol"
             is Unsupported -> this._uid
         }
 
@@ -158,6 +162,7 @@ sealed class BlockchainType : Parcelable {
         Thorchain -> "thorchain"
         Mayachain -> "mayachain"
         Xrp -> "xrp"
+        Near -> "near"
         is Unsupported -> "unsupported|$uid"
     }
 
@@ -192,6 +197,7 @@ sealed class BlockchainType : Parcelable {
                 "thorchain" -> Thorchain
                 "mayachain" -> Mayachain
                 "xrp" -> Xrp
+                "near-protocol" -> Near
                 else -> Unsupported(uid)
             }
 
