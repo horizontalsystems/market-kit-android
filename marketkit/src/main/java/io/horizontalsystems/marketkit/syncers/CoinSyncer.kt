@@ -27,8 +27,6 @@ class CoinSyncer(
     // "-v2": forces one token re-fetch so installs synced before normalizeNear() get the fixed rows
     private val keyTokensLastSyncTimestamp = "coin-syncer-tokens-last-sync-timestamp-v2"
 
-    private val BACKEND_SYNC_DISABLED = true
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var job: Job? = null
 
@@ -36,11 +34,6 @@ class CoinSyncer(
     val fullCoinsUpdatedObservable: SharedFlow<Unit> = _fullCoinsUpdatedObservable.asSharedFlow()
 
     fun sync(coinsTimestamp: Long, blockchainsTimestamp: Long, tokensTimestamp: Long) {
-        // TEMP (near-chain): backend sync disabled so the NEAR rows preset in initial_coins_list
-        // (native NEAR under `near-protocol` with 24 decimals) are not overwritten by the
-        // backend's rows. Remove once the backend serves NEAR in that shape.
-        if (BACKEND_SYNC_DISABLED) return
-
         val lastCoinsSyncTimestamp = syncerStateDao.get(keyCoinsLastSyncTimestamp)?.toLong() ?: 0
         val coinsOutdated = lastCoinsSyncTimestamp != coinsTimestamp
 
