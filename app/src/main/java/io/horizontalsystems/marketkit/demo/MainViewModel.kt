@@ -260,7 +260,6 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             Log.w("AAA", "marketOverview global: ${it.globalMarketPoints}")
             Log.w("AAA", "marketOverview coinCategories: ${it.coinCategories}")
             Log.w("AAA", "marketOverview topPlatforms: ${it.topPlatforms}")
-            Log.w("AAA", "marketOverview nft collections: ${it.nftCollections}")
             Log.w("AAA", "marketOverview top pairs: ${it.topPairs}")
         }
     }
@@ -278,25 +277,6 @@ class MainViewModel(private val marketKit: MarketKit) : ViewModel() {
             it.forEach {
                 Log.w("AAA", "TopPairs: $it")
             }
-        }
-    }
-
-    fun runNftCollections() {
-        Log.w("AAA", "doCollections")
-        viewModelScope.launch {
-            val collections = marketKit.nftTopCollections()
-
-            Log.w("AAA", "collections count: ${collections.size}")
-            collections.firstOrNull()?.let { collection ->
-                Log.w("AAA", "${collection.blockchainType}")
-                Log.w("AAA", "${collection.providerUid}")
-                Log.w("AAA", "${collection.name}")
-                Log.w("AAA", "${collection.thumbnailImageUrl}")
-                Log.w("AAA", "${collection.floorPrice}")
-                Log.w("AAA", "${collection.volumes}")
-                Log.w("AAA", "${collection.changes}")
-            }
-            notifySuccess("NftCollections")
         }
     }
 
